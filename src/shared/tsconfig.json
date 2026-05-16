@@ -4,6 +4,6 @@
     "lib": ["ES2020"],
     "noDOM": true
   },
-  "include": ["."],
-  "exclude": ["*.test.ts"]
+  "include": ["**/*.ts"],
+  "exclude": ["**/*.test.ts"]
 }

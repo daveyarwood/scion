@@ -21,7 +21,7 @@
       "@client/*": ["src/client/*"]
     }
   },
-  "include": ["src"],
+  "files": [],
   "references": [
     { "path": "./src/shared/tsconfig.json" },
     { "path": "./src/server/tsconfig.json" },

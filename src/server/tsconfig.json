@@ -5,6 +5,6 @@
     "noDOM": true,
     "types": ["node"]
   },
-  "include": ["."],
-  "exclude": ["*.test.ts"]
+  "include": ["**/*.ts"],
+  "exclude": ["**/*.test.ts"]
 }
