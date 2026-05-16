@@ -1,9 +1,9 @@
-import React from 'react'
-import { Song } from '../../shared/index'
-import './SongCard.css'
+import React from 'react';
+import { Song } from '../../shared/index';
+import './SongCard.css';
 
 interface SongCardProps {
-  song: Song
+  song: Song;
 }
 
 export const SongCard: React.FC<SongCardProps> = ({ song }) => {
@@ -15,17 +15,17 @@ export const SongCard: React.FC<SongCardProps> = ({ song }) => {
       blooming: '🌸',
       dormant: '❄️',
       archived: '📦',
-    }
-    return emojiMap[stage] || '🌱'
-  }
+    };
+    return emojiMap[stage] || '🌱';
+  };
 
   const formatDate = (date: Date): string => {
     return new Date(date).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
-    })
-  }
+    });
+  };
 
   return (
     <div className="song-card">
@@ -39,5 +39,5 @@ export const SongCard: React.FC<SongCardProps> = ({ song }) => {
         <span className="song-date">{formatDate(song.created_at)}</span>
       </div>
     </div>
-  )
-}
+  );
+};

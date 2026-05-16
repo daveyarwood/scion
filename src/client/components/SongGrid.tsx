@@ -1,10 +1,10 @@
-import React from 'react'
-import { Song } from '../../shared/index'
-import { SongCard } from './SongCard'
-import './SongGrid.css'
+import React from 'react';
+import { Song } from '../../shared/index';
+import { SongCard } from './SongCard';
+import './SongGrid.css';
 
 interface SongGridProps {
-  songs: Song[]
+  songs: Song[];
 }
 
 export const SongGrid: React.FC<SongGridProps> = ({ songs }) => {
@@ -13,7 +13,7 @@ export const SongGrid: React.FC<SongGridProps> = ({ songs }) => {
       <div className="empty-state">
         <p>No seeds yet. Create your first song idea to get started!</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -22,5 +22,5 @@ export const SongGrid: React.FC<SongGridProps> = ({ songs }) => {
         <SongCard key={song.id} song={song} />
       ))}
     </div>
-  )
-}
+  );
+};

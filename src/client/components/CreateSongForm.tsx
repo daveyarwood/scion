@@ -1,23 +1,23 @@
-import React, { useState } from 'react'
-import './CreateSongForm.css'
+import React, { useState } from 'react';
+import './CreateSongForm.css';
 
 interface CreateSongFormProps {
-  onSubmit: (title: string, body: string) => void
-  isLoading?: boolean
+  onSubmit: (title: string, body: string) => void;
+  isLoading?: boolean;
 }
 
 export const CreateSongForm: React.FC<CreateSongFormProps> = ({ onSubmit, isLoading = false }) => {
-  const [title, setTitle] = useState('')
-  const [body, setBody] = useState('')
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (title.trim()) {
-      onSubmit(title, body)
-      setTitle('')
-      setBody('')
+      onSubmit(title, body);
+      setTitle('');
+      setBody('');
     }
-  }
+  };
 
   return (
     <form className="create-song-form" onSubmit={handleSubmit}>
@@ -46,13 +46,9 @@ export const CreateSongForm: React.FC<CreateSongFormProps> = ({ onSubmit, isLoad
         />
       </div>
 
-      <button
-        type="submit"
-        className="btn btn-primary"
-        disabled={isLoading || !title.trim()}
-      >
+      <button type="submit" className="btn btn-primary" disabled={isLoading || !title.trim()}>
         {isLoading ? 'Creating...' : 'Create Seed'}
       </button>
     </form>
-  )
-}
+  );
+};

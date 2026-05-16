@@ -1,26 +1,26 @@
-import React, { useState } from 'react'
-import { trpc } from './trpc'
-import { SongGrid } from './components/SongGrid'
-import { CreateSongForm } from './components/CreateSongForm'
-import './App.css'
+import React, { useState } from 'react';
+import { trpc } from './trpc';
+import { SongGrid } from './components/SongGrid';
+import { CreateSongForm } from './components/CreateSongForm';
+import './App.css';
 
 export const App: React.FC = () => {
-  const [showCreateForm, setShowCreateForm] = useState(false)
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
-  const listQuery = trpc.song.list.useQuery()
+  const listQuery = trpc.song.list.useQuery();
   const createMutation = trpc.song.create.useMutation({
     onSuccess: () => {
-      listQuery.refetch()
-      setShowCreateForm(false)
+      listQuery.refetch();
+      setShowCreateForm(false);
     },
-  })
+  });
 
   const handleCreateSong = (title: string, body: string) => {
     createMutation.mutate({
       title,
       body: body || undefined,
-    })
-  }
+    });
+  };
 
   return (
     <div className="app">
@@ -31,19 +31,13 @@ export const App: React.FC = () => {
 
       <main className="app-main">
         <div className="controls">
-          <button
-            className="btn btn-primary"
-            onClick={() => setShowCreateForm(!showCreateForm)}
-          >
+          <button className="btn btn-primary" onClick={() => setShowCreateForm(!showCreateForm)}>
             {showCreateForm ? 'Cancel' : '+ New Seed'}
           </button>
         </div>
 
         {showCreateForm && (
-          <CreateSongForm
-            onSubmit={handleCreateSong}
-            isLoading={createMutation.isPending}
-          />
+          <CreateSongForm onSubmit={handleCreateSong} isLoading={createMutation.isPending} />
         )}
 
         {listQuery.isLoading && <div className="loading">Loading songs...</div>}
@@ -53,5 +47,5 @@ export const App: React.FC = () => {
         {listQuery.data && <SongGrid songs={listQuery.data} />}
       </main>
     </div>
-  )
-}
+  );
+};
