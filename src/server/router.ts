@@ -1,21 +1,17 @@
 import { initTRPC } from '@trpc/server';
 import { v4 as uuidv4 } from 'uuid';
-import { SongSchema, CreateSongInput, UpdateSongInput, Song } from '../shared/index';
+import { SongSchema, CreateSongInput, UpdateSongWithId, Song } from '../shared/index';
 import { getDb } from './db';
 
 const t = initTRPC.create();
-
-const parseSongRow = (row: Record<string, unknown>): Song => {
-  return SongSchema.parse(row);
-};
 
 export const appRouter = t.router({
   song: t.router({
     // List all songs
     list: t.procedure.query(() => {
       const db = getDb();
-      const rows = db.prepare('SELECT * FROM songs ORDER BY created_at DESC').all();
-      return rows.map((row) => parseSongRow(row as Record<string, unknown>));
+      const rows = db.prepare<[], Song>('SELECT * FROM songs ORDER BY created_at DESC').all();
+      return rows.map((row) => SongSchema.parse(row));
     }),
 
     // Get a single song by id
@@ -26,9 +22,9 @@ export const appRouter = t.router({
       })
       .query(({ input: id }) => {
         const db = getDb();
-        const row = db.prepare('SELECT * FROM songs WHERE id = ?').get(id);
+        const row = db.prepare<[string], Song>('SELECT * FROM songs WHERE id = ?').get(id);
         if (!row) return null;
-        return parseSongRow(row as Record<string, unknown>);
+        return SongSchema.parse(row);
       }),
 
     // Create a new song
@@ -37,35 +33,29 @@ export const appRouter = t.router({
       const id = uuidv4();
       const now = new Date().toISOString();
 
-      const stmt = db.prepare(`
+      const stmt = db.prepare<[string, string, string, null | string, string, string, string]>(
+        `
         INSERT INTO songs (id, title, body, plot_id, growth_stage, created_at, updated_at)
         VALUES (?, ?, ?, ?, ?, ?, ?)
-      `);
+      `
+      );
 
       stmt.run(id, input.title, input.body || '', input.plot_id || null, 'seed', now, now);
 
-      const row = db.prepare('SELECT * FROM songs WHERE id = ?').get(id);
-      return parseSongRow(row as Record<string, unknown>);
+      const row = db.prepare<[string], Song>('SELECT * FROM songs WHERE id = ?').get(id);
+      if (!row) throw new Error('Failed to retrieve created song');
+      return SongSchema.parse(row);
     }),
 
     // Update a song
     update: t.procedure
-      .input((value) => {
-        if (typeof value !== 'object' || value === null) {
-          throw new Error('input must be an object');
-        }
-        const obj = value as Record<string, unknown>;
-        if (typeof obj.id !== 'string') throw new Error('id must be a string');
-        const { id, ...updateData } = obj;
-        const parsed = UpdateSongInput.parse(updateData);
-        return { id, ...parsed };
-      })
+      .input(UpdateSongWithId)
       .mutation(({ input }) => {
         const db = getDb();
         const { id, ...updateData } = input;
 
         // Check if song exists
-        const existing = db.prepare('SELECT * FROM songs WHERE id = ?').get(id);
+        const existing = db.prepare<[string], Song>('SELECT * FROM songs WHERE id = ?').get(id);
         if (!existing) throw new Error('Song not found');
 
         // Build dynamic update query
@@ -98,8 +88,9 @@ export const appRouter = t.router({
 
         db.prepare(query).run(...values);
 
-        const row = db.prepare('SELECT * FROM songs WHERE id = ?').get(id);
-        return parseSongRow(row as Record<string, unknown>);
+        const row = db.prepare<[string], Song>('SELECT * FROM songs WHERE id = ?').get(id);
+        if (!row) throw new Error('Failed to retrieve updated song');
+        return SongSchema.parse(row);
       }),
 
     // Delete a song
@@ -112,7 +103,7 @@ export const appRouter = t.router({
         const db = getDb();
 
         // Check if song exists
-        const existing = db.prepare('SELECT * FROM songs WHERE id = ?').get(id);
+        const existing = db.prepare<[string], Song>('SELECT * FROM songs WHERE id = ?').get(id);
         if (!existing) throw new Error('Song not found');
 
         db.prepare('DELETE FROM songs WHERE id = ?').run(id);

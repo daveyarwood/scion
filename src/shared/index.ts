@@ -51,3 +51,15 @@ const updateSongInputSchema = z.object({
 
 export const UpdateSongInput = updateSongInputSchema;
 export type UpdateSongInput = z.infer<typeof updateSongInputSchema>;
+
+// Input schema for updating a song with id (used by tRPC)
+const updateSongWithIdSchema = z.object({
+  id: z.string().uuid(),
+  title: z.string().min(1, 'Title is required').optional(),
+  body: z.string().optional(),
+  growth_stage: GrowthStageEnum.optional(),
+  plot_id: z.string().uuid().nullable().optional(),
+});
+
+export const UpdateSongWithId = updateSongWithIdSchema;
+export type UpdateSongWithId = z.infer<typeof updateSongWithIdSchema>;

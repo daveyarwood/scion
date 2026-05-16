@@ -56,6 +56,10 @@ Not yet built (deferred):
 - Migrations are append-only — no down migrations; write a new migration to reverse a change
 - Keep `src/shared/` free of any Node.js or browser dependencies — it must be importable by both client and server
 - Vitest for all tests
+- **No type coercions**: Type coercions (`as`, `!`) are strongly discouraged as they hide real type errors. If you find yourself needing one, it usually indicates a missing type annotation or a design issue worth fixing properly. For example:
+  - Use generic type parameters with better-sqlite3 queries: `db.prepare<[string], SongType>('...')` instead of `db.prepare('...').get(id) as Record<string, unknown>`
+  - Replace manual type guards with Zod schemas for validation
+  - Use proper function signatures instead of `as any`
 
 ## Testing philosophy
 
