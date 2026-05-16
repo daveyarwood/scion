@@ -132,7 +132,18 @@ The application now implements a complete data flow:
 
 ## Review Notes
 
-<!-- to be filled in by cycle-reviewer -->
+### Summary
+
+Cycle 002 delivered a complete, working end-to-end implementation of the core Scion application: shared Zod schemas, a fully functional Express + tRPC server with CRUD operations, a React client with tRPC integration, and a responsive song grid with create form. All 36 tests pass (14 shared schemas, 10 server CRUD, 12 migration runner), TypeScript strict mode passes, and ESLint/Prettier formatting is clean. Code follows the project conventions well: arrow functions throughout, `const` by default, no database ORM (raw SQL via better-sqlite3), Zod schemas as the single source of truth for types, and clean separation of shared/server/client layers. The implementation is high quality and ready for the next phase (plant visuals, detail views, etc.).
+
+### Fixed
+
+- **Schema naming convention**: Refactored `CreateSongInput` and `UpdateSongInput` in `src/shared/index.ts` to use internal schema names (`createSongInputSchema`, `updateSongInputSchema`) to avoid confusion between the Zod schema constant and the inferred TypeScript type. This follows idiomatic Zod patterns and improves clarity.
+- **Missing semicolons**: Added missing semicolons in `scripts/dev.ts` to match the project's Prettier configuration (`"semi": true`). The file was not formatted during the initial implementation.
+
+### Escalated to Open Questions
+
+Nothing escalated.
 
 ## Test Results
 
