@@ -53,11 +53,11 @@ Key design decisions already made and stable:
 
 ## Goals
 
-- [ ] Update AGENTS.md to reflect the app name (Scion) and renamed directory
-- [ ] Repo and tooling scaffold: `package.json` (Yarn, monorepo with `src/client`, `src/server`, `src/shared`), TypeScript (strict mode), Vite, Vitest, ESLint
-- [ ] Database schema: `migrations/001_initial_schema.sql` with songs table (`id`, `title`, `body`, `plot_id`, `growth_stage`, `created_at`, `updated_at`) plus `schema_migrations` tracking table
-- [ ] Migration runner: `scripts/migrate.ts` — reads `migrations/`, skips applied, runs pending, records in `schema_migrations`
-- [ ] Write `README.md`: what the app is, how to run it locally (install, migrate, dev), note on the plant/seed metaphor and the name Scion
+- [x] Update AGENTS.md to reflect the app name (Scion) and renamed directory
+- [x] Repo and tooling scaffold: `package.json` (Yarn, monorepo with `src/client`, `src/server`, `src/shared`), TypeScript (strict mode), Vite, Vitest, ESLint
+- [x] Database schema: `migrations/001_initial_schema.sql` with songs table (`id`, `title`, `body`, `plot_id`, `growth_stage`, `created_at`, `updated_at`) plus `schema_migrations` tracking table
+- [x] Migration runner: `scripts/migrate.ts` — reads `migrations/`, skips applied, runs pending, records in `schema_migrations`
+- [x] Write `README.md`: what the app is, how to run it locally (install, migrate, dev), note on the plant/seed metaphor and the name Scion
 
 ## Scope
 
@@ -66,7 +66,56 @@ Key design decisions already made and stable:
 
 ## Work Done
 
-<!-- to be filled in by cycle-developer -->
+**Completed all five goals for cycle-001:**
+
+1. **AGENTS.md updated** — Changed project name from "Song App" to "Scion" and updated directory structure references to match the renamed repo.
+
+2. **Monorepo scaffolding complete** — Created `package.json` with Yarn (v1.22.22), installed all dependencies (React, Express, tRPC, Zod, better-sqlite3, Vitest, TypeScript, ESLint, Prettier, and related plugins). Set up:
+   - Root TypeScript config with project references
+   - TypeScript configs for shared, server, and client with appropriate settings (no DOM in shared/server, no Node types in shared/client)
+   - Vite config for client bundling with React plugin and path aliases
+   - Vitest config for running tests in Node environment
+   - ESLint and Prettier configs for code quality
+   - `.gitignore` to exclude `node_modules/`, `data/`, and build artifacts
+   - src/ directory structure with empty placeholder files
+
+3. **Database schema created** — Wrote `migrations/001_initial_schema.sql` with:
+   - `schema_migrations` table for tracking applied migrations (id, version, applied_at)
+   - `songs` table with all required columns (id, title, body, plot_id, growth_stage, created_at, updated_at)
+   - Indexes on plot_id, growth_stage, and created_at for query performance
+   - Proper constraints and defaults (growth_stage defaults to 'seed', timestamps auto-populate)
+
+4. **Migration runner implemented** — Created `scripts/migrate.ts` that:
+   - Connects to SQLite database, creating data/ directory if needed
+   - Reads all .sql files from migrations/ directory
+   - Tracks which migrations have been applied via schema_migrations table
+   - Runs only pending migrations in order
+   - Provides clear console output of applied and skipped migrations
+   - Comprehensive test suite with 6 passing tests covering schema creation, column validation, insertion, and index creation
+
+5. **README.md written** — Comprehensive guide covering:
+   - Project description and the plant metaphor for song ideas
+   - Tech stack summary
+   - Project structure overview
+   - Getting started instructions (installation, running dev server, database setup)
+   - Test, linting, and build commands
+   - Database migration workflow
+   - Deferred features documented
+
+**Testing & verification:**
+- All 6 migration tests pass (`yarn test --run`)
+- Migration runner successfully applies initial schema (`yarn migrate`)
+- Type checking passes (`yarn type-check`)
+- ESLint passes without errors (`yarn lint`)
+- Database file created correctly in data/ directory with proper schema
+
+**Commits made:**
+1. docs(AGENTS.md): update app name to Scion and directory structure
+2. build: scaffold monorepo with TypeScript, Vite, Vitest, ESLint config
+3. db: add initial schema migration with songs table
+4. feat: implement migration runner with tests
+5. docs: add comprehensive README
+6. fix: adjust TypeScript and ESLint configuration for monorepo structure
 
 ## Review Notes
 
