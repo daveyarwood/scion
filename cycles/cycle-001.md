@@ -53,11 +53,16 @@ Key design decisions already made and stable:
 
 ## Goals
 
-<!-- to be filled in during human planning conversation -->
+- [ ] Update AGENTS.md to reflect the app name (Scion) and renamed directory
+- [ ] Repo and tooling scaffold: `package.json` (Yarn, monorepo with `src/client`, `src/server`, `src/shared`), TypeScript (strict mode), Vite, Vitest, ESLint
+- [ ] Database schema: `migrations/001_initial_schema.sql` with songs table (`id`, `title`, `body`, `plot_id`, `growth_stage`, `created_at`, `updated_at`) plus `schema_migrations` tracking table
+- [ ] Migration runner: `scripts/migrate.ts` — reads `migrations/`, skips applied, runs pending, records in `schema_migrations`
+- [ ] Write `README.md`: what the app is, how to run it locally (install, migrate, dev), note on the plant/seed metaphor and the name Scion
 
 ## Scope
 
-<!-- to be filled in during human planning conversation -->
+- In scope: AGENTS.md update, monorepo scaffold, DB schema, migration runner, README
+- Deferred: tRPC server, Express server, React client, plant visual generation, create-seed UI flow, audio file support, plots UI, withering/decay, Alda integration
 
 ## Work Done
 
