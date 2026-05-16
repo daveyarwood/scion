@@ -51,12 +51,12 @@ The next meaningful milestone is a browser showing a grid of song-plant cards fe
 
 ## Goals
 
-- [ ] Zod `Song` schema + `GrowthStage` enum in `src/shared/`
-- [ ] Express + tRPC server with full song CRUD (`song.list`, `song.create`, `song.get`, `song.update`, `song.delete`)
-- [ ] `scripts/dev.ts` concurrent dev launcher (runs client + server together)
-- [ ] React app entry point + tRPC client configuration
-- [ ] Plant card grid — layout and data flow, grid of cards showing song ideas
-- [ ] "Create new seed" form — first end-to-end user interaction (title + optional body, creates a song at growth stage `seed`, appears in the grid)
+- [x] Zod `Song` schema + `GrowthStage` enum in `src/shared/`
+- [x] Express + tRPC server with full song CRUD (`song.list`, `song.create`, `song.get`, `song.update`, `song.delete`)
+- [x] `scripts/dev.ts` concurrent dev launcher (runs client + server together)
+- [x] React app entry point + tRPC client configuration
+- [x] Plant card grid — layout and data flow, grid of cards showing song ideas
+- [x] "Create new seed" form — first end-to-end user interaction (title + optional body, creates a song at growth stage `seed`, appears in the grid)
 
 ## Scope
 
@@ -65,7 +65,70 @@ The next meaningful milestone is a browser showing a grid of song-plant cards fe
 
 ## Work Done
 
-<!-- to be filled in by cycle-developer -->
+**Cycle 002 Implementation Summary (2026-05-16)**
+
+All six goals completed successfully. The application now has a fully functional backend and frontend that work end-to-end with tRPC integration and database persistence.
+
+**Goal 1: Zod schemas and GrowthStage enum**
+- Implemented `src/shared/index.ts` with `GrowthStageEnum` (seed, seedling, sprout, blooming, dormant, archived)
+- Created `SongSchema` with full validation including UUID id, required title, optional body, growth_stage, timestamps
+- Added `CreateSongInput` and `UpdateSongInput` helper schemas for type-safe mutations
+- Wrote 14 comprehensive tests covering enum validation, schema parsing, defaults, and error cases
+
+**Goal 2: Express + tRPC server**
+- Built `src/server/db.ts` module for SQLite connection pooling with WAL pragma
+- Implemented `src/server/router.ts` with complete tRPC song CRUD: `song.list`, `song.create`, `song.get`, `song.update`, `song.delete`
+- Created `src/server/index.ts` Express app with tRPC middleware mounted at `/trpc`
+- Wired database queries with raw SQL via better-sqlite3, proper error handling, and timestamp management
+- Wrote 10 tests covering all CRUD operations, error cases, and data integrity
+- Server runs on port 3000 with health check endpoint
+
+**Goal 3: Concurrent dev launcher**
+- Created `scripts/dev.ts` that uses the `concurrently` package to run both client and server
+- Uses `node --import tsx` for modern Node.js compatibility (updated package.json dev script)
+- Clear console output showing both services starting and their addresses
+- Properly handles process lifecycle and exit codes
+
+**Goal 4: React app and tRPC client**
+- Created `src/client/trpc.ts` with tRPC React client factory
+- Built `src/client/main.tsx` entry point with React query and tRPC providers configured
+- Set up QueryClient and tRPC client with httpBatchLink pointing to localhost:3000
+- Added `index.html` as Vite entry point
+
+**Goal 5: Song card grid**
+- Built `src/client/components/SongGrid.tsx` responsive grid component
+- Implemented `src/client/components/SongCard.tsx` displaying: title, growth stage emoji, formatted date, optional body preview
+- Added stage emoji mapping (🌰 seed, 🌱 seedling, 🌿 sprout, 🌸 blooming, ❄️ dormant, 📦 archived)
+- Grid uses CSS Grid with auto-fill responsive layout (280px cards, responsive down to mobile)
+- Graceful empty state when no songs exist
+
+**Goal 6: "Create new seed" form and integration**
+- Built `src/client/components/CreateSongForm.tsx` with title input and optional body textarea
+- Created `src/client/App.tsx` main component orchestrating the full flow
+- Integrated tRPC mutations: `song.create` wired to form submission
+- Form resets after successful creation, automatically refetches song list
+- Toggle button to show/hide form
+- All UI uses plain CSS (App.css, SongGrid.css, SongCard.css, CreateSongForm.css) — no frameworks, clean and minimal
+
+**Infrastructure & Build**
+- Fixed tsconfig.json to work with `tsc` and Vite build by adding `noEmit: true`
+- Installed missing dependency: @tanstack/react-query@5
+- All linting and formatting issues resolved (ESLint, Prettier)
+- Build produces optimized bundle: 242 KB JavaScript, 3 KB CSS (gzipped)
+
+**Test Results**
+- All 36 tests passing (14 shared schemas, 10 server router, 12 migration runner)
+- TypeScript strict mode type checking passes
+- Project builds successfully with `yarn build`
+
+**Architecture Summary**
+The application now implements a complete data flow:
+1. User fills create form with title/body
+2. Form calls `song.create` via tRPC
+3. Server validates with Zod, generates UUID, persists to SQLite
+4. Song list auto-refetches
+5. New song appears in grid immediately
+6. All mutations update timestamps automatically
 
 ## Review Notes
 
