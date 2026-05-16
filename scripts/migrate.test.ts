@@ -133,15 +133,104 @@ describe('Migration Runner', () => {
     expect(indexNames).toContain('idx_songs_created_at')
   })
 
-  it('should record migration in schema_migrations table', () => {
-    const migrationPath = path.join(MIGRATIONS_DIR, '001_initial_schema.sql')
-    applyMigration(db, migrationPath)
+   it('should record migration in schema_migrations table', () => {
+     const migrationPath = path.join(MIGRATIONS_DIR, '001_initial_schema.sql')
+     applyMigration(db, migrationPath)
 
-    db.prepare('INSERT INTO schema_migrations (version) VALUES (?)').run('001_initial_schema')
+     db.prepare('INSERT INTO schema_migrations (version) VALUES (?)').run('001_initial_schema')
 
-    const migration = db.prepare('SELECT version FROM schema_migrations WHERE version = ?').get(
-      '001_initial_schema'
-    )
-    expect(migration).toBeDefined()
-  })
+     const migration = db.prepare('SELECT version FROM schema_migrations WHERE version = ?').get(
+       '001_initial_schema'
+     )
+     expect(migration).toBeDefined()
+   })
+
+   it('should enforce unique constraint on migration versions', () => {
+     const migrationPath = path.join(MIGRATIONS_DIR, '001_initial_schema.sql')
+     applyMigration(db, migrationPath)
+
+     db.prepare('INSERT INTO schema_migrations (version) VALUES (?)').run('001_initial_schema')
+
+     // Attempting to insert the same version twice should fail
+     expect(() => {
+       db.prepare('INSERT INTO schema_migrations (version) VALUES (?)').run('001_initial_schema')
+     }).toThrow()
+   })
+
+   it('should allow null plot_id when inserting songs', () => {
+     const migrationPath = path.join(MIGRATIONS_DIR, '001_initial_schema.sql')
+     applyMigration(db, migrationPath)
+
+     const stmt = db.prepare(
+       'INSERT INTO songs (id, title, body, plot_id, growth_stage) VALUES (?, ?, ?, ?, ?)'
+     )
+     stmt.run('test-null-plot', 'Test Song', 'A test song body', null, 'seed')
+
+     const song = db.prepare('SELECT plot_id FROM songs WHERE id = ?').get('test-null-plot') as
+       | { plot_id: null }
+       | undefined
+     expect(song).toBeDefined()
+     expect(song?.plot_id).toBeNull()
+   })
+
+   it('should reject songs with null title', () => {
+     const migrationPath = path.join(MIGRATIONS_DIR, '001_initial_schema.sql')
+     applyMigration(db, migrationPath)
+
+     expect(() => {
+       db.prepare('INSERT INTO songs (id, title, body, plot_id, growth_stage) VALUES (?, ?, ?, ?, ?)')
+         .run('test-null-title', null, 'A test song body', null, 'seed')
+     }).toThrow()
+   })
+
+   it('should use default growth_stage of "seed" when not specified', () => {
+     const migrationPath = path.join(MIGRATIONS_DIR, '001_initial_schema.sql')
+     applyMigration(db, migrationPath)
+
+     const stmt = db.prepare('INSERT INTO songs (id, title, body) VALUES (?, ?, ?)')
+     stmt.run('test-default-stage', 'Test Song', 'A test song body')
+
+     const song = db.prepare('SELECT growth_stage FROM songs WHERE id = ?').get(
+       'test-default-stage'
+     ) as { growth_stage: string } | undefined
+     expect(song).toBeDefined()
+     expect(song?.growth_stage).toBe('seed')
+   })
+
+   it('should auto-populate timestamps for created_at and updated_at', () => {
+     const migrationPath = path.join(MIGRATIONS_DIR, '001_initial_schema.sql')
+     applyMigration(db, migrationPath)
+
+     const stmt = db.prepare(
+       'INSERT INTO songs (id, title, body, plot_id, growth_stage) VALUES (?, ?, ?, ?, ?)'
+     )
+     stmt.run('test-timestamps', 'Test Song', 'A test song body', null, 'seed')
+
+     const song = db.prepare('SELECT created_at, updated_at FROM songs WHERE id = ?').get(
+       'test-timestamps'
+     ) as { created_at: string; updated_at: string } | undefined
+     expect(song).toBeDefined()
+     expect(song?.created_at).toBeDefined()
+     expect(song?.updated_at).toBeDefined()
+     // Both should be recent timestamps (within last minute)
+     const createdTime = new Date(song!.created_at).getTime()
+     const updatedTime = new Date(song!.updated_at).getTime()
+     const now = Date.now()
+     expect(now - createdTime).toBeLessThan(60000)
+     expect(now - updatedTime).toBeLessThan(60000)
+   })
+
+   it('should enforce primary key constraint on song id', () => {
+     const migrationPath = path.join(MIGRATIONS_DIR, '001_initial_schema.sql')
+     applyMigration(db, migrationPath)
+
+     db.prepare('INSERT INTO songs (id, title, body, plot_id, growth_stage) VALUES (?, ?, ?, ?, ?)')
+       .run('test-unique-id', 'Test Song 1', 'Body 1', null, 'seed')
+
+     // Attempting to insert the same id twice should fail
+     expect(() => {
+       db.prepare('INSERT INTO songs (id, title, body, plot_id, growth_stage) VALUES (?, ?, ?, ?, ?)')
+         .run('test-unique-id', 'Test Song 2', 'Body 2', null, 'seed')
+     }).toThrow()
+   })
 })
