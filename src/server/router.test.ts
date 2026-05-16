@@ -4,32 +4,19 @@ import { getDb, closeDb } from './db';
 import path from 'path';
 import fs from 'fs';
 
-// Use a test database
-const TEST_DB_DIR = '/tmp/scion-test';
+// Use an in-memory database for tests — never touches data/scion.db
+process.env.DB_PATH = ':memory:';
 
 beforeAll(() => {
-  // Create test db directory
-  if (!fs.existsSync(TEST_DB_DIR)) {
-    fs.mkdirSync(TEST_DB_DIR, { recursive: true });
-  }
-
-  // Set up test database with schema
-  process.env.NODE_ENV = 'test';
-
-  // For testing, we'll use the actual database setup
-  // In a real test, you might want to use an in-memory DB
   const db = getDb();
-
-  // Apply schema if not already done
   const schemaPath = path.join(process.cwd(), 'migrations', '001_initial_schema.sql');
-  if (fs.existsSync(schemaPath)) {
-    const schema = fs.readFileSync(schemaPath, 'utf-8');
-    db.exec(schema);
-  }
+  const schema = fs.readFileSync(schemaPath, 'utf-8');
+  db.exec(schema);
 });
 
 afterAll(() => {
   closeDb();
+  delete process.env.DB_PATH;
 });
 
 describe('song.list', () => {
