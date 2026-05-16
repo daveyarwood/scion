@@ -51,11 +51,17 @@ The next meaningful milestone is a browser showing a grid of song-plant cards fe
 
 ## Goals
 
-<!-- to be filled in during human planning conversation -->
+- [ ] Zod `Song` schema + `GrowthStage` enum in `src/shared/`
+- [ ] Express + tRPC server with full song CRUD (`song.list`, `song.create`, `song.get`, `song.update`, `song.delete`)
+- [ ] `scripts/dev.ts` concurrent dev launcher (runs client + server together)
+- [ ] React app entry point + tRPC client configuration
+- [ ] Plant card grid — layout and data flow, grid of cards showing song ideas
+- [ ] "Create new seed" form — first end-to-end user interaction (title + optional body, creates a song at growth stage `seed`, appears in the grid)
 
 ## Scope
 
-<!-- to be filled in during human planning conversation -->
+- In scope: shared Zod schemas, tRPC server with CRUD, dev launcher, React + tRPC client, song grid, create-seed form
+- Deferred: algorithmic plant visual, song detail/edit view, audio file support, plots UI, withering/decay, Alda integration
 
 ## Work Done
 
