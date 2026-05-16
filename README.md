@@ -1,4 +1,4 @@
-# Scion
+# 🌱 Scion
 
 A personal creative sketchbook for musical fragments. Song ideas are represented as "plants" — living things you can tend and develop over time. Each idea starts as a seed and grows as you flesh it out.
 
