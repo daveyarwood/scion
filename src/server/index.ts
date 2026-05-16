@@ -1,4 +1,5 @@
 import express, { Express } from 'express';
+import cors from 'cors';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import { appRouter } from './router';
 
@@ -8,6 +9,7 @@ export const createServer = (): Express => {
   const app = express();
 
   // Middleware
+  app.use(cors({ origin: 'http://localhost:5173' }));
   app.use(express.json());
 
   // tRPC router
