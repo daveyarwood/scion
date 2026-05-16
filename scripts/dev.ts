@@ -12,11 +12,19 @@ const startDev = (): void => {
   console.log('[Dev] Server will be available at http://localhost:3000');
 
   // Use concurrently to run both processes
-  const proc = spawn('concurrently', ['node --import tsx src/server/index.ts', 'vite'], {
-    stdio: 'inherit',
-    cwd: rootDir,
-    shell: true,
-  });
+  const proc = spawn(
+    'concurrently',
+    [
+      '--names', 'server,client',
+      'node --import tsx src/server/index.ts',
+      'vite',
+    ],
+    {
+      stdio: 'inherit',
+      cwd: rootDir,
+      shell: true,
+    }
+  );
 
   proc.on('error', (err) => {
     console.error('[Dev] Error:', err);
