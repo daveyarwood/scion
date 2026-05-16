@@ -6,7 +6,7 @@
   "private": true,
   "packageManager": "yarn@1.22.22",
   "scripts": {
-    "dev": "node --import tsx ./scripts/dev.ts",
+    "dev": "concurrently --names server,client \"node --import tsx src/server/index.ts\" \"vite\"",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "migrate": "tsx scripts/migrate.ts",
