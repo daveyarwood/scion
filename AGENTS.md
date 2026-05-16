@@ -1,8 +1,8 @@
-# Song App — Agent Context
+# Scion — Agent Context
 
 ## Project description
 
-A personal creative sketchbook for musical fragments. Song ideas are represented as "plants" — living things you can tend and develop over time. Each idea starts as a seed and grows as you flesh it out. The app is a local full-stack web application, intended initially for personal use with social/collaborative features as a future possibility.
+A personal creative sketchbook for musical fragments. Song ideas are represented as "plants" — living things you can tend and develop over time. Each idea starts as a seed and grows as you flesh it out. Scion is a local full-stack web application, intended initially for personal use with social/collaborative features as a future possibility.
 
 ## Tech stack
 
@@ -17,7 +17,7 @@ A personal creative sketchbook for musical fragments. Song ideas are represented
 ## Monorepo structure
 
 ```
-song-app/
+scion/
   src/
     client/    # React + TypeScript + Vite
     server/    # Node + Express + tRPC
