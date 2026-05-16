@@ -1,0 +1,17 @@
+node_modules/
+dist/
+build/
+.DS_Store
+*.log
+.env
+.env.local
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Data directory (SQLite, audio files)
+data/
+
+# Build output
+*.tsbuildinfo
