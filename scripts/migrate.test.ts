@@ -112,9 +112,11 @@ describe('Migration Runner', () => {
 
     expect(result.changes).toBe(1)
 
-    const song = db.prepare('SELECT * FROM songs WHERE id = ?').get('test-1')
+    const song = db.prepare('SELECT * FROM songs WHERE id = ?').get('test-1') as
+      | { title: string }
+      | undefined
     expect(song).toBeDefined()
-    expect((song as any).title).toBe('Test Song')
+    expect(song!.title).toBe('Test Song')
   })
 
   it('should create indexes on songs table', () => {
