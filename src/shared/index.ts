@@ -32,20 +32,22 @@ export const SongSchema = z.object({
 export type Song = z.infer<typeof SongSchema>;
 
 // Input schema for creating a song (excludes id, timestamps)
-export const CreateSongInput = z.object({
+const createSongInputSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   body: z.string().optional().default(''),
   plot_id: z.string().uuid().nullable().optional(),
 });
 
-export type CreateSongInput = z.infer<typeof CreateSongInput>;
+export const CreateSongInput = createSongInputSchema;
+export type CreateSongInput = z.infer<typeof createSongInputSchema>;
 
 // Input schema for updating a song
-export const UpdateSongInput = z.object({
+const updateSongInputSchema = z.object({
   title: z.string().min(1, 'Title is required').optional(),
   body: z.string().optional(),
   growth_stage: GrowthStageEnum.optional(),
   plot_id: z.string().uuid().nullable().optional(),
 });
 
-export type UpdateSongInput = z.infer<typeof UpdateSongInput>;
+export const UpdateSongInput = updateSongInputSchema;
+export type UpdateSongInput = z.infer<typeof updateSongInputSchema>;
