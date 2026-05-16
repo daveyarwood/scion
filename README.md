@@ -118,7 +118,7 @@ Some features are intentionally deferred and documented in [AGENTS.md](./AGENTS.
 
 ## License
 
-Personal project. No license specified.
+MIT — see [LICENSE](LICENSE).
 
 ## Contributing
 
