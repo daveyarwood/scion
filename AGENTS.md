@@ -30,7 +30,14 @@ scion/
 
 ## Current state
 
-Greenfield. Nothing built yet.
+Scaffold complete (cycle 001). The following is in place and working:
+
+- Monorepo with TypeScript (strict, project references), Vite, Vitest, ESLint, Prettier
+- `migrations/001_initial_schema.sql` — `songs` table (`id`, `title`, `body`, `plot_id`, `growth_stage`, `created_at`, `updated_at`) plus `schema_migrations` tracking table
+- `scripts/migrate.ts` — migration runner with 12 passing tests
+- `src/shared/index.ts` — placeholder only; Zod schemas not yet written
+- `src/client/` and `src/server/` — directory structure exists, no source files yet
+- All dependencies installed (React, Express, tRPC, Zod, better-sqlite3, etc.)
 
 ## Coding conventions
 
