@@ -57,6 +57,23 @@ Not yet built (deferred):
 - Keep `src/shared/` free of any Node.js or browser dependencies — it must be importable by both client and server
 - Vitest for all tests
 
+## Testing philosophy
+
+Tests must verify actual exported implementation code, not logic defined within test files. Follow these principles:
+
+- **Unit tests of pure business logic**: Test exported functions and modules (Zod schemas, utility functions, business logic)
+- **No network calls**: Tests must not make HTTP requests; test the logic, not the network layer
+- **No running servers**: Tests must not require a live Express server or tRPC endpoint
+- **No real filesystem**: Tests must not write to or depend on the actual `data/scion.db` or other real files; use in-memory SQLite (`DB_PATH=:memory:`) if a database is needed
+- **CI-compatible**: All tests must pass in a CI environment without external infrastructure, concurrency, or special setup
+- **Fast and focused**: Tests should be granular (test one thing well) and run in seconds, not minutes
+
+**Anti-patterns to avoid:**
+- Defining test logic inside the test file and testing that logic (e.g., defining `getStageEmoji` in the test file and testing it there)
+- Opening the real production database in tests
+- Requiring a running server or making HTTP calls from tests
+- Testing React component internals (use exported functions or snapshot tests if needed)
+
 ## Design decisions (documented, not built)
 
 - **Withering/decay**: Song plants could wither if not developed. Deferred — document as future idea only.
