@@ -1,6 +1,6 @@
 import { initTRPC } from '@trpc/server'
 import { v4 as uuidv4 } from 'uuid'
-import { SongSchema, CreateSongInput, UpdateSongInput, Song } from '@shared'
+import { SongSchema, CreateSongInput, UpdateSongInput, Song } from '../shared/index'
 import { getDb } from './db'
 
 const t = initTRPC.create()
