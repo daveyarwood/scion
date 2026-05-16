@@ -30,14 +30,21 @@ scion/
 
 ## Current state
 
-Scaffold complete (cycle 001). The following is in place and working:
+Full-stack working application (cycle 002). The following is in place and working:
 
 - Monorepo with TypeScript (strict, project references), Vite, Vitest, ESLint, Prettier
 - `migrations/001_initial_schema.sql` — `songs` table (`id`, `title`, `body`, `plot_id`, `growth_stage`, `created_at`, `updated_at`) plus `schema_migrations` tracking table
-- `scripts/migrate.ts` — migration runner with 12 passing tests
-- `src/shared/index.ts` — placeholder only; Zod schemas not yet written
-- `src/client/` and `src/server/` — directory structure exists, no source files yet
-- All dependencies installed (React, Express, tRPC, Zod, better-sqlite3, etc.)
+- `scripts/migrate.ts` — migration runner, 12 passing tests
+- `scripts/dev.ts` — concurrent dev launcher (Vite client + Express server via `concurrently`)
+- `src/shared/index.ts` — `GrowthStageEnum`, `SongSchema`, `CreateSongInput`, `UpdateSongInput`; 14 passing tests
+- `src/server/` — Express + tRPC server with full song CRUD (`song.list`, `song.create`, `song.get`, `song.update`, `song.delete`); raw SQL via better-sqlite3; 23 passing tests
+- `src/client/` — React app with tRPC + React Query client, responsive song-card grid, "Create new seed" form; 31 passing tests
+- 80 tests total, all passing; TypeScript strict mode passes; build produces a working bundle
+
+Not yet built (deferred):
+- Algorithmic plant visual generation (each song card shows a stage emoji placeholder instead)
+- Song detail / edit view (clicking a card does nothing)
+- Audio file uploads, plots UI, withering/decay, Alda integration
 
 ## Coding conventions
 
