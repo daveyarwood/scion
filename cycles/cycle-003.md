@@ -64,11 +64,17 @@ The application is genuinely usable in a minimal sense: you can create song idea
 
 ## Goals
 
-<!-- to be filled in during human planning conversation -->
+- [ ] Audit all existing tests: remove any that test logic defined in the test file itself rather than actual implementation code, and any that require a running server or network. Add testing philosophy to AGENTS.md: prefer unit tests of pure business logic, no network/server dependencies, tests must pass quickly in CI without infrastructure.
+- [ ] Fix all TypeScript diagnostic errors visible in the editor (including `db.test.ts` opening the real database, unused `vi` import, and any others found during the audit)
+- [ ] Investigate and eliminate `as Record<string, unknown>` and any other type coercions in the codebase; document in AGENTS.md that type coercions are strongly discouraged as they hide real type errors
+- [ ] Adopt the Gardener color palette (https://lospec.com/palette-list/gardener) as the app's visual theme; give the UI a lo-fi / retro aesthetic that will complement the algorithmically generated plant visuals
+- [ ] Implement a first-cut algorithmic plant visual generator (`src/client/components/PlantVisual.tsx`) — deterministic SVG seeded by song UUID, visually distinct across all six growth stages; replace the emoji placeholder in SongCard
+- [ ] Song edit view — clicking a card opens a detail/edit view (modal or page, your call) showing full title and body, with an edit form wired to `song.update`; includes a growth stage selector so the user can manually set the stage; includes a delete button wired to `song.delete`
 
 ## Scope
 
-<!-- to be filled in during human planning conversation -->
+- In scope: test audit + philosophy docs, diagnostic fixes, type coercion cleanup + docs, Gardener palette + lo-fi UI, plant visual generator v1, song edit/detail view with stage selector and delete
+- Deferred: automatic growth stage advancement, React Router / client-side routing (only add if the edit view genuinely needs it — a modal is fine for now), audio file support, plots UI, withering/decay, Alda integration, README screenshot
 
 ## Work Done
 
