@@ -23,8 +23,8 @@ describe('SongSchema', () => {
     body: 'A test song body',
     plot_id: null,
     growth_stage: 'seed' as const,
-    created_at: new Date(),
-    updated_at: new Date(),
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   };
 
   it('validates a complete valid song', () => {

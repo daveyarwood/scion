@@ -25,8 +25,8 @@ export const SongSchema = z.object({
   body: z.string().optional().default(''),
   plot_id: z.string().uuid().nullable().optional(),
   growth_stage: GrowthStageEnum.default('seed'),
-  created_at: z.date(),
-  updated_at: z.date(),
+  created_at: z.string(),
+  updated_at: z.string(),
 });
 
 export type Song = z.infer<typeof SongSchema>;

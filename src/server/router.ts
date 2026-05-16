@@ -6,12 +6,7 @@ import { getDb } from './db';
 const t = initTRPC.create();
 
 const parseSongRow = (row: Record<string, unknown>): Song => {
-  // Convert ISO timestamp strings to Date objects
-  return SongSchema.parse({
-    ...row,
-    created_at: typeof row.created_at === 'string' ? new Date(row.created_at) : row.created_at,
-    updated_at: typeof row.updated_at === 'string' ? new Date(row.updated_at) : row.updated_at,
-  });
+  return SongSchema.parse(row);
 };
 
 export const appRouter = t.router({

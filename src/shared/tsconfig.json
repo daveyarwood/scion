@@ -1,8 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "lib": ["ES2020"],
-    "noDOM": true
+    "lib": ["ES2020"]
   },
   "include": ["**/*.ts"],
   "exclude": ["**/*.test.ts"]

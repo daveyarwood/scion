@@ -19,7 +19,7 @@ export const SongCard: React.FC<SongCardProps> = ({ song }) => {
     return emojiMap[stage] || '🌱';
   };
 
-  const formatDate = (date: Date): string => {
+  const formatDate = (date: string): string => {
     return new Date(date).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
