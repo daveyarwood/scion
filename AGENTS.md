@@ -6,13 +6,13 @@ A personal creative sketchbook for musical fragments. Song ideas are represented
 
 ## Tech stack
 
-**Frontend**: React + TypeScript + Vite  
-**Backend**: Node.js + Express + tRPC  
-**Validation**: Zod (shared between client and server)  
-**Database**: SQLite via better-sqlite3 (direct SQL, no ORM)  
-**Migrations**: Plain numbered `.sql` files in `migrations/` with a small custom migration runner  
-**Package manager**: Yarn  
-**Test runner**: Vitest  
+**Frontend**: React + TypeScript + Vite
+**Backend**: Node.js + Express + tRPC
+**Validation**: Zod (shared between client and server)
+**Database**: SQLite via better-sqlite3 (direct SQL, no ORM)
+**Migrations**: Plain numbered `.sql` files in `migrations/` with a small custom migration runner
+**Package manager**: Yarn
+**Test runner**: Vitest
 
 ## Monorepo structure
 
