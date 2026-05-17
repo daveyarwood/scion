@@ -30,21 +30,23 @@ scion/
 
 ## Current state
 
-Full-stack working application (cycle 002). The following is in place and working:
+Full-stack working application with garden-themed UI (cycle 003). The following is in place and working:
 
 - Monorepo with TypeScript (strict, project references), Vite, Vitest, ESLint, Prettier
 - `migrations/001_initial_schema.sql` — `songs` table (`id`, `title`, `body`, `plot_id`, `growth_stage`, `created_at`, `updated_at`) plus `schema_migrations` tracking table
 - `scripts/migrate.ts` — migration runner, 12 passing tests
-- `scripts/dev.ts` — concurrent dev launcher (Vite client + Express server via `concurrently`)
-- `src/shared/index.ts` — `GrowthStageEnum`, `SongSchema`, `CreateSongInput`, `UpdateSongInput`; 14 passing tests
-- `src/server/` — Express + tRPC server with full song CRUD (`song.list`, `song.create`, `song.get`, `song.update`, `song.delete`); raw SQL via better-sqlite3; 23 passing tests
-- `src/client/` — React app with tRPC + React Query client, responsive song-card grid, "Create new seed" form; 31 passing tests
-- 80 tests total, all passing; TypeScript strict mode passes; build produces a working bundle
+- `yarn dev` runs Vite client + Express server concurrently via `concurrently` (no separate dev.ts script)
+- `src/shared/index.ts` — `GrowthStageEnum`, `SongSchema`, `CreateSongInput`, `UpdateSongInput`, `UpdateSongWithId`; 14 passing tests
+- `src/server/` — Express + tRPC server with full song CRUD (`song.list`, `song.create`, `song.get`, `song.update`, `song.delete`); raw SQL via better-sqlite3; zero type coercions; 10 passing tests
+- `src/client/` — React app with tRPC + React Query client, Gardener-palette lo-fi UI, responsive song-card grid, "New Seed" form, click-to-edit modal with stage selector and delete
+- `src/client/plant/generator.ts` — deterministic SVG plant generator seeded by UUID, stage-gated visual complexity; 15 passing tests
+- `src/client/components/PlantVisual.tsx` — renders generated plant as inline SVG on each song card
+- 51 tests total, all passing; TypeScript strict mode passes; build produces a working bundle
 
 Not yet built (deferred):
-- Algorithmic plant visual generation (each song card shows a stage emoji placeholder instead)
-- Song detail / edit view (clicking a card does nothing)
 - Audio file uploads, plots UI, withering/decay, Alda integration
+- Client-side routing (React Router); currently a single-page app with modal for edit
+- Automatic growth stage advancement (currently manual via the edit modal dropdown)
 
 ## Coding conventions
 
