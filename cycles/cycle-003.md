@@ -165,6 +165,30 @@ Nothing escalated.
 
 ## Test Results
 
-<!-- to be filled in by cycle-tester -->
+**Tests run**: 51
+**Passing**: 51
+**Failing**: 0
+**Duration**: 1.40s
+
+### Coverage notes
+
+Test coverage for cycle-003 is solid and focused on exported implementation code per AGENTS.md guidelines:
+
+- **plantGenerator.test.ts** (15 tests): Comprehensive unit testing of deterministic plant generation logic. Tests verify determinism, diversity across UUIDs, stage-gated complexity, property validity (stem height/curve/angles within bounds), Gardener palette adherence, and visual distinctness across all 6 growth stages. Excellent coverage of core algorithm.
+
+- **router.test.ts** (10 tests): Full coverage of tRPC CRUD procedures (song.list, song.create, song.get, song.update, song.delete) with both happy paths and error cases. Uses in-memory SQLite to avoid filesystem dependencies.
+
+- **shared/index.test.ts** (14 tests): Comprehensive Zod schema validation testing for GrowthStageEnum, SongSchema, CreateSongInput, and UpdateSongInput. Tests defaults, required fields, and invalid input rejection.
+
+- **migrate.test.ts** (12 tests): Full coverage of migration runner including schema creation, constraints, defaults, and uniqueness enforcement.
+
+**Coverage gaps and rationale**:
+- **SongEditModal.tsx**: React component for edit/detail modal not unit-tested. However, the underlying tRPC mutations (song.update, song.delete) it calls are fully tested in router.test.ts. Modal state management and UI interactions would require React Testing Library or snapshot tests; deferred as lower priority per project testing philosophy (focus on business logic, not framework internals).
+
+- **PlantVisual.tsx**: React component rendering SVG is not directly unit-tested. Coverage is provided indirectly: plantGenerator.test.ts thoroughly tests the generation logic that feeds into PlantVisual, ensuring determinism and property validity across all stages.
+
+- **App.tsx modal integration**: State management for selectedSong and callbacks are not unit-tested. Deferred as integration-level testing; would require mocking tRPC providers.
+
+All critical exported functions and schemas are tested. React components are tested indirectly through their dependencies. No infrastructure tests; all tests use in-memory DB and pure functions. Fast (1.4s total) and CI-compatible.
 
 ## Open Questions
