@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+import { Song, UpdateSongWithId } from '../shared/index';
 import { trpc } from './trpc';
 import { SongGrid } from './components/SongGrid';
 import { CreateSongForm } from './components/CreateSongForm';
+import { SongEditModal } from './components/SongEditModal';
 import './App.css';
 
 export const App: React.FC = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [selectedSong, setSelectedSong] = useState<Song | null>(null);
 
   const listQuery = trpc.song.list.useQuery();
   const createMutation = trpc.song.create.useMutation({
@@ -14,11 +17,50 @@ export const App: React.FC = () => {
       setShowCreateForm(false);
     },
   });
+  const updateMutation = trpc.song.update.useMutation({
+    onSuccess: () => {
+      listQuery.refetch();
+      setSelectedSong(null);
+    },
+  });
+  const deleteMutation = trpc.song.delete.useMutation({
+    onSuccess: () => {
+      listQuery.refetch();
+      setSelectedSong(null);
+    },
+  });
 
   const handleCreateSong = (title: string, body: string) => {
     createMutation.mutate({
       title,
       body: body || undefined,
+    });
+  };
+
+  const handleSaveEditedSong = async (data: UpdateSongWithId) => {
+    return new Promise<void>((resolve, reject) => {
+      updateMutation.mutate(data, {
+        onSuccess: () => {
+          resolve();
+        },
+        onError: (error) => {
+          reject(error);
+        },
+      });
+    });
+  };
+
+  const handleDeleteSong = async () => {
+    if (!selectedSong) return;
+    return new Promise<void>((resolve, reject) => {
+      deleteMutation.mutate(selectedSong.id, {
+        onSuccess: () => {
+          resolve();
+        },
+        onError: (error) => {
+          reject(error);
+        },
+      });
     });
   };
 
@@ -44,8 +86,24 @@ export const App: React.FC = () => {
         {listQuery.error && (
           <div className="error">Error loading songs: {listQuery.error.message}</div>
         )}
-        {listQuery.data && <SongGrid songs={listQuery.data} />}
+        {listQuery.data && (
+          <SongGrid
+            songs={listQuery.data}
+            onSongClick={(song) => setSelectedSong(song)}
+          />
+        )}
       </main>
+
+      {selectedSong && (
+        <SongEditModal
+          song={selectedSong}
+          isOpen={true}
+          onClose={() => setSelectedSong(null)}
+          onSave={handleSaveEditedSong}
+          onDelete={handleDeleteSong}
+          isLoading={updateMutation.isPending || deleteMutation.isPending}
+        />
+      )}
     </div>
   );
 };

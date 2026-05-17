@@ -5,9 +5,10 @@ import './SongGrid.css';
 
 interface SongGridProps {
   songs: Song[];
+  onSongClick?: (song: Song) => void;
 }
 
-export const SongGrid: React.FC<SongGridProps> = ({ songs }) => {
+export const SongGrid: React.FC<SongGridProps> = ({ songs, onSongClick }) => {
   if (songs.length === 0) {
     return (
       <div className="empty-state">
@@ -19,7 +20,7 @@ export const SongGrid: React.FC<SongGridProps> = ({ songs }) => {
   return (
     <div className="song-grid">
       {songs.map((song) => (
-        <SongCard key={song.id} song={song} />
+        <SongCard key={song.id} song={song} onClick={() => onSongClick?.(song)} />
       ))}
     </div>
   );

@@ -1,0 +1,162 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: var(--color-cream);
+  border: 3px solid var(--color-dark-gray);
+  border-radius: 0;
+  padding: 2rem;
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--color-dark-gray);
+  padding-bottom: 1rem;
+}
+
+.modal-header h2 {
+  font-size: 1.5rem;
+  color: var(--color-black);
+  font-family: 'Courier New', monospace;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--color-dark-gray);
+  padding: 0.5rem;
+  line-height: 1;
+  transition: transform 0.2s;
+}
+
+.modal-close-btn:hover:not(:disabled) {
+  transform: scale(1.2);
+}
+
+.modal-close-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.modal-error {
+  background-color: #f9f5f5;
+  border: 2px solid var(--color-dark-red);
+  color: var(--color-dark-red);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.modal-form .form-group {
+  margin-bottom: 0;
+}
+
+.modal-form label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-black);
+  font-family: 'Courier New', monospace;
+  display: block;
+}
+
+.modal-form input,
+.modal-form textarea,
+.modal-form select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--color-dark-gray);
+  border-radius: 0;
+  font-family: 'Courier New', monospace;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  background-color: white;
+}
+
+.modal-form input:focus,
+.modal-form textarea:focus,
+.modal-form select:focus {
+  outline: none;
+  border-color: var(--color-medium-green);
+  box-shadow: 3px 3px 0 var(--color-pale-green);
+}
+
+.modal-form input:disabled,
+.modal-form textarea:disabled,
+.modal-form select:disabled {
+  background-color: var(--color-light-gray);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.modal-form textarea {
+  resize: vertical;
+}
+
+.modal-form select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%233d494f' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2rem;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  border-top: 2px solid var(--color-dark-gray);
+  padding-top: 1.5rem;
+  margin-top: 1rem;
+}
+
+.modal-footer .btn {
+  flex-shrink: 0;
+}
+
+.btn-delete {
+  background-color: #f9f5f5;
+  border-color: var(--color-dark-red);
+  color: var(--color-dark-red);
+}
+
+.btn-delete:hover:not(:disabled) {
+  background-color: var(--color-dark-red);
+  color: var(--color-cream);
+}
+
+.btn-cancel {
+  background-color: var(--color-light-gray);
+  color: var(--color-black);
+  border-color: var(--color-dark-gray);
+}
+
+.btn-cancel:hover:not(:disabled) {
+  background-color: var(--color-gray);
+  border-color: var(--color-black);
+}

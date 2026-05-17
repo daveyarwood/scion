@@ -5,9 +5,10 @@ import './SongCard.css';
 
 interface SongCardProps {
   song: Song;
+  onClick?: () => void;
 }
 
-export const SongCard: React.FC<SongCardProps> = ({ song }) => {
+export const SongCard: React.FC<SongCardProps> = ({ song, onClick }) => {
   const formatDate = (date: string): string => {
     return new Date(date).toLocaleDateString('en-US', {
       month: 'short',
@@ -17,7 +18,7 @@ export const SongCard: React.FC<SongCardProps> = ({ song }) => {
   };
 
   return (
-    <div className="song-card">
+    <div className="song-card" onClick={onClick}>
       <div className="song-card-header">
         <PlantVisual id={song.id} stage={song.growth_stage} />
         <span className="song-stage">{song.growth_stage}</span>
