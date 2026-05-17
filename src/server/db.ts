@@ -7,7 +7,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const DATA_DIR = path.join(__dirname, '..', '..', 'data');
-const DB_PATH = process.env.DB_PATH ?? path.join(DATA_DIR, 'scion.db');
+// If running tests and no explicit DB_PATH is provided, default to in-memory DB to
+// ensure tests never write to the production database.
+const DB_PATH = process.env.DB_PATH ?? (process.env.NODE_ENV === 'test' ? ':memory:' : path.join(DATA_DIR, 'scion.db'));
 
 let db: Database.Database | null = null;
 
