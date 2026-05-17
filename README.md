@@ -116,6 +116,10 @@ Some features are intentionally deferred and documented in [AGENTS.md](./AGENTS.
 - **Alda integration**: Input Alda notation text for playback via the Alda engine. Deferred feature.
 - **Collaboration**: Social/collaborative features. Not in scope for the local-first phase.
 
+## Palette
+
+The app uses the "Gardener" color palette for its lo-fi garden-inspired aesthetic. Palette source: https://lospec.com/palette-list/gardener
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
