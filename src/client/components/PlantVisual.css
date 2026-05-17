@@ -1,0 +1,9 @@
+.plant-visual {
+  width: 120px;
+  height: 140px;
+  display: block;
+}
+
+.plant-archived {
+  opacity: 0.6;
+}

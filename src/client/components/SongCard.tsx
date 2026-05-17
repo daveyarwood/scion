@@ -1,5 +1,6 @@
 import React from 'react';
 import { Song } from '../../shared/index';
+import { PlantVisual } from './PlantVisual';
 import './SongCard.css';
 
 interface SongCardProps {
@@ -7,18 +8,6 @@ interface SongCardProps {
 }
 
 export const SongCard: React.FC<SongCardProps> = ({ song }) => {
-  const getStageEmoji = (stage: string): string => {
-    const emojiMap: Record<string, string> = {
-      seed: '🌰',
-      seedling: '🌱',
-      sprout: '🌿',
-      blooming: '🌸',
-      dormant: '❄️',
-      archived: '📦',
-    };
-    return emojiMap[stage] || '🌱';
-  };
-
   const formatDate = (date: string): string => {
     return new Date(date).toLocaleDateString('en-US', {
       month: 'short',
@@ -30,7 +19,7 @@ export const SongCard: React.FC<SongCardProps> = ({ song }) => {
   return (
     <div className="song-card">
       <div className="song-card-header">
-        <span className="song-stage-emoji">{getStageEmoji(song.growth_stage)}</span>
+        <PlantVisual id={song.id} stage={song.growth_stage} />
         <span className="song-stage">{song.growth_stage}</span>
       </div>
       <h3 className="song-title">{song.title}</h3>
