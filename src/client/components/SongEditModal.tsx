@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Song, GrowthStage, UpdateSongWithId } from '../../shared/index';
+import { Song, GrowthStage, UpdateSongWithId, GrowthStageEnum } from '../../shared/index';
 import './SongEditModal.css';
 
 interface SongEditModalProps {
@@ -51,6 +51,13 @@ export const SongEditModal: React.FC<SongEditModalProps> = ({
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete');
+    }
+  };
+
+  const handleStageChange = (value: string) => {
+    const parsed = GrowthStageEnum.safeParse(value);
+    if (parsed.success) {
+      setGrowthStage(parsed.data);
     }
   };
 
@@ -106,7 +113,7 @@ export const SongEditModal: React.FC<SongEditModalProps> = ({
             <select
               id="modal-stage"
               value={growthStage}
-              onChange={(e) => setGrowthStage(e.target.value as GrowthStage)}
+              onChange={(e) => handleStageChange(e.target.value)}
               disabled={isLoading}
             >
               {stages.map((stage) => (
