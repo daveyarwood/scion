@@ -1,6 +1,6 @@
 import React from 'react';
 import { GrowthStage } from '../../shared/index';
-import { generatePlant } from '../utils/plantGenerator';
+import { generatePlant } from '../plant/generator';
 import './PlantVisual.css';
 
 interface PlantVisualProps {

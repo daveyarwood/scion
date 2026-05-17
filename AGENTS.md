@@ -60,6 +60,8 @@ Not yet built (deferred):
   - Use generic type parameters with better-sqlite3 queries: `db.prepare<[string], SongType>('...')` instead of `db.prepare('...').get(id) as Record<string, unknown>`
   - Replace manual type guards with Zod schemas for validation
   - Use proper function signatures instead of `as any`
+  
+ - **No `utils/` modules**: Avoid creating generic `utils/` folders. They tend to accumulate unrelated helpers and encourage lazy organization. Prefer placing small, focused modules alongside the features or components that use them (co-location) or in a clearly named domain package (e.g., `plant/generator.ts`), not in a catch-all `utils` directory.
 
 ## Testing philosophy
 
