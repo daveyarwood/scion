@@ -22,6 +22,11 @@
   box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
 }
 
+.song-card:has(button:active) {
+  transform: none;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.15);
+}
+
 .song-card-header {
   display: flex;
   align-items: flex-start;
@@ -50,7 +55,7 @@
 
 .stage-btn-card:hover:not(:disabled) {
   color: var(--color-dark-green);
-  font-size: 1.1rem;
+  transform: scale(1.2);
 }
 
 .stage-btn-card:disabled {
