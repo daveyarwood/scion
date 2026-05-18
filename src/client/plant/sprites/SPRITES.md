@@ -48,8 +48,7 @@ All other pixels must use ONLY:
 #193628  #35632a  #659939  #a2bf5e  #d9d89e  #9c665e
 ```
 
-A JASC .pal file for this 10-color palette is at `img/scion-sprites.pal` (gitignored;
-regenerate from the colors above if needed).
+A JASC .pal file for this 10-color palette is at `src/client/plant/sprites/scion-sprites.pal`.
 
 ## Retro Diffusion prompt
 
@@ -86,11 +85,64 @@ All other pixels must use ONLY:
 #193628 #35632a #659939 #a2bf5e #d9d89e #9c665e
 ```
 
-## Post-generation workflow
+## Aseprite palette cleanup workflow
 
-1. Open sheet in Aseprite
-2. Load the 10-color palette (`img/scion-sprites.pal`) — do NOT load the full Gardener palette
-3. Sprite > Color Mode > Indexed, select "Remap" to snap all pixels to the nearest palette color
-4. Export as PNG
-5. Verify compliance: run the palette-check script (or adapt the inline Python used during cycle 005)
-6. Slice into individual PNGs and replace files in `src/client/plant/sprites/{archetype}/{stage}.png`
+Retro Diffusion will likely ignore the palette constraints in the prompt and produce
+hundreds of colors. Every generated sheet needs to be cleaned up in Aseprite before
+slicing.
+
+1. **Open the sheet** in Aseprite.
+
+2. **Load the restricted palette**
+   - Palette menu (bottom of screen) → ≡ → Load Palette
+   - Select `src/client/plant/sprites/scion-sprites.pal`
+   - This loads exactly the 10 allowed colors. Do NOT load the full Gardener palette —
+     it contains 47 colors and will cause Aseprite to remap to the wrong shades.
+
+3. **Convert to Indexed color mode**
+   - Sprite menu → Color Mode → Indexed
+   - In the dialog, choose **Remap** (not Dither)
+   - This snaps every pixel to the nearest of the 10 palette colors
+
+4. **Review the result**
+   - Zoom in and check accent elements (petals, mushroom caps) are using the pink/dark-red
+     ramp and not green or soil colors
+   - Check that transparent areas are still transparent (indexed mode can accidentally
+     fill them — undo and retry with "Remap" if so)
+
+5. **Export as PNG**
+   - File → Export As → save to `img/` (gitignored scratch space)
+   - Keep the filename distinct from the original (e.g. append ` - aseprite edit 2`)
+
+6. **Verify palette compliance**
+   - Run the Python snippet below from the repo root. It should report 0 unexpected colors.
+
+   ```python
+   from PIL import Image
+   import numpy as np
+
+   img = Image.open('img/<your-file>.png').convert('RGBA')
+   arr = np.array(img)
+
+   allowed = {
+       (25,54,40),(53,99,42),(101,153,57),(162,191,94),(217,216,158),
+       (75,25,43),(129,39,55),(197,76,134),(230,115,146),(156,102,94),
+   }
+
+   opaque = arr[:,:,3] > 10
+   colors = set(map(tuple, arr[opaque][:,:3].tolist()))
+   unexpected = colors - allowed
+   print(f'{len(colors)} colors found, {len(unexpected)} unexpected')
+   for c in sorted(unexpected):
+       print(f'  #{c[0]:02x}{c[1]:02x}{c[2]:02x}')
+   ```
+
+   If unexpected colors appear, go back to step 3 and try again — usually caused by
+   loading the wrong palette before converting.
+
+7. **Slice into individual sprites**
+   - Use the column-boundary detection approach from cycle 005 (alpha gap analysis) or
+     slice manually if the sheet has uniform column widths
+   - Output files to `src/client/plant/sprites/{archetype}/{stage}.png`
+   - Stage filenames must match the `GrowthStage` enum values exactly:
+     `seed`, `seedling`, `sprout`, `budding`, `blooming`, `dormant`, `archived`
