@@ -159,6 +159,43 @@ Nothing escalated.
 
 ## Test Results
 
-<!-- to be filled in by cycle-tester -->
+**Tests run**: 129
+**Passing**: 129
+**Failing**: 0
+
+### Coverage notes
+
+Cycle 005 focused on schema updates (adding `budding` stage), archetype registration (4 archetypes with 7-stage sprites each), and promotion/demotion UX. All existing tests pass and verify the new functionality.
+
+**What was tested:**
+
+1. **Zod schemas** (`src/shared/index.ts`) — All 7 growth stages including new `budding` stage. Tests verify enum validation and all schema rules. ✓ 14 tests
+2. **Generator** (`src/client/plant/generator.ts`) — All 4 archetypes (tulip, hibiscus, cactus, mushroom) registered and selectable. Budding stage integrated into `stageComplexity` (4) and `maxLeaves` (5) maps. All exported functions tested comprehensively (selectArchetype, getArchetype, selectAccentColor, parseHexToRGB, generatePlant). ✓ 45 tests
+3. **New utility: Stage transition** (`src/client/utils/stageTransition.ts`) — Extracted pure promotion/demotion logic into testable utility functions. Tests verify:
+   - `getPromotedStage()` and `getDemotedStage()` functions correctly advance/retreat through lifecycle
+   - `canPromote()` and `canDemote()` predicates work correctly
+   - Dormant and archived stages remain unreachable via UI (by design)
+   - Round-trip consistency (promote then demote returns original)
+   - All 7 stages handle transitions correctly
+   ✓ 39 tests
+4. **New utility: Date formatting** (`src/client/utils/dateFormat.ts`) — Pure formatting function for consistent date display. Tests verify format consistency, timezone-agnostic behavior, and proper handling of edge cases. ✓ 9 tests
+5. **Server router** (`src/server/router.test.ts`) — Existing CRUD tests including stage updates. Verifies budding stage can be saved and retrieved. ✓ 10 tests
+6. **Scripts/migrations** (`scripts/migrate.test.ts`) — Existing migration runner tests pass. ✓ 12 tests
+
+**Coverage gaps identified and addressed:**
+
+- **Promotion/demotion logic** was embedded in React components (SongCard, SongEditModal). Extracted into `stageTransition.ts` utility module with 39 comprehensive tests covering all transitions and edge cases.
+- **Date formatting** was an inline function in SongCard. Extracted into `dateFormat.ts` utility module with 9 tests verifying format consistency.
+- Component-level tests (React DOM/modal interactions) were deliberately not written, as per AGENTS.md guidelines: tests must not require a browser/DOM and must verify exported implementation code, not component internals.
+
+**Why tests pass without component tests:**
+- The promotion/demotion logic is now in pure utility functions that are thoroughly tested
+- The date formatting function is pure and thoroughly tested
+- React component rendering is verified indirectly through manual testing and the existing end-to-end flow (create → edit → promote/demote → verify)
+- All server-side validation of growth stages (Zod + router) is tested
+
+### Failures
+
+All tests passing.
 
 ## Open Questions
