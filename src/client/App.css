@@ -1,39 +1,70 @@
-/* Gardener Palette - Earthy, muted colors */
+/* Gardener Palette - Complete 47-color palette */
 :root {
-  /* Neutral scale */
-  --color-black: #1e1420;
+  /* True blacks and darkest neutrals */
+  --color-pure-black: #000000;
+  --color-near-black: #0c1013;
+  --color-dark-navy: #11151f;
+  --color-deep-blue-black: #181f27;
+  --color-charcoal: #212e37;
+
+  /* Neutral grays */
   --color-dark-gray: #3d494f;
+  --color-cool-gray: #5a7278;
   --color-gray: #829797;
+  --color-soft-gray: #a9b5b2;
   --color-light-gray: #cacecb;
   --color-cream: #ebede6;
 
-  /* Primary greens */
-  --color-dark-green: #193628;
-  --color-green: #35632a;
-  --color-medium-green: #659939;
-  --color-light-green: #a2bf5e;
-  --color-pale-green: #d9d89e;
-
-  /* Secondary blues */
+  /* Deep blues (cool background/secondary) */
+  --color-navy: #1b2034;
   --color-dark-blue: #254265;
   --color-blue: #3975a9;
   --color-light-blue: #51a2c9;
   --color-sky-blue: #81c6d8;
+  --color-pale-blue: #b8dee7;
 
-  /* Accent browns */
+  /* Deep greens/grays (alternate background) */
+  --color-deep-teal: #1a2634;
+  --color-forest-green: #193628;
+  --color-dark-green: #35632a;
+  --color-medium-green: #659939;
+  --color-light-green: #a2bf5e;
+  --color-pale-green: #d9d89e;
+
+  /* Browns (warm, earthy) */
+  --color-deep-brown: #442e37;
   --color-dark-brown: #6b4446;
   --color-brown: #9c665e;
   --color-tan: #d4a78d;
   --color-beige: #ecc9ab;
+  --color-light-beige: #ebd6be;
 
-  /* Accent oranges */
-  --color-dark-orange: #984c39;
-  --color-orange: #c97743;
-  --color-light-orange: #ecaa66;
+  /* Dark purples/magentas */
+  --color-deep-purple: #322030;
+  --color-dark-maroon: #5d2f35;
+  --color-rust: #984c39;
+  --color-burnt-orange: #c97743;
+  --color-warm-tan: #ecaa66;
+  --color-light-orange: #f4c37d;
 
-  /* Accent reds */
-  --color-red: #af3233;
-  --color-dark-red: #e14c43;
+  /* Deep reds and burgundies */
+  --color-darkest-red: #1e1420;
+  --color-deep-maroon: #4b192b;
+  --color-burgundy: #812737;
+  --color-dark-red: #af3233;
+  --color-red: #e14c43;
+  --color-orange-red: #e47d4b;
+
+  /* Purples and magentas (accent/flower colors) */
+  --color-dark-purple: #24223b;
+  --color-purple: #492850;
+  --color-magenta: #823a63;
+  --color-bright-magenta: #c54c86;
+  --color-pink: #e67392;
+  --color-light-pink: #efa9b5;
+
+  /* Aliases for backwards compatibility and clarity */
+  --color-green: #35632a;
 }
 
 * {
