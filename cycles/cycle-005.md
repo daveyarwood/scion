@@ -64,11 +64,15 @@ The app works end-to-end and has a coherent aesthetic, but the plant visual syst
 
 ## Goals
 
-<!-- to be filled in during human planning conversation -->
+- [ ] Add `budding` growth stage to the schema: new migration, update `GrowthStageEnum` in `src/shared/`, update all downstream references (server router, generator stageComplexity map, etc.)
+- [ ] Slice the new sprite sheet (`img/Retro Diffusion - sprite sheet.png`) into 28 sprites (4 archetypes × 7 stages), detect column boundaries automatically, save into `src/client/plant/sprites/{tulip,hibiscus,cactus,mushroom}/`; retire old placeholder sprites
+- [ ] Register all 4 archetypes (tulip, hibiscus, cactus, mushroom) in the archetype registry; update `selectArchetype` to select from all 4
+- [ ] Growth stage promotion UX: replace the stage dropdown in the edit modal with up/down arrow buttons; add the same up/down arrows directly on each song card in the grid; down arrow hidden at `seed`, up arrow hidden at `blooming`; `dormant` and `archived` are not reachable via the promotion UI
 
 ## Scope
 
-<!-- to be filled in during human planning conversation -->
+- In scope: `budding` stage migration + schema, sprite slicing + archetype registration, promotion/demotion arrow UI on both card and modal
+- Deferred: palette ramp swap (sprites aren't palette-constrained yet), plots, React Router, card info density, empty-state polish, dormant/archived promotion UI
 
 ## Work Done
 
