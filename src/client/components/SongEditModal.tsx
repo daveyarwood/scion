@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Song, GrowthStage, UpdateSongWithId, GrowthStageEnum } from '../../shared/index';
+import { Song, GrowthStage, UpdateSongWithId } from '../../shared/index';
 import './SongEditModal.css';
 
 interface SongEditModalProps {
@@ -54,12 +54,25 @@ export const SongEditModal: React.FC<SongEditModalProps> = ({
     }
   };
 
-  const handleStageChange = (value: string) => {
-    const parsed = GrowthStageEnum.safeParse(value);
-    if (parsed.success) {
-      setGrowthStage(parsed.data);
+  // Helper function to get next/prev stages (excluding dormant and archived)
+  const promotableStages: GrowthStage[] = ['seed', 'seedling', 'sprout', 'budding', 'blooming'];
+
+  const handlePromote = () => {
+    const currentIndex = promotableStages.indexOf(growthStage as GrowthStage);
+    if (currentIndex < promotableStages.length - 1) {
+      setGrowthStage(promotableStages[currentIndex + 1]);
     }
   };
+
+  const handleDemote = () => {
+    const currentIndex = promotableStages.indexOf(growthStage as GrowthStage);
+    if (currentIndex > 0) {
+      setGrowthStage(promotableStages[currentIndex - 1]);
+    }
+  };
+
+  const isAtMinStage = growthStage === 'seed';
+  const isAtMaxPromotableStage = growthStage === 'blooming';
 
   const handleClose = () => {
     // Reset form to original values
@@ -69,8 +82,6 @@ export const SongEditModal: React.FC<SongEditModalProps> = ({
     setError(null);
     onClose();
   };
-
-  const stages: GrowthStage[] = ['seed', 'seedling', 'sprout', 'budding', 'blooming', 'dormant', 'archived'];
 
   return (
     <div className="modal-overlay" onClick={handleClose}>
@@ -109,19 +120,28 @@ export const SongEditModal: React.FC<SongEditModalProps> = ({
           </div>
 
           <div className="form-group">
-            <label htmlFor="modal-stage">Growth Stage</label>
-            <select
-              id="modal-stage"
-              value={growthStage}
-              onChange={(e) => handleStageChange(e.target.value)}
-              disabled={isLoading}
-            >
-              {stages.map((stage) => (
-                <option key={stage} value={stage}>
-                  {stage.charAt(0).toUpperCase() + stage.slice(1)}
-                </option>
-              ))}
-            </select>
+            <label>Growth Stage</label>
+            <div className="stage-controls">
+              <button
+                type="button"
+                className="stage-btn stage-demote"
+                onClick={handleDemote}
+                disabled={isLoading || isAtMinStage}
+                title="Demote to earlier stage"
+              >
+                ▼
+              </button>
+              <span className="stage-label">{growthStage.charAt(0).toUpperCase() + growthStage.slice(1)}</span>
+              <button
+                type="button"
+                className="stage-btn stage-promote"
+                onClick={handlePromote}
+                disabled={isLoading || isAtMaxPromotableStage}
+                title="Promote to next stage"
+              >
+                ▲
+              </button>
+            </div>
           </div>
 
           <div className="modal-footer">

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Song, UpdateSongWithId } from '../shared/index';
+import { Song, UpdateSongWithId, GrowthStage } from '../shared/index';
 import { trpc } from './trpc';
 import { SongGrid } from './components/SongGrid';
 import { CreateSongForm } from './components/CreateSongForm';
@@ -64,6 +64,13 @@ export const App: React.FC = () => {
     });
   };
 
+  const handleSongStageChange = (song: Song, newStage: GrowthStage) => {
+    updateMutation.mutate({
+      id: song.id,
+      growth_stage: newStage,
+    });
+  };
+
   return (
     <div className="app">
       <header className="app-header">
@@ -87,7 +94,12 @@ export const App: React.FC = () => {
           <div className="error">Error loading songs: {listQuery.error.message}</div>
         )}
         {listQuery.data && (
-          <SongGrid songs={listQuery.data} onSongClick={(song) => setSelectedSong(song)} />
+          <SongGrid 
+            songs={listQuery.data} 
+            onSongClick={(song) => setSelectedSong(song)}
+            onSongStageChange={handleSongStageChange}
+            isLoadingStageChange={updateMutation.isPending}
+          />
         )}
       </main>
 
