@@ -118,6 +118,35 @@ Nothing escalated.
 
 ## Test Results
 
-<!-- to be filled in by cycle-tester -->
+**Tests run**: 80
+**Passing**: 80
+**Failing**: 0
+
+### Coverage notes
+
+Cycle 004 introduced three significant new features: archetype selection infrastructure, accent color palette-swapping, and a canvas-based sprite renderer. All exported pure functions have comprehensive test coverage:
+
+**`selectArchetype(id: string)`**: Verified for determinism (same input → same output), valid index bounds, and edge cases (empty strings, long strings, special characters). Since only one archetype exists currently, the function always returns 0, but the tests document expected behavior for when multiple archetypes are added in future cycles.
+
+**`getArchetype(id: number)`**: Tested for valid archetype retrieval, fallback to default for invalid IDs, and correct sprite stage filenames for all six growth stages.
+
+**`selectAccentColor(id: string)`**: Verified for determinism, valid hex color format, and critically, that every returned color is from the defined 17-color palette. Tests exhaustively check that the function never returns arbitrary colors.
+
+**`parseHexToRGB(hex: string)` (newly exported)**: Extracted from PlantVisual.tsx to enable proper testing. 18 new tests cover:
+  - Valid hex conversions (with/without `#`, uppercase, mixed case) for all Gardener palette colors
+  - Invalid inputs (too short, too long, non-hex chars, empty string) → safe black fallback
+  - RGB output properties (always integers, 0-255 range, correct object shape)
+  - Critical test: `#c54c86` (the accent color in sprites) converts to exactly RGB(197, 76, 134) for pixel-perfect palette swapping
+
+**Integration coverage**: The `generatePlant()` function is tested comprehensively with 15+ existing tests covering complexity gates by stage, determinism, and property bounds. Each plant now includes an `accentColor` and `archetypeId`; both are validated.
+
+**Not tested (intentional)**: `PlantVisual.tsx` component rendering and canvas image manipulation are not tested in Vitest—the DOM canvas context is unavailable in jsdom. The pure logic (palette swap color calculation) is fully tested via `parseHexToRGB`. Sprite loading and rendering would require a real or mocked canvas environment and are deferred to integration/e2e testing if needed.
+
+**Gap mitigations**: 
+- Archetype and accent color selection are both deterministic functions with no randomness, so they're easily testable and reliable.
+- Edge cases in the hash/seed functions are covered by tests with unusual input strings.
+- The palette-swap logic relies on exact RGB matching; this is verified by testing parseHexToRGB against the exact values from the code comments.
+
+Total test growth: 62 → 80 tests (18 new). All 80 tests pass.
 
 ## Open Questions
