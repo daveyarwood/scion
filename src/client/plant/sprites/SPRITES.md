@@ -146,3 +146,8 @@ slicing.
    - Output files to `src/client/plant/sprites/{archetype}/{stage}.png`
    - Stage filenames must match the `GrowthStage` enum values exactly:
      `seed`, `seedling`, `sprout`, `budding`, `blooming`, `dormant`, `archived`
+
+   > **⚠ Known issue — slicing algorithm needs improvement**
+   > The current slicing approach has known problems that have not yet been fixed.
+   > Before re-slicing a new sheet, check the cycle log for a task describing exactly
+   > what is wrong and fix the slicer first.
