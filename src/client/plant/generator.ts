@@ -7,6 +7,8 @@ export interface PlantData {
   leafAngles: number[];
   hue: string;
   complexity: number;
+  archetypeId: number;
+  accentColor: string;
 }
 
 /**
@@ -35,6 +37,76 @@ const seededRandom = (seed: number, index: number = 0): number => {
 };
 
 /**
+ * Archetype registry: each archetype represents a plant type.
+ * Currently only one archetype (placeholder), but structured to support more.
+ */
+const ARCHETYPES = [
+  {
+    id: 0,
+    name: 'placeholder',
+    spriteStages: {
+      seed: 'seed.png',
+      seedling: 'seedling.png',
+      sprout: 'sprout.png',
+      blooming: 'blooming.png',
+      dormant: 'dormant.png',
+      archived: 'archived.png',
+    },
+  },
+];
+
+/**
+ * Accent colors (non-green, non-neutral Gardener palette colors).
+ * These are available for palette-swapping from #c54c86 in sprites.
+ */
+const ACCENT_COLORS = [
+  '#254265', // dark-blue
+  '#3975a9', // blue
+  '#51a2c9', // light-blue
+  '#81c6d8', // sky-blue
+  '#6b4446', // dark-brown
+  '#9c665e', // brown
+  '#d4a78d', // tan
+  '#984c39', // rust
+  '#c97743', // burnt-orange
+  '#ecaa66', // warm-tan
+  '#af3233', // dark-red
+  '#e14c43', // red
+  '#e47d4b', // orange-red
+  '#492850', // purple
+  '#823a63', // magenta
+  '#c54c86', // bright-magenta (original accent in sprites)
+  '#e67392', // pink
+];
+
+/**
+ * Select an archetype based on UUID.
+ * Currently returns archetype 0 (placeholder), but structured for future expansion.
+ */
+export const selectArchetype = (id: string): number => {
+  const baseSeed = hashString(id);
+  const archetypeIndex = Math.floor(seededRandom(baseSeed, 0) * ARCHETYPES.length);
+  return archetypeIndex;
+};
+
+/**
+ * Get archetype by ID.
+ */
+export const getArchetype = (archetypeId: number) => {
+  return ARCHETYPES[archetypeId] || ARCHETYPES[0];
+};
+
+/**
+ * Select an accent color based on UUID.
+ * Returns a hex color from the non-green, non-neutral palette.
+ */
+export const selectAccentColor = (id: string): string => {
+  const baseSeed = hashString(id);
+  const colorIndex = Math.floor(seededRandom(baseSeed, 1) * ACCENT_COLORS.length);
+  return ACCENT_COLORS[colorIndex];
+};
+
+/**
  * Generate plant visual parameters deterministically from a song UUID.
  * Same UUID always produces same plant.
  * Different UUIDs produce visually different plants.
@@ -42,7 +114,7 @@ const seededRandom = (seed: number, index: number = 0): number => {
 export const generatePlant = (id: string, stage: GrowthStage): PlantData => {
   const baseSeed = hashString(id);
 
-  // Gardener palette colors
+  // Gardener palette colors (plant hue, not accent)
   const colors = [
     '#193628', // dark-green
     '#35632a', // green
@@ -59,6 +131,12 @@ export const generatePlant = (id: string, stage: GrowthStage): PlantData => {
 
   const colorIndex = Math.floor(seededRandom(baseSeed, 0) * colors.length);
   const hue = colors[colorIndex];
+
+  // Archetype selection
+  const archetypeId = selectArchetype(id);
+
+  // Accent color selection
+  const accentColor = selectAccentColor(id);
 
   // Map growth stage to complexity level
   const stageComplexity: Record<GrowthStage, number> = {
@@ -103,5 +181,7 @@ export const generatePlant = (id: string, stage: GrowthStage): PlantData => {
     leafAngles,
     hue,
     complexity,
+    archetypeId,
+    accentColor,
   };
 };

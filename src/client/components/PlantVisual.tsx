@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { GrowthStage } from '../../shared/index';
-import { generatePlant } from '../plant/generator';
+import { generatePlant, getArchetype } from '../plant/generator';
 import './PlantVisual.css';
 
 interface PlantVisualProps {
@@ -9,121 +9,91 @@ interface PlantVisualProps {
 }
 
 export const PlantVisual: React.FC<PlantVisualProps> = ({ id, stage }) => {
-  const plant = generatePlant(id, stage);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const plantData = generatePlant(id, stage);
+  const archetype = getArchetype(plantData.archetypeId);
 
-  // SVG dimensions
-  const width = 120;
-  const height = 140;
-  const centerX = width / 2;
-  const baseY = height - 10;
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-  // Generate SVG path for curved stem
-  const stemPath = `M ${centerX} ${baseY} Q ${centerX + plant.stemCurve} ${baseY - plant.stemHeight * 0.5} ${centerX + plant.stemCurve * 0.5} ${baseY - plant.stemHeight}`;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-  // Generate leaf SVG paths
-  const leaves = plant.leafAngles.map((angle, index) => {
-    // Position leaf along the stem (higher up for higher index)
-    const progress = (index + 1) / Math.max(plant.leafCount, 1);
-    const leafBaseX = centerX + plant.stemCurve * (1 - progress);
-    const leafBaseY = baseY - plant.stemHeight * progress;
+    // Clear canvas
+    ctx.fillStyle = 'transparent';
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Angle in radians
-    const angleRad = (angle * Math.PI) / 180;
-    const leafLength = 20 + plant.complexity * 3;
+    // Load sprite image
+    const spriteFilename = archetype.spriteStages[stage];
+    const spritePath = new URL(`../plant/sprites/${spriteFilename}`, import.meta.url).href;
 
-    // Leaf tip position
-    const leafTipX = leafBaseX + Math.cos(angleRad) * leafLength;
-    const leafTipY = leafBaseY + Math.sin(angleRad) * leafLength;
+    const img = new Image();
+    img.onload = () => {
+      // Disable smoothing for pixel-perfect rendering
+      ctx.imageSmoothingEnabled = false;
 
-    // Create leaf shape (simple curved oval)
-    const leafPath = `M ${leafBaseX} ${leafBaseY} Q ${leafBaseX + Math.cos(angleRad) * leafLength * 0.7} ${leafBaseY + Math.sin(angleRad) * leafLength * 0.5 - 5} ${leafTipX} ${leafTipY}`;
+      // Draw sprite at 4x scale (36px sprite → 144px display)
+      const scale = 4;
+      const scaledWidth = 36 * scale;
+      const scaledHeight = 36 * scale;
 
-    return (
-      <path
-        key={`leaf-${index}`}
-        d={leafPath}
-        stroke={plant.hue}
-        strokeWidth="2"
-        fill="none"
-        strokeLinecap="round"
-      />
-    );
-  });
+      // Center the sprite on canvas
+      const x = (canvas.width - scaledWidth) / 2;
+      const y = (canvas.height - scaledHeight) / 2;
 
-  // Render based on stage
-  if (stage === 'seed') {
-    // Just a small seed form
-    return (
-      <svg className="plant-visual" width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
-        <ellipse cx={centerX} cy={baseY} rx="8" ry="10" fill={plant.hue} opacity="0.7" />
-      </svg>
-    );
+      ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+
+      // Apply palette swap: replace #c54c86 with accent color
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+
+      // Convert accent color from hex to RGB
+      const accentColor = plantData.accentColor;
+      const accentRGB = parseHexToRGB(accentColor);
+
+      // Replace #c54c86 (196, 76, 134) with accent color
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const a = data[i + 3];
+
+        // Match #c54c86 exactly (196, 76, 134)
+        if (r === 196 && g === 76 && b === 134 && a === 255) {
+          data[i] = accentRGB.r;
+          data[i + 1] = accentRGB.g;
+          data[i + 2] = accentRGB.b;
+          // Keep alpha unchanged
+        }
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+    };
+
+    img.onerror = () => {
+      // Fallback if sprite fails to load
+      ctx.fillStyle = plantData.accentColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    };
+
+    img.src = spritePath;
+  }, [stage, plantData, archetype]);
+
+  return <canvas ref={canvasRef} className="plant-visual" width={180} height={180} />;
+};
+
+/**
+ * Convert hex color string to RGB object.
+ */
+const parseHexToRGB = (hex: string): { r: number; g: number; b: number } => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) {
+    return { r: 0, g: 0, b: 0 };
   }
-
-  if (stage === 'archived') {
-    // Sparse, faded plant
-    return (
-      <svg
-        className="plant-visual plant-archived"
-        width={width}
-        height={height}
-        viewBox={`0 0 ${width} ${height}`}
-      >
-        <path d={stemPath} stroke={plant.hue} strokeWidth="1.5" fill="none" opacity="0.4" strokeLinecap="round" />
-        {leaves.map((leaf) => React.cloneElement(leaf, { opacity: 0.3 }))}
-      </svg>
-    );
-  }
-
-  if (stage === 'dormant') {
-    // Drooping stem
-    const droopStem = `M ${centerX} ${baseY} Q ${centerX + plant.stemCurve * 1.5} ${baseY - plant.stemHeight * 0.3} ${centerX + plant.stemCurve} ${baseY + 10}`;
-    return (
-      <svg className="plant-visual" width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
-        <path d={droopStem} stroke={plant.hue} strokeWidth="2" fill="none" opacity="0.6" strokeLinecap="round" />
-        {leaves.slice(0, 1).map((leaf) => leaf)}
-      </svg>
-    );
-  }
-
-  // Normal plants (seedling, sprout, blooming)
-  const svgContent = (
-    <>
-      {/* Stem */}
-      <path d={stemPath} stroke={plant.hue} strokeWidth="2" fill="none" strokeLinecap="round" />
-
-      {/* Leaves */}
-      {leaves}
-
-      {/* Flower (for blooming stage) */}
-      {stage === 'blooming' && (
-        <>
-          <circle cx={centerX + plant.stemCurve * 0.3} cy={baseY - plant.stemHeight - 5} r="6" fill={plant.hue} opacity="0.8" />
-          {[0, 60, 120, 180, 240, 300].map((angle) => {
-            const rad = (angle * Math.PI) / 180;
-            const petalX = centerX + plant.stemCurve * 0.3 + Math.cos(rad) * 8;
-            const petalY = baseY - plant.stemHeight - 5 + Math.sin(rad) * 8;
-            return (
-              <ellipse
-                key={`petal-${angle}`}
-                cx={petalX}
-                cy={petalY}
-                rx="3"
-                ry="5"
-                fill={plant.hue}
-                opacity="0.7"
-                transform={`rotate(${angle} ${petalX} ${petalY})`}
-              />
-            );
-          })}
-        </>
-      )}
-    </>
-  );
-
-  return (
-    <svg className="plant-visual" width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
-      {svgContent}
-    </svg>
-  );
+  return {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16),
+  };
 };

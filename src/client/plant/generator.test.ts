@@ -1,5 +1,79 @@
 import { describe, it, expect } from 'vitest';
-import { generatePlant } from './generator';
+import { generatePlant, selectArchetype, getArchetype, selectAccentColor } from './generator';
+
+describe('selectArchetype', () => {
+  it('returns a valid archetype index', () => {
+    const index = selectArchetype('550e8400-e29b-41d4-a716-446655440000');
+    expect(index).toBeGreaterThanOrEqual(0);
+    expect(Number.isInteger(index)).toBe(true);
+  });
+
+  it('returns the same index for the same UUID', () => {
+    const uuid = '550e8400-e29b-41d4-a716-446655440000';
+    const index1 = selectArchetype(uuid);
+    const index2 = selectArchetype(uuid);
+    expect(index1).toBe(index2);
+  });
+
+  it('may return different indices for different UUIDs', () => {
+    const uuid1 = '550e8400-e29b-41d4-a716-446655440000';
+    const uuid2 = '550e8400-e29b-41d4-a716-446655440001';
+    // Since there's only one archetype now, both will return 0
+    // This test documents the behavior for when more archetypes are added
+    const index1 = selectArchetype(uuid1);
+    const index2 = selectArchetype(uuid2);
+    expect(typeof index1).toBe('number');
+    expect(typeof index2).toBe('number');
+  });
+});
+
+describe('getArchetype', () => {
+  it('returns archetype by ID', () => {
+    const archetype = getArchetype(0);
+    expect(archetype).toBeDefined();
+    expect(archetype.id).toBe(0);
+    expect(archetype.name).toBe('placeholder');
+  });
+
+  it('returns default archetype for invalid ID', () => {
+    const archetype = getArchetype(999);
+    expect(archetype.id).toBe(0);
+  });
+
+  it('has sprite stages defined for all growth stages', () => {
+    const archetype = getArchetype(0);
+    expect(archetype.spriteStages.seed).toBe('seed.png');
+    expect(archetype.spriteStages.seedling).toBe('seedling.png');
+    expect(archetype.spriteStages.sprout).toBe('sprout.png');
+    expect(archetype.spriteStages.blooming).toBe('blooming.png');
+    expect(archetype.spriteStages.dormant).toBe('dormant.png');
+    expect(archetype.spriteStages.archived).toBe('archived.png');
+  });
+});
+
+describe('selectAccentColor', () => {
+  it('returns a valid hex color', () => {
+    const color = selectAccentColor('550e8400-e29b-41d4-a716-446655440000');
+    expect(color).toMatch(/^#[0-9a-fA-F]{6}$/);
+  });
+
+  it('returns the same color for the same UUID', () => {
+    const uuid = '550e8400-e29b-41d4-a716-446655440000';
+    const color1 = selectAccentColor(uuid);
+    const color2 = selectAccentColor(uuid);
+    expect(color1).toBe(color2);
+  });
+
+  it('may return different colors for different UUIDs', () => {
+    const uuid1 = '550e8400-e29b-41d4-a716-446655440000';
+    const uuid2 = '550e8400-e29b-41d4-a716-446655440001';
+    const color1 = selectAccentColor(uuid1);
+    const color2 = selectAccentColor(uuid2);
+    // Both are valid colors, but may differ
+    expect(color1).toMatch(/^#[0-9a-fA-F]{6}$/);
+    expect(color2).toMatch(/^#[0-9a-fA-F]{6}$/);
+  });
+});
 
 describe('generatePlant', () => {
   const exampleUuid = '550e8400-e29b-41d4-a716-446655440000';
@@ -23,7 +97,8 @@ describe('generatePlant', () => {
       const differs =
         plant1.stemHeight !== plant2.stemHeight ||
         plant1.stemCurve !== plant2.stemCurve ||
-        plant1.hue !== plant2.hue;
+        plant1.hue !== plant2.hue ||
+        plant1.accentColor !== plant2.accentColor;
       expect(differs).toBe(true);
     });
   });
@@ -110,6 +185,17 @@ describe('generatePlant', () => {
 
       const plant = generatePlant(exampleUuid, 'sprout');
       expect(validHues).toContain(plant.hue);
+    });
+
+    it('includes archetype ID', () => {
+      const plant = generatePlant(exampleUuid, 'seed');
+      expect(typeof plant.archetypeId).toBe('number');
+      expect(plant.archetypeId).toBeGreaterThanOrEqual(0);
+    });
+
+    it('includes accent color', () => {
+      const plant = generatePlant(exampleUuid, 'seed');
+      expect(plant.accentColor).toMatch(/^#[0-9a-fA-F]{6}$/);
     });
   });
 
