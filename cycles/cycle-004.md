@@ -65,11 +65,16 @@ The app has crossed the threshold from skeleton to genuine prototype. The core m
 
 ## Goals
 
-<!-- to be filled in during human planning conversation -->
+- [ ] Complete the Gardener palette: capture all 47 colors as CSS custom properties (currently only ~18 are defined)
+- [ ] Switch plant rendering from procedural SVG to pixel art sprites: load static PNG sprites per (archetype, stage) and render them with nearest-neighbor scaling (no smoothing)
+- [ ] Define the archetype selection infrastructure: given a song UUID, deterministically pick an archetype index; wire this up even though there is only one archetype this cycle
+- [ ] Use the extracted sprites from `img/sprites/` (seed, seedling, sprout, blooming, dormant, archived PNGs — 36×36, transparent background) as the single placeholder archetype
+- [ ] Palette-swap support: the flower/accent color in each sprite is `#c54c86`; at render time, remap it to a UUID-derived color from the non-green Gardener palette colors
 
 ## Scope
 
-<!-- to be filled in during human planning conversation -->
+- In scope: full Gardener palette in CSS, pixel art sprite renderer, archetype selection infrastructure, placeholder archetype sprites, palette-swap for accent color
+- Deferred: Aseprite palette cleanup of the sprites (wrong greens, wrong flower color — to be fixed when real archetype art is produced in a future cycle), plots UI, growth stage promotion UX, React Router, song card info density, withering/decay, empty-state polish
 
 ## Work Done
 
