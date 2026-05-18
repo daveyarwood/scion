@@ -30,7 +30,7 @@ scion/
 
 ## Current state
 
-Full-stack working application with garden-themed UI (cycle 003). The following is in place and working:
+Full-stack working application with garden-themed UI and pixel art plant sprites (cycle 004). The following is in place and working:
 
 - Monorepo with TypeScript (strict, project references), Vite, Vitest, ESLint, Prettier
 - `migrations/001_initial_schema.sql` — `songs` table (`id`, `title`, `body`, `plot_id`, `growth_stage`, `created_at`, `updated_at`) plus `schema_migrations` tracking table
@@ -39,9 +39,10 @@ Full-stack working application with garden-themed UI (cycle 003). The following 
 - `src/shared/index.ts` — `GrowthStageEnum`, `SongSchema`, `CreateSongInput`, `UpdateSongInput`, `UpdateSongWithId`; 14 passing tests
 - `src/server/` — Express + tRPC server with full song CRUD (`song.list`, `song.create`, `song.get`, `song.update`, `song.delete`); raw SQL via better-sqlite3; zero type coercions; 10 passing tests
 - `src/client/` — React app with tRPC + React Query client, Gardener-palette lo-fi UI, responsive song-card grid, "New Seed" form, click-to-edit modal with stage selector and delete
-- `src/client/plant/generator.ts` — deterministic SVG plant generator seeded by UUID, stage-gated visual complexity; 15 passing tests
-- `src/client/components/PlantVisual.tsx` — renders generated plant as inline SVG on each song card
-- 51 tests total, all passing; TypeScript strict mode passes; build produces a working bundle
+- `src/client/plant/generator.ts` — archetype registry, deterministic archetype/accent-color selection seeded by UUID; exports `selectArchetype`, `getArchetype`, `selectAccentColor`, `parseHexToRGB`; tests cover all exported functions
+- `src/client/components/PlantVisual.tsx` — canvas-based pixel art sprite renderer; nearest-neighbor scaling (4×); one placeholder archetype wired, palette ramp swap deferred
+- `src/client/plant/sprites/` — six PNG sprites for the placeholder archetype (seed through archived); bundled via Vite `import.meta.url`
+- 80 tests total, all passing; TypeScript strict mode passes; build produces a working bundle
 
 Not yet built (deferred):
 - Audio file uploads, plots UI, withering/decay, Alda integration

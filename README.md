@@ -11,7 +11,7 @@ The soul of Scion is treating your musical ideas like living things. Just as you
 - **Seeds** are brand new ideas — raw, untested, full of potential
 - **Seedlings** are ideas you've started developing — you've added some structure or notes
 - As ideas grow, they develop more completely, with richer arrangement, more complete lyrics, etc.
-- Plants are visual representations, algorithmically generated and seeded by the song's ID, so each song has a unique visual identity that evolves as it grows
+- Plants are visual representations using pixel art sprites, with the archetype (tulip, hibiscus, cactus, mushroom) deterministically selected from the song's UUID, so each song has a unique visual identity that evolves as it grows through the stages
 
 This metaphor informs everything from the UI to the data model.
 
