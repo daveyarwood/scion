@@ -31,10 +31,10 @@ export const PlantVisual: React.FC<PlantVisualProps> = ({ id, stage }) => {
       // Disable smoothing for pixel-perfect rendering
       ctx.imageSmoothingEnabled = false;
 
-      // Draw sprite at 4x scale (36px sprite → 144px display)
+      // Draw sprite at 4x scale using the image's natural dimensions
       const scale = 4;
-      const scaledWidth = 36 * scale;
-      const scaledHeight = 36 * scale;
+      const scaledWidth = img.naturalWidth * scale;
+      const scaledHeight = img.naturalHeight * scale;
 
       // Center the sprite on canvas
       const x = (canvas.width - scaledWidth) / 2;
