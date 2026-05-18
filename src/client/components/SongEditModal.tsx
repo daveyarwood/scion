@@ -71,8 +71,9 @@ export const SongEditModal: React.FC<SongEditModalProps> = ({
     }
   };
 
-  const isAtMinStage = growthStage === 'seed';
-  const isAtMaxPromotableStage = growthStage === 'blooming';
+  const isInactive = growthStage === 'dormant' || growthStage === 'archived';
+  const isAtMinStage = growthStage === 'seed' || isInactive;
+  const isAtMaxPromotableStage = growthStage === 'blooming' || isInactive;
 
   const handleClose = () => {
     // Reset form to original values
@@ -124,22 +125,22 @@ export const SongEditModal: React.FC<SongEditModalProps> = ({
             <div className="stage-controls">
               <button
                 type="button"
-                className="stage-btn stage-demote"
-                onClick={handleDemote}
-                disabled={isLoading || isAtMinStage}
-                title="Demote to earlier stage"
-              >
-                ▼
-              </button>
-              <span className="stage-label">{growthStage.charAt(0).toUpperCase() + growthStage.slice(1)}</span>
-              <button
-                type="button"
                 className="stage-btn stage-promote"
                 onClick={handlePromote}
                 disabled={isLoading || isAtMaxPromotableStage}
                 title="Promote to next stage"
               >
                 ▲
+              </button>
+              <span className="stage-label">{growthStage.charAt(0).toUpperCase() + growthStage.slice(1)}</span>
+              <button
+                type="button"
+                className="stage-btn stage-demote"
+                onClick={handleDemote}
+                disabled={isLoading || isAtMinStage}
+                title="Demote to earlier stage"
+              >
+                ▼
               </button>
             </div>
           </div>
