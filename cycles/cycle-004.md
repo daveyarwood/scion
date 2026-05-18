@@ -65,11 +65,11 @@ The app has crossed the threshold from skeleton to genuine prototype. The core m
 
 ## Goals
 
-- [ ] Complete the Gardener palette: capture all 47 colors as CSS custom properties (currently only ~18 are defined)
-- [ ] Switch plant rendering from procedural SVG to pixel art sprites: load static PNG sprites per (archetype, stage) and render them with nearest-neighbor scaling (no smoothing)
-- [ ] Define the archetype selection infrastructure: given a song UUID, deterministically pick an archetype index; wire this up even though there is only one archetype this cycle
-- [ ] Use the extracted sprites from `img/sprites/` (seed, seedling, sprout, blooming, dormant, archived PNGs — 36×36, transparent background) as the single placeholder archetype
-- [ ] Palette-swap support: the flower/accent color in each sprite is `#c54c86`; at render time, remap it to a UUID-derived color from the non-green Gardener palette colors
+- [x] Complete the Gardener palette: capture all 47 colors as CSS custom properties (currently only ~18 are defined)
+- [x] Switch plant rendering from procedural SVG to pixel art sprites: load static PNG sprites per (archetype, stage) and render them with nearest-neighbor scaling (no smoothing)
+- [x] Define the archetype selection infrastructure: given a song UUID, deterministically pick an archetype index; wire this up even though there is only one archetype this cycle
+- [x] Use the extracted sprites from `img/sprites/` (seed, seedling, sprout, blooming, dormant, archived PNGs — 36×36, transparent background) as the single placeholder archetype
+- [x] Palette-swap support: the flower/accent color in each sprite is `#c54c86`; at render time, remap it to a UUID-derived color from the non-green Gardener palette colors
 
 ## Scope
 
@@ -78,7 +78,30 @@ The app has crossed the threshold from skeleton to genuine prototype. The core m
 
 ## Work Done
 
-<!-- to be filled in by cycle-developer -->
+**Gardener palette completion**: All 47 colors from the Lospec Gardener palette now defined as CSS custom properties in `src/client/App.css`, organized by color family (neutrals, blues, greens, browns, oranges, reds, purples/magentas). Added backwards-compatibility alias `--color-green` for existing usage.
+
+**Sprite-based plant renderer**: Replaced procedural SVG plant generator with pixel art sprite rendering:
+- Copied all 6 sprite PNGs to `src/client/plant/sprites/` for Vite bundling
+- Implemented HTML5 canvas renderer in `PlantVisual.tsx` with `imageSmoothingEnabled = false` for pixel-perfect nearest-neighbor scaling
+- Sprites rendered at 4x scale (36px → 144px display) centered on 180×180 canvas
+- Updated PlantVisual.css to work with canvas element
+
+**Archetype infrastructure**: Implemented deterministic archetype selection in `src/client/plant/generator.ts`:
+- `ARCHETYPES` registry maps archetype IDs to sprite stage filenames
+- `selectArchetype(id)` deterministically picks archetype from UUID hash
+- `getArchetype(id)` retrieves archetype configuration
+- Structure allows adding new archetypes in future cycles with only sprite additions and registry registration—no structural changes needed
+- Currently one placeholder archetype with all 6 stage sprites
+
+**Accent color palette-swap**: Implemented UUID-derived accent color selection:
+- `selectAccentColor(id)` picks from 17 non-green, non-neutral palette colors (blues, browns, oranges, reds, purples/magentas)
+- `PlantVisual.tsx` applies exact pixel-replacement of `#c54c86` (196, 76, 134 RGB) with chosen accent color using `getImageData`/`putImageData`
+- Swap is precise (exact RGB match) to preserve indexed-color sprite integrity
+- `parseHexToRGB` utility converts hex colors for canvas manipulation
+
+**Testing**: Added 11 new tests to `src/client/plant/generator.test.ts` covering archetype selection, accent color derivation, and integration with plant generation. Total test count increased from 51 to 62; all passing.
+
+**Build & quality**: All tests pass (62), TypeScript strict mode clean, ESLint clean, Prettier formatting applied, production build successful.
 
 ## Review Notes
 
