@@ -79,6 +79,7 @@ describe('getArchetype', () => {
     expect(archetype.spriteStages.seed).toBe('seed.png');
     expect(archetype.spriteStages.seedling).toBe('seedling.png');
     expect(archetype.spriteStages.sprout).toBe('sprout.png');
+    expect(archetype.spriteStages.budding).toBeDefined();
     expect(archetype.spriteStages.blooming).toBe('blooming.png');
     expect(archetype.spriteStages.dormant).toBe('dormant.png');
     expect(archetype.spriteStages.archived).toBe('archived.png');
@@ -192,6 +193,12 @@ describe('generatePlant', () => {
       const plant = generatePlant(uuid, 'sprout');
       expect(plant.complexity).toBe(3);
       expect(plant.leafCount).toBeLessThanOrEqual(3);
+    });
+
+    it('budding stage has higher complexity', () => {
+      const plant = generatePlant(uuid, 'budding');
+      expect(plant.complexity).toBe(4);
+      expect(plant.leafCount).toBeLessThanOrEqual(5);
     });
 
     it('blooming stage has high complexity', () => {

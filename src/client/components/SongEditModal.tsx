@@ -70,7 +70,7 @@ export const SongEditModal: React.FC<SongEditModalProps> = ({
     onClose();
   };
 
-  const stages: GrowthStage[] = ['seed', 'seedling', 'sprout', 'blooming', 'dormant', 'archived'];
+  const stages: GrowthStage[] = ['seed', 'seedling', 'sprout', 'budding', 'blooming', 'dormant', 'archived'];
 
   return (
     <div className="modal-overlay" onClick={handleClose}>

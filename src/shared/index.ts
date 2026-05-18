@@ -11,6 +11,7 @@ export const GrowthStageEnum = z.enum([
   'seed',
   'seedling',
   'sprout',
+  'budding',
   'blooming',
   'dormant',
   'archived',

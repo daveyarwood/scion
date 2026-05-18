@@ -3,7 +3,7 @@ import { GrowthStageEnum, SongSchema, CreateSongInput, UpdateSongInput } from '.
 
 describe('GrowthStageEnum', () => {
   it('accepts valid growth stages', () => {
-    const stages = ['seed', 'seedling', 'sprout', 'blooming', 'dormant', 'archived'];
+    const stages = ['seed', 'seedling', 'sprout', 'budding', 'blooming', 'dormant', 'archived'];
     stages.forEach((stage) => {
       const result = GrowthStageEnum.safeParse(stage);
       expect(result.success).toBe(true);
