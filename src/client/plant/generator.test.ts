@@ -168,7 +168,7 @@ describe('generatePlant', () => {
         plant1.stemHeight !== plant2.stemHeight ||
         plant1.stemCurve !== plant2.stemCurve ||
         plant1.hue !== plant2.hue ||
-        plant1.accentColor !== plant2.accentColor;
+        plant1.archetypeId !== plant2.archetypeId;
       expect(differs).toBe(true);
     });
   });
@@ -261,11 +261,6 @@ describe('generatePlant', () => {
       const plant = generatePlant(exampleUuid, 'seed');
       expect(typeof plant.archetypeId).toBe('number');
       expect(plant.archetypeId).toBeGreaterThanOrEqual(0);
-    });
-
-    it('includes accent color', () => {
-      const plant = generatePlant(exampleUuid, 'seed');
-      expect(plant.accentColor).toMatch(/^#[0-9a-fA-F]{6}$/);
     });
   });
 

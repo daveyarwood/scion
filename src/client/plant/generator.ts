@@ -8,7 +8,12 @@ export interface PlantData {
   hue: string;
   complexity: number;
   archetypeId: number;
-  accentColor: string;
+  // accentColor is intentionally omitted here until the palette ramp swap is
+  // implemented. selectAccentColor() and parseHexToRGB() are retained as
+  // exported utilities ready for that work. Each archetype will declare an
+  // `accentRamp` (ordered source shades in the sprite), and the UUID-derived
+  // accent selection will map those shades to a target Gardener palette ramp
+  // at canvas render time. Requires palette-constrained sprites from Aseprite.
 }
 
 interface Archetype {
@@ -157,8 +162,8 @@ export const generatePlant = (id: string, stage: GrowthStage): PlantData => {
   // Archetype selection
   const archetypeId = selectArchetype(id);
 
-  // Accent color selection
-  const accentColor = selectAccentColor(id);
+  // Accent color selection is deferred to render time via palette ramp swap.
+  // See PlantVisual.tsx and the TODO comment there for the intended approach.
 
   // Map growth stage to complexity level
   const stageComplexity: Record<GrowthStage, number> = {
@@ -204,6 +209,5 @@ export const generatePlant = (id: string, stage: GrowthStage): PlantData => {
     hue,
     complexity,
     archetypeId,
-    accentColor,
   };
 };

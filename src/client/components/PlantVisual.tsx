@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { GrowthStage } from '../../shared/index';
-import { generatePlant, getArchetype, parseHexToRGB } from '../plant/generator';
+import { generatePlant, getArchetype } from '../plant/generator';
 import './PlantVisual.css';
 
 interface PlantVisualProps {
@@ -44,36 +44,21 @@ export const PlantVisual: React.FC<PlantVisualProps> = ({ id, stage }) => {
 
       ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
 
-      // Apply palette swap: replace #c54c86 with accent color
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imageData.data;
-
-      // Convert accent color from hex to RGB
-      const accentColor = plantData.accentColor;
-      const accentRGB = parseHexToRGB(accentColor);
-
-      // Replace #c54c86 (197, 76, 134) with accent color
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        const a = data[i + 3];
-
-        // Match #c54c86 exactly (197, 76, 134)
-        if (r === 197 && g === 76 && b === 134 && a === 255) {
-          data[i] = accentRGB.r;
-          data[i + 1] = accentRGB.g;
-          data[i + 2] = accentRGB.b;
-          // Keep alpha unchanged
-        }
-      }
-
-      ctx.putImageData(imageData, 0, 0);
+      // TODO: palette ramp swap
+      // Each archetype should declare an `accentRamp` — an ordered list of source
+      // shades used for flowers/fruit in the sprite (shadow → highlight). At render
+      // time, the UUID deterministically selects a target Gardener palette ramp and
+      // each source shade is remapped to the corresponding target shade positionally.
+      //
+      // This requires palette-constrained sprites (exact indexed colors, no
+      // anti-aliasing) produced via Aseprite. The current placeholder sprites use
+      // hundreds of anti-aliased colors so no single-color swap is meaningful.
+      // Implement once real archetype sprites are available.
     };
 
     img.onerror = () => {
-      // Fallback if sprite fails to load
-      ctx.fillStyle = plantData.accentColor;
+      // Fallback: fill with a neutral color if sprite fails to load
+      ctx.fillStyle = '#659939';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     };
 
