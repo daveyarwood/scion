@@ -81,3 +81,4 @@ export const PlantVisual: React.FC<PlantVisualProps> = ({ id, stage }) => {
   }, [stage, plantData, archetype]);
 
   return <canvas ref={canvasRef} className="plant-visual" width={180} height={180} />;
+};
