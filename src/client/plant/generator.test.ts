@@ -18,8 +18,7 @@ describe('selectArchetype', () => {
   it('may return different indices for different UUIDs', () => {
     const uuid1 = '550e8400-e29b-41d4-a716-446655440000';
     const uuid2 = '550e8400-e29b-41d4-a716-446655440001';
-    // Since there's only one archetype now, both will return 0
-    // This test documents the behavior for when more archetypes are added
+    // With 4 archetypes registered, different UUIDs may produce different indices
     const index1 = selectArchetype(uuid1);
     const index2 = selectArchetype(uuid2);
     expect(typeof index1).toBe('number');
@@ -56,7 +55,7 @@ describe('selectArchetype', () => {
     testUUIDs.forEach((uuid) => {
       const index = selectArchetype(uuid);
       expect(index).toBeGreaterThanOrEqual(0);
-      expect(index).toBeLessThan(1); // Currently only 1 archetype
+      expect(index).toBeLessThan(4); // Now 4 archetypes (tulip, hibiscus, cactus, mushroom)
     });
   });
 });
@@ -66,23 +65,42 @@ describe('getArchetype', () => {
     const archetype = getArchetype(0);
     expect(archetype).toBeDefined();
     expect(archetype.id).toBe(0);
-    expect(archetype.name).toBe('placeholder');
+    expect(archetype.name).toBe('tulip');
   });
 
   it('returns default archetype for invalid ID', () => {
     const archetype = getArchetype(999);
     expect(archetype.id).toBe(0);
+    expect(archetype.name).toBe('tulip');
   });
 
   it('has sprite stages defined for all growth stages', () => {
     const archetype = getArchetype(0);
-    expect(archetype.spriteStages.seed).toBe('seed.png');
-    expect(archetype.spriteStages.seedling).toBe('seedling.png');
-    expect(archetype.spriteStages.sprout).toBe('sprout.png');
+    expect(archetype.spriteStages.seed).toBe('tulip/seed.png');
+    expect(archetype.spriteStages.seedling).toBe('tulip/seedling.png');
+    expect(archetype.spriteStages.sprout).toBe('tulip/sprout.png');
     expect(archetype.spriteStages.budding).toBeDefined();
-    expect(archetype.spriteStages.blooming).toBe('blooming.png');
-    expect(archetype.spriteStages.dormant).toBe('dormant.png');
-    expect(archetype.spriteStages.archived).toBe('archived.png');
+    expect(archetype.spriteStages.blooming).toBe('tulip/blooming.png');
+    expect(archetype.spriteStages.dormant).toBe('tulip/dormant.png');
+    expect(archetype.spriteStages.archived).toBe('tulip/archived.png');
+  });
+
+  it('returns different archetypes by different IDs', () => {
+    const tulip = getArchetype(0);
+    const hibiscus = getArchetype(1);
+    const cactus = getArchetype(2);
+    const mushroom = getArchetype(3);
+
+    expect(tulip.name).toBe('tulip');
+    expect(hibiscus.name).toBe('hibiscus');
+    expect(cactus.name).toBe('cactus');
+    expect(mushroom.name).toBe('mushroom');
+
+    // Verify each has correct sprite paths
+    expect(tulip.spriteStages.seed).toContain('tulip');
+    expect(hibiscus.spriteStages.seed).toContain('hibiscus');
+    expect(cactus.spriteStages.seed).toContain('cactus');
+    expect(mushroom.spriteStages.seed).toContain('mushroom');
   });
 });
 

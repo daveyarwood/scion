@@ -49,20 +49,59 @@ const seededRandom = (seed: number, index: number = 0): number => {
 
 /**
  * Archetype registry: each archetype represents a plant type.
- * Currently only one archetype (placeholder), but structured to support more.
+ * Structured to support multiple plant designs with different sprite appearances.
  */
 const ARCHETYPES: Archetype[] = [
   {
     id: 0,
-    name: 'placeholder',
+    name: 'tulip',
     spriteStages: {
-      seed: 'seed.png',
-      seedling: 'seedling.png',
-      sprout: 'sprout.png',
-      budding: 'budding.png',
-      blooming: 'blooming.png',
-      dormant: 'dormant.png',
-      archived: 'archived.png',
+      seed: 'tulip/seed.png',
+      seedling: 'tulip/seedling.png',
+      sprout: 'tulip/sprout.png',
+      budding: 'tulip/budding.png',
+      blooming: 'tulip/blooming.png',
+      dormant: 'tulip/dormant.png',
+      archived: 'tulip/archived.png',
+    },
+  },
+  {
+    id: 1,
+    name: 'hibiscus',
+    spriteStages: {
+      seed: 'hibiscus/seed.png',
+      seedling: 'hibiscus/seedling.png',
+      sprout: 'hibiscus/sprout.png',
+      budding: 'hibiscus/budding.png',
+      blooming: 'hibiscus/blooming.png',
+      dormant: 'hibiscus/dormant.png',
+      archived: 'hibiscus/archived.png',
+    },
+  },
+  {
+    id: 2,
+    name: 'cactus',
+    spriteStages: {
+      seed: 'cactus/seed.png',
+      seedling: 'cactus/seedling.png',
+      sprout: 'cactus/sprout.png',
+      budding: 'cactus/budding.png',
+      blooming: 'cactus/blooming.png',
+      dormant: 'cactus/dormant.png',
+      archived: 'cactus/archived.png',
+    },
+  },
+  {
+    id: 3,
+    name: 'mushroom',
+    spriteStages: {
+      seed: 'mushroom/seed.png',
+      seedling: 'mushroom/seedling.png',
+      sprout: 'mushroom/sprout.png',
+      budding: 'mushroom/budding.png',
+      blooming: 'mushroom/blooming.png',
+      dormant: 'mushroom/dormant.png',
+      archived: 'mushroom/archived.png',
     },
   },
 ];
