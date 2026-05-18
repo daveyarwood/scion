@@ -170,7 +170,7 @@ body {
 
 .btn-primary:hover:not(:disabled) {
   background-color: var(--color-light-green);
-  color: var(--color-black);
+  color: var(--color-dark-gray);
 }
 
 .loading,

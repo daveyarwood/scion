@@ -52,15 +52,15 @@ export const PlantVisual: React.FC<PlantVisualProps> = ({ id, stage }) => {
       const accentColor = plantData.accentColor;
       const accentRGB = parseHexToRGB(accentColor);
 
-      // Replace #c54c86 (196, 76, 134) with accent color
+      // Replace #c54c86 (197, 76, 134) with accent color
       for (let i = 0; i < data.length; i += 4) {
         const r = data[i];
         const g = data[i + 1];
         const b = data[i + 2];
         const a = data[i + 3];
 
-        // Match #c54c86 exactly (196, 76, 134)
-        if (r === 196 && g === 76 && b === 134 && a === 255) {
+        // Match #c54c86 exactly (197, 76, 134)
+        if (r === 197 && g === 76 && b === 134 && a === 255) {
           data[i] = accentRGB.r;
           data[i + 1] = accentRGB.g;
           data[i + 2] = accentRGB.b;

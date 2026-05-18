@@ -11,6 +11,12 @@ export interface PlantData {
   accentColor: string;
 }
 
+interface Archetype {
+  id: number;
+  name: string;
+  spriteStages: Record<GrowthStage, string>;
+}
+
 /**
  * Simple hash function to convert a string into a numeric seed.
  * Deterministic: same input always produces same output.
@@ -40,7 +46,7 @@ const seededRandom = (seed: number, index: number = 0): number => {
  * Archetype registry: each archetype represents a plant type.
  * Currently only one archetype (placeholder), but structured to support more.
  */
-const ARCHETYPES = [
+const ARCHETYPES: Archetype[] = [
   {
     id: 0,
     name: 'placeholder',
@@ -92,7 +98,7 @@ export const selectArchetype = (id: string): number => {
 /**
  * Get archetype by ID.
  */
-export const getArchetype = (archetypeId: number) => {
+export const getArchetype = (archetypeId: number): Archetype => {
   return ARCHETYPES[archetypeId] || ARCHETYPES[0];
 };
 
