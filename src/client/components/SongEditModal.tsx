@@ -58,14 +58,14 @@ export const SongEditModal: React.FC<SongEditModalProps> = ({
   const promotableStages: GrowthStage[] = ['seed', 'seedling', 'sprout', 'budding', 'blooming'];
 
   const handlePromote = () => {
-    const currentIndex = promotableStages.indexOf(growthStage as GrowthStage);
-    if (currentIndex < promotableStages.length - 1) {
+    const currentIndex = promotableStages.indexOf(growthStage);
+    if (currentIndex >= 0 && currentIndex < promotableStages.length - 1) {
       setGrowthStage(promotableStages[currentIndex + 1]);
     }
   };
 
   const handleDemote = () => {
-    const currentIndex = promotableStages.indexOf(growthStage as GrowthStage);
+    const currentIndex = promotableStages.indexOf(growthStage);
     if (currentIndex > 0) {
       setGrowthStage(promotableStages[currentIndex - 1]);
     }

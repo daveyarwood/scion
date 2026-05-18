@@ -28,8 +28,8 @@ export const SongCard: React.FC<SongCardProps> = ({
 
   const handlePromote = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const currentIndex = promotableStages.indexOf(song.growth_stage as GrowthStage);
-    if (currentIndex < promotableStages.length - 1) {
+    const currentIndex = promotableStages.indexOf(song.growth_stage);
+    if (currentIndex >= 0 && currentIndex < promotableStages.length - 1) {
       const newStage = promotableStages[currentIndex + 1];
       onStageChange?.(newStage);
     }
@@ -37,7 +37,7 @@ export const SongCard: React.FC<SongCardProps> = ({
 
   const handleDemote = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const currentIndex = promotableStages.indexOf(song.growth_stage as GrowthStage);
+    const currentIndex = promotableStages.indexOf(song.growth_stage);
     if (currentIndex > 0) {
       const newStage = promotableStages[currentIndex - 1];
       onStageChange?.(newStage);
