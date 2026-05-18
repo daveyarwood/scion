@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Song, GrowthStage } from '../../shared/index';
 import { PlantVisual } from './PlantVisual';
+import { formatDate } from './dateFormat';
 import './SongCard.css';
 
 interface SongCardProps {
@@ -16,13 +17,7 @@ export const SongCard: React.FC<SongCardProps> = ({
   onStageChange,
   isLoadingStageChange = false 
 }) => {
-  const formatDate = (date: string): string => {
-    return new Date(date).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
+  const [pressing, setPressing] = useState(false);
 
   const promotableStages: GrowthStage[] = ['seed', 'seedling', 'sprout', 'budding', 'blooming'];
 
@@ -48,7 +43,13 @@ export const SongCard: React.FC<SongCardProps> = ({
   const isAtMaxPromotableStage = song.growth_stage === 'blooming';
 
   return (
-    <div className="song-card" onClick={onClick}>
+    <div
+      className={`song-card${pressing ? ' song-card--pressing' : ''}`}
+      onClick={onClick}
+      onMouseDown={(e) => { if (e.target === e.currentTarget) setPressing(true); }}
+      onMouseUp={() => setPressing(false)}
+      onMouseLeave={() => setPressing(false)}
+    >
       <div className="song-card-header">
         <PlantVisual id={song.id} stage={song.growth_stage} />
         <div className="song-stage-controls">

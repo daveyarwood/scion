@@ -17,14 +17,9 @@
   transform: translate(-1px, -1px);
 }
 
-.song-card:active {
+.song-card--pressing {
   transform: translate(1px, 1px);
   box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
-}
-
-.song-card:has(button:active) {
-  transform: none;
-  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.15);
 }
 
 .song-card-header {
@@ -48,9 +43,15 @@
   color: var(--color-medium-green);
   font-size: 0.9rem;
   cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  transition: all 0.2s;
+  padding: 0;
+  width: 2rem;
+  height: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, transform 0.2s;
   line-height: 1;
+  transform-origin: center;
 }
 
 .stage-btn-card:hover:not(:disabled) {
