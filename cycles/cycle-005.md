@@ -145,7 +145,17 @@ The app works end-to-end and has a coherent aesthetic, but the plant visual syst
 
 ## Review Notes
 
-<!-- to be filled in by cycle-reviewer -->
+### Summary
+
+Cycle 005 is well-executed and achieves all stated goals with high quality. The budding stage has been fully integrated into the schema, database documentation, and all downstream systems (complexity maps, UI, tests). All four archetypes are properly registered with complete sprite coverage (7 stages each), and the promotion/demotion UI is thoughtfully designed with correct visibility rules. Code adheres to project conventions: strict TypeScript, no type coercions, const/arrow functions throughout, and comprehensive test coverage. The only issue found was a minor code-style matter: unnecessary type coercions in the promotion handlers, which was fixed to better reflect the actual logic (checking for valid index bounds). Build passes, all 81 tests pass, and the app is visually coherent and ready for user interaction.
+
+### Fixed
+
+- Removed unnecessary `as GrowthStage` type coercions in `SongCard.tsx` and `SongEditModal.tsx` promotion handlers. The coercions were defensive but redundant; the actual fix properly bounds-checks the `indexOf` result to handle non-promotable stages (dormant/archived) that may appear in the song's current stage.
+
+### Escalated to Open Questions
+
+Nothing escalated.
 
 ## Test Results
 
