@@ -5,7 +5,7 @@ import {
   getDemotedStage,
   canPromote,
   canDemote,
-} from './stageTransition';
+} from './stageTransitions';
 
 describe('stageTransition utilities', () => {
   describe('PROMOTABLE_STAGES', () => {
