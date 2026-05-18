@@ -53,16 +53,6 @@ export const SongCard: React.FC<SongCardProps> = ({
         <PlantVisual id={song.id} stage={song.growth_stage} />
         <div className="song-stage-controls">
           <button
-            className="stage-btn-card stage-demote"
-            onClick={handleDemote}
-            disabled={isLoadingStageChange || isAtMinStage}
-            title="Demote to earlier stage"
-            aria-label="Demote stage"
-          >
-            ▼
-          </button>
-          <span className="song-stage">{song.growth_stage}</span>
-          <button
             className="stage-btn-card stage-promote"
             onClick={handlePromote}
             disabled={isLoadingStageChange || isAtMaxPromotableStage}
@@ -70,6 +60,16 @@ export const SongCard: React.FC<SongCardProps> = ({
             aria-label="Promote stage"
           >
             ▲
+          </button>
+          <span className="song-stage">{song.growth_stage}</span>
+          <button
+            className="stage-btn-card stage-demote"
+            onClick={handleDemote}
+            disabled={isLoadingStageChange || isAtMinStage}
+            title="Demote to earlier stage"
+            aria-label="Demote stage"
+          >
+            ▼
           </button>
         </div>
       </div>
