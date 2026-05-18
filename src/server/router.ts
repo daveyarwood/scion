@@ -48,50 +48,48 @@ export const appRouter = t.router({
     }),
 
     // Update a song
-    update: t.procedure
-      .input(UpdateSongWithId)
-      .mutation(({ input }) => {
-        const db = getDb();
-        const { id, ...updateData } = input;
+    update: t.procedure.input(UpdateSongWithId).mutation(({ input }) => {
+      const db = getDb();
+      const { id, ...updateData } = input;
 
-        // Check if song exists
-        const existing = db.prepare<[string], Song>('SELECT * FROM songs WHERE id = ?').get(id);
-        if (!existing) throw new Error('Song not found');
+      // Check if song exists
+      const existing = db.prepare<[string], Song>('SELECT * FROM songs WHERE id = ?').get(id);
+      if (!existing) throw new Error('Song not found');
 
-        // Build dynamic update query
-        const fields: string[] = [];
-        const values: unknown[] = [];
+      // Build dynamic update query
+      const fields: string[] = [];
+      const values: unknown[] = [];
 
-        if (updateData.title !== undefined) {
-          fields.push('title = ?');
-          values.push(updateData.title);
-        }
-        if (updateData.body !== undefined) {
-          fields.push('body = ?');
-          values.push(updateData.body);
-        }
-        if (updateData.growth_stage !== undefined) {
-          fields.push('growth_stage = ?');
-          values.push(updateData.growth_stage);
-        }
-        if (updateData.plot_id !== undefined) {
-          fields.push('plot_id = ?');
-          values.push(updateData.plot_id);
-        }
+      if (updateData.title !== undefined) {
+        fields.push('title = ?');
+        values.push(updateData.title);
+      }
+      if (updateData.body !== undefined) {
+        fields.push('body = ?');
+        values.push(updateData.body);
+      }
+      if (updateData.growth_stage !== undefined) {
+        fields.push('growth_stage = ?');
+        values.push(updateData.growth_stage);
+      }
+      if (updateData.plot_id !== undefined) {
+        fields.push('plot_id = ?');
+        values.push(updateData.plot_id);
+      }
 
-        // Always update the updated_at timestamp
-        fields.push('updated_at = ?');
-        values.push(new Date().toISOString());
+      // Always update the updated_at timestamp
+      fields.push('updated_at = ?');
+      values.push(new Date().toISOString());
 
-        const query = `UPDATE songs SET ${fields.join(', ')} WHERE id = ?`;
-        values.push(id);
+      const query = `UPDATE songs SET ${fields.join(', ')} WHERE id = ?`;
+      values.push(id);
 
-        db.prepare(query).run(...values);
+      db.prepare(query).run(...values);
 
-        const row = db.prepare<[string], Song>('SELECT * FROM songs WHERE id = ?').get(id);
-        if (!row) throw new Error('Failed to retrieve updated song');
-        return SongSchema.parse(row);
-      }),
+      const row = db.prepare<[string], Song>('SELECT * FROM songs WHERE id = ?').get(id);
+      if (!row) throw new Error('Failed to retrieve updated song');
+      return SongSchema.parse(row);
+    }),
 
     // Delete a song
     delete: t.procedure

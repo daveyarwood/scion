@@ -136,7 +136,12 @@ export const SongEditModal: React.FC<SongEditModalProps> = ({
             >
               {isLoading ? 'Deleting...' : 'Delete'}
             </button>
-            <button type="button" className="btn btn-cancel" onClick={handleClose} disabled={isLoading}>
+            <button
+              type="button"
+              className="btn btn-cancel"
+              onClick={handleClose}
+              disabled={isLoading}
+            >
               Cancel
             </button>
           </div>

@@ -87,10 +87,7 @@ export const App: React.FC = () => {
           <div className="error">Error loading songs: {listQuery.error.message}</div>
         )}
         {listQuery.data && (
-          <SongGrid
-            songs={listQuery.data}
-            onSongClick={(song) => setSelectedSong(song)}
-          />
+          <SongGrid songs={listQuery.data} onSongClick={(song) => setSelectedSong(song)} />
         )}
       </main>
 
