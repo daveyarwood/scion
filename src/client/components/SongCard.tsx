@@ -39,8 +39,9 @@ export const SongCard: React.FC<SongCardProps> = ({
     }
   };
 
-  const isAtMinStage = song.growth_stage === 'seed';
-  const isAtMaxPromotableStage = song.growth_stage === 'blooming';
+  const isInactive = song.growth_stage === 'dormant' || song.growth_stage === 'archived';
+  const isAtMinStage = song.growth_stage === 'seed' || isInactive;
+  const isAtMaxPromotableStage = song.growth_stage === 'blooming' || isInactive;
 
   return (
     <div
