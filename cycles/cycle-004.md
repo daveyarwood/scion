@@ -105,7 +105,16 @@ The app has crossed the threshold from skeleton to genuine prototype. The core m
 
 ## Review Notes
 
-<!-- to be filled in by cycle-reviewer -->
+### Summary
+Cycle 004 successfully migrated the plant visual system from procedural SVG generation to pixel art sprites with a well-architected archetype registry system. The implementation is clean, well-tested, and follows all project conventions. Code quality is high: no type coercions, proper use of TypeScript generics, arrow functions throughout, and meaningful tests that verify actual exported functionality. The archetype infrastructure is extensible and properly supports future additions. Three issues were identified and fixed during review: a critical RGB conversion bug in the palette swap logic, missing type safety annotations on the archetype registry, and a broken CSS variable reference from the palette expansion.
+
+### Fixed
+- **RGB palette swap precision bug**: The code checked for RGB(196, 76, 134) but #c54c86 correctly converts to RGB(197, 76, 134). This would have caused the palette swap to fail to detect and replace the accent color. Fixed in PlantVisual.tsx lines 55 and 62.
+- **Archetype registry type safety**: Added explicit `Archetype` interface to define the structure of archetypes with proper `Record<GrowthStage, string>` type for `spriteStages`. This improves type safety and makes the registry more maintainable for future archetype additions. Updated ARCHETYPES array declaration and getArchetype return type.
+- **Broken CSS variable**: The palette expansion removed `--color-black` but the code in `.btn-primary:hover` still referenced it, causing runtime CSS failure. Fixed by changing to `--color-dark-gray` which is semantically appropriate for button text on a light-green background.
+
+### Escalated to Open Questions
+Nothing escalated.
 
 ## Test Results
 
