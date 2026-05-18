@@ -13,5 +13,8 @@ build/
 # Data directory (SQLite, audio files)
 data/
 
+# Scratch image workspace (source sprites belong in src/client/plant/sprites/)
+img/
+
 # Build output
 *.tsbuildinfo
