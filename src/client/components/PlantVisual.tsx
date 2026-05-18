@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { GrowthStage } from '../../shared/index';
-import { generatePlant, getArchetype } from '../plant/generator';
+import { generatePlant, getSpritePath } from '../plant/generator';
 import './PlantVisual.css';
 
 interface PlantVisualProps {
@@ -10,8 +10,7 @@ interface PlantVisualProps {
 
 export const PlantVisual: React.FC<PlantVisualProps> = ({ id, stage }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const plantData = generatePlant(id, stage);
-  const archetype = getArchetype(plantData.archetypeId);
+  const plantData = generatePlant(id);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -25,8 +24,7 @@ export const PlantVisual: React.FC<PlantVisualProps> = ({ id, stage }) => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Load sprite image
-    const spriteFilename = archetype.spriteStages[stage];
-    const spritePath = new URL(`../plant/sprites/${spriteFilename}`, import.meta.url).href;
+    const spritePath = new URL(`../plant/sprites/${getSpritePath(plantData.archetypeId, stage)}`, import.meta.url).href;
 
     const img = new Image();
     img.onload = () => {
@@ -63,7 +61,7 @@ export const PlantVisual: React.FC<PlantVisualProps> = ({ id, stage }) => {
     };
 
     img.src = spritePath;
-  }, [stage, plantData, archetype]);
+  }, [stage, plantData.archetypeId]);
 
   return <canvas ref={canvasRef} className="plant-visual" width={180} height={180} />;
 };

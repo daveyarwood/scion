@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generatePlant, selectArchetype, getArchetype, selectAccentColor, parseHexToRGB } from './generator';
+import { generatePlant, selectArchetype, getArchetype, getSpritePath, selectAccentColor, parseHexToRGB } from './generator';
 
 describe('selectArchetype', () => {
   it('returns a valid archetype index', () => {
@@ -74,33 +74,24 @@ describe('getArchetype', () => {
     expect(archetype.name).toBe('tulip');
   });
 
-  it('has sprite stages defined for all growth stages', () => {
-    const archetype = getArchetype(0);
-    expect(archetype.spriteStages.seed).toBe('tulip/seed.png');
-    expect(archetype.spriteStages.seedling).toBe('tulip/seedling.png');
-    expect(archetype.spriteStages.sprout).toBe('tulip/sprout.png');
-    expect(archetype.spriteStages.budding).toBeDefined();
-    expect(archetype.spriteStages.blooming).toBe('tulip/blooming.png');
-    expect(archetype.spriteStages.dormant).toBe('tulip/dormant.png');
-    expect(archetype.spriteStages.archived).toBe('tulip/archived.png');
+  it('returns different archetypes by different IDs', () => {
+    expect(getArchetype(0).name).toBe('tulip');
+    expect(getArchetype(1).name).toBe('hibiscus');
+    expect(getArchetype(2).name).toBe('cactus');
+    expect(getArchetype(3).name).toBe('mushroom');
+  });
+});
+
+describe('getSpritePath', () => {
+  it('returns correct path for a known archetype and stage', () => {
+    expect(getSpritePath(0, 'seed')).toBe('tulip/seed.png');
+    expect(getSpritePath(1, 'blooming')).toBe('hibiscus/blooming.png');
+    expect(getSpritePath(2, 'sprout')).toBe('cactus/sprout.png');
+    expect(getSpritePath(3, 'archived')).toBe('mushroom/archived.png');
   });
 
-  it('returns different archetypes by different IDs', () => {
-    const tulip = getArchetype(0);
-    const hibiscus = getArchetype(1);
-    const cactus = getArchetype(2);
-    const mushroom = getArchetype(3);
-
-    expect(tulip.name).toBe('tulip');
-    expect(hibiscus.name).toBe('hibiscus');
-    expect(cactus.name).toBe('cactus');
-    expect(mushroom.name).toBe('mushroom');
-
-    // Verify each has correct sprite paths
-    expect(tulip.spriteStages.seed).toContain('tulip');
-    expect(hibiscus.spriteStages.seed).toContain('hibiscus');
-    expect(cactus.spriteStages.seed).toContain('cactus');
-    expect(mushroom.spriteStages.seed).toContain('mushroom');
+  it('falls back to tulip for invalid archetype ID', () => {
+    expect(getSpritePath(999, 'seed')).toBe('tulip/seed.png');
   });
 });
 
@@ -167,143 +158,31 @@ describe('selectAccentColor', () => {
 describe('generatePlant', () => {
   const exampleUuid = '550e8400-e29b-41d4-a716-446655440000';
 
-  describe('determinism', () => {
-    it('produces same output for same input', () => {
-      const plant1 = generatePlant(exampleUuid, 'seed');
-      const plant2 = generatePlant(exampleUuid, 'seed');
-
-      expect(plant1).toEqual(plant2);
-    });
-
-    it('produces different output for different IDs', () => {
-      const uuid1 = '550e8400-e29b-41d4-a716-446655440000';
-      const uuid2 = '650e8400-e29b-41d4-a716-446655440000';
-
-      const plant1 = generatePlant(uuid1, 'seed');
-      const plant2 = generatePlant(uuid2, 'seed');
-
-      // At least one property should differ
-      const differs =
-        plant1.stemHeight !== plant2.stemHeight ||
-        plant1.stemCurve !== plant2.stemCurve ||
-        plant1.hue !== plant2.hue ||
-        plant1.archetypeId !== plant2.archetypeId;
-      expect(differs).toBe(true);
-    });
+  it('produces same output for same input', () => {
+    const plant1 = generatePlant(exampleUuid);
+    const plant2 = generatePlant(exampleUuid);
+    expect(plant1).toEqual(plant2);
   });
 
-  describe('growth stage affects output', () => {
-    const uuid = exampleUuid;
-
-    it('seed stage has minimal complexity', () => {
-      const plant = generatePlant(uuid, 'seed');
-      expect(plant.complexity).toBe(1);
-      expect(plant.leafCount).toBe(0);
-    });
-
-    it('seedling stage has low complexity', () => {
-      const plant = generatePlant(uuid, 'seedling');
-      expect(plant.complexity).toBe(2);
-      expect(plant.leafCount).toBeLessThanOrEqual(2);
-    });
-
-    it('sprout stage has medium complexity', () => {
-      const plant = generatePlant(uuid, 'sprout');
-      expect(plant.complexity).toBe(3);
-      expect(plant.leafCount).toBeLessThanOrEqual(3);
-    });
-
-    it('budding stage has higher complexity', () => {
-      const plant = generatePlant(uuid, 'budding');
-      expect(plant.complexity).toBe(4);
-      expect(plant.leafCount).toBeLessThanOrEqual(5);
-    });
-
-    it('blooming stage has high complexity', () => {
-      const plant = generatePlant(uuid, 'blooming');
-      expect(plant.complexity).toBe(5);
-      expect(plant.leafCount).toBeLessThanOrEqual(6);
-    });
-
-    it('dormant stage has low complexity', () => {
-      const plant = generatePlant(uuid, 'dormant');
-      expect(plant.complexity).toBe(2);
-      expect(plant.leafCount).toBeLessThanOrEqual(1);
-    });
-
-    it('archived stage has minimal complexity', () => {
-      const plant = generatePlant(uuid, 'archived');
-      expect(plant.complexity).toBe(1);
-      expect(plant.leafCount).toBe(0);
-    });
+  it('produces different archetypes across a spread of UUIDs', () => {
+    const uuids = [
+      '550e8400-e29b-41d4-a716-446655440000',
+      '650e8400-e29b-41d4-a716-446655440000',
+      '750e8400-e29b-41d4-a716-446655440000',
+      'ffffffff-ffff-ffff-ffff-ffffffffffff',
+      '00000000-0000-0000-0000-000000000000',
+      'aabbccdd-eeff-0011-2233-445566778899',
+      '11111111-2222-3333-4444-555566667777',
+      'deadbeef-dead-beef-dead-beefdeadbeef',
+    ];
+    const ids = new Set(uuids.map((u) => generatePlant(u).archetypeId));
+    expect(ids.size).toBeGreaterThan(1);
   });
 
-  describe('plant properties are valid', () => {
-    it('stem height is positive', () => {
-      const plant = generatePlant(exampleUuid, 'sprout');
-      expect(plant.stemHeight).toBeGreaterThan(0);
-    });
-
-    it('stem curve is within expected range', () => {
-      const plant = generatePlant(exampleUuid, 'sprout');
-      expect(plant.stemCurve).toBeGreaterThanOrEqual(-20);
-      expect(plant.stemCurve).toBeLessThanOrEqual(20);
-    });
-
-    it('leaf angles are within expected range', () => {
-      const plant = generatePlant(exampleUuid, 'blooming');
-      plant.leafAngles.forEach((angle) => {
-        expect(angle).toBeGreaterThanOrEqual(-60);
-        expect(angle).toBeLessThanOrEqual(60);
-      });
-    });
-
-    it('leaf count matches leaf angles length', () => {
-      const plant = generatePlant(exampleUuid, 'blooming');
-      expect(plant.leafCount).toBe(plant.leafAngles.length);
-    });
-
-    it('hue is from Gardener palette', () => {
-      const validHues = [
-        '#193628', // dark-green
-        '#35632a', // green
-        '#659939', // medium-green
-        '#a2bf5e', // light-green
-        '#254265', // dark-blue
-        '#3975a9', // blue
-        '#51a2c9', // light-blue
-        '#6b4446', // dark-brown
-        '#9c665e', // brown
-        '#984c39', // dark-orange
-        '#c97743', // orange
-      ];
-
-      const plant = generatePlant(exampleUuid, 'sprout');
-      expect(validHues).toContain(plant.hue);
-    });
-
-    it('includes archetype ID', () => {
-      const plant = generatePlant(exampleUuid, 'seed');
-      expect(typeof plant.archetypeId).toBe('number');
-      expect(plant.archetypeId).toBeGreaterThanOrEqual(0);
-    });
-  });
-
-  describe('different stages produce visually distinct plants', () => {
-    const uuid = exampleUuid;
-
-    it('seed and blooming have different complexity', () => {
-      const seed = generatePlant(uuid, 'seed');
-      const blooming = generatePlant(uuid, 'blooming');
-      expect(seed.complexity).not.toBe(blooming.complexity);
-    });
-
-    it('seed has no leaves while blooming has many potential leaves', () => {
-      const seed = generatePlant(uuid, 'seed');
-      const blooming = generatePlant(uuid, 'blooming');
-      expect(seed.leafCount).toBe(0);
-      expect(blooming.leafCount).toBeGreaterThanOrEqual(0);
-    });
+  it('includes a valid archetype ID', () => {
+    const plant = generatePlant(exampleUuid);
+    expect(typeof plant.archetypeId).toBe('number');
+    expect(plant.archetypeId).toBeGreaterThanOrEqual(0);
   });
 });
 

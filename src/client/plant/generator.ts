@@ -1,25 +1,18 @@
 import { GrowthStage } from '../../shared/index';
 
 export interface PlantData {
-  stemHeight: number;
-  stemCurve: number;
-  leafCount: number;
-  leafAngles: number[];
-  hue: string;
-  complexity: number;
   archetypeId: number;
   // accentColor is intentionally omitted here until the palette ramp swap is
   // implemented. selectAccentColor() and parseHexToRGB() are retained as
   // exported utilities ready for that work. Each archetype will declare an
   // `accentRamp` (ordered source shades in the sprite), and the UUID-derived
   // accent selection will map those shades to a target Gardener palette ramp
-  // at canvas render time. Requires palette-constrained sprites from Aseprite.
+  // at canvas render time.
 }
 
 interface Archetype {
   id: number;
   name: string;
-  spriteStages: Record<GrowthStage, string>;
 }
 
 /**
@@ -47,63 +40,11 @@ const seededRandom = (seed: number, index: number = 0): number => {
   return Math.abs(Math.sin(combined * 12.9898) * 43758.5453) % 1;
 };
 
-/**
- * Archetype registry: each archetype represents a plant type.
- * Structured to support multiple plant designs with different sprite appearances.
- */
 const ARCHETYPES: Archetype[] = [
-  {
-    id: 0,
-    name: 'tulip',
-    spriteStages: {
-      seed: 'tulip/seed.png',
-      seedling: 'tulip/seedling.png',
-      sprout: 'tulip/sprout.png',
-      budding: 'tulip/budding.png',
-      blooming: 'tulip/blooming.png',
-      dormant: 'tulip/dormant.png',
-      archived: 'tulip/archived.png',
-    },
-  },
-  {
-    id: 1,
-    name: 'hibiscus',
-    spriteStages: {
-      seed: 'hibiscus/seed.png',
-      seedling: 'hibiscus/seedling.png',
-      sprout: 'hibiscus/sprout.png',
-      budding: 'hibiscus/budding.png',
-      blooming: 'hibiscus/blooming.png',
-      dormant: 'hibiscus/dormant.png',
-      archived: 'hibiscus/archived.png',
-    },
-  },
-  {
-    id: 2,
-    name: 'cactus',
-    spriteStages: {
-      seed: 'cactus/seed.png',
-      seedling: 'cactus/seedling.png',
-      sprout: 'cactus/sprout.png',
-      budding: 'cactus/budding.png',
-      blooming: 'cactus/blooming.png',
-      dormant: 'cactus/dormant.png',
-      archived: 'cactus/archived.png',
-    },
-  },
-  {
-    id: 3,
-    name: 'mushroom',
-    spriteStages: {
-      seed: 'mushroom/seed.png',
-      seedling: 'mushroom/seedling.png',
-      sprout: 'mushroom/sprout.png',
-      budding: 'mushroom/budding.png',
-      blooming: 'mushroom/blooming.png',
-      dormant: 'mushroom/dormant.png',
-      archived: 'mushroom/archived.png',
-    },
-  },
+  { id: 0, name: 'tulip' },
+  { id: 1, name: 'hibiscus' },
+  { id: 2, name: 'cactus' },
+  { id: 3, name: 'mushroom' },
 ];
 
 /**
@@ -132,19 +73,25 @@ const ACCENT_COLORS = [
 
 /**
  * Select an archetype based on UUID.
- * Currently returns archetype 0 (placeholder), but structured for future expansion.
  */
 export const selectArchetype = (id: string): number => {
   const baseSeed = hashString(id);
-  const archetypeIndex = Math.floor(seededRandom(baseSeed, 0) * ARCHETYPES.length);
-  return archetypeIndex;
+  return Math.floor(seededRandom(baseSeed, 0) * ARCHETYPES.length);
 };
 
 /**
  * Get archetype by ID.
  */
 export const getArchetype = (archetypeId: number): Archetype => {
-  return ARCHETYPES[archetypeId] || ARCHETYPES[0];
+  return ARCHETYPES[archetypeId] ?? ARCHETYPES[0];
+};
+
+/**
+ * Get the sprite path for an archetype at a given growth stage.
+ */
+export const getSpritePath = (archetypeId: number, stage: GrowthStage): string => {
+  const archetype = getArchetype(archetypeId);
+  return `${archetype.name}/${stage}.png`;
 };
 
 /**
@@ -176,80 +123,7 @@ export const selectAccentColor = (id: string): string => {
 /**
  * Generate plant visual parameters deterministically from a song UUID.
  * Same UUID always produces same plant.
- * Different UUIDs produce visually different plants.
  */
-export const generatePlant = (id: string, stage: GrowthStage): PlantData => {
-  const baseSeed = hashString(id);
-
-  // Gardener palette colors (plant hue, not accent)
-  const colors = [
-    '#193628', // dark-green
-    '#35632a', // green
-    '#659939', // medium-green
-    '#a2bf5e', // light-green
-    '#254265', // dark-blue
-    '#3975a9', // blue
-    '#51a2c9', // light-blue
-    '#6b4446', // dark-brown
-    '#9c665e', // brown
-    '#984c39', // dark-orange
-    '#c97743', // orange
-  ];
-
-  const colorIndex = Math.floor(seededRandom(baseSeed, 0) * colors.length);
-  const hue = colors[colorIndex];
-
-  // Archetype selection
-  const archetypeId = selectArchetype(id);
-
-  // Accent color selection is deferred to render time via palette ramp swap.
-  // See PlantVisual.tsx and the TODO comment there for the intended approach.
-
-  // Map growth stage to complexity level
-  const stageComplexity: Record<GrowthStage, number> = {
-    seed: 1,
-    seedling: 2,
-    sprout: 3,
-    budding: 4,
-    blooming: 5,
-    dormant: 2,
-    archived: 1,
-  };
-
-  const complexity = stageComplexity[stage];
-
-  // Stem parameters
-  const stemHeightBase = 80 + seededRandom(baseSeed, 1) * 40;
-  const stemHeight = (complexity / 5) * stemHeightBase;
-  const stemCurve = seededRandom(baseSeed, 2) * 40 - 20; // -20 to 20
-
-  // Leaf parameters - gated by complexity
-  const maxLeaves: Record<GrowthStage, number> = {
-    seed: 0,
-    seedling: 2,
-    sprout: 3,
-    budding: 5,
-    blooming: 6,
-    dormant: 1,
-    archived: 0,
-  };
-
-  const leafCount = Math.ceil(seededRandom(baseSeed, 3) * maxLeaves[stage]);
-
-  // Generate leaf angles deterministically
-  const leafAngles: number[] = [];
-  for (let i = 0; i < leafCount; i++) {
-    const angle = -60 + seededRandom(baseSeed, 4 + i) * 120; // -60 to 60 degrees
-    leafAngles.push(angle);
-  }
-
-  return {
-    stemHeight,
-    stemCurve,
-    leafCount,
-    leafAngles,
-    hue,
-    complexity,
-    archetypeId,
-  };
+export const generatePlant = (id: string): PlantData => {
+  return { archetypeId: selectArchetype(id) };
 };
