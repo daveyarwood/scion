@@ -103,6 +103,22 @@ export const getArchetype = (archetypeId: number): Archetype => {
 };
 
 /**
+ * Convert hex color string to RGB object.
+ * Deterministic: invalid hex returns black (0, 0, 0).
+ */
+export const parseHexToRGB = (hex: string): { r: number; g: number; b: number } => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) {
+    return { r: 0, g: 0, b: 0 };
+  }
+  return {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16),
+  };
+};
+
+/**
  * Select an accent color based on UUID.
  * Returns a hex color from the non-green, non-neutral palette.
  */
