@@ -64,10 +64,10 @@ The app works end-to-end and has a coherent aesthetic, but the plant visual syst
 
 ## Goals
 
-- [ ] Add `budding` growth stage to the schema: new migration, update `GrowthStageEnum` in `src/shared/`, update all downstream references (server router, generator stageComplexity map, etc.)
-- [ ] Slice the new sprite sheet (`img/Retro Diffusion - sprite sheet.png`) into 28 sprites (4 archetypes × 7 stages), detect column boundaries automatically, save into `src/client/plant/sprites/{tulip,hibiscus,cactus,mushroom}/`; retire old placeholder sprites
-- [ ] Register all 4 archetypes (tulip, hibiscus, cactus, mushroom) in the archetype registry; update `selectArchetype` to select from all 4
-- [ ] Growth stage promotion UX: replace the stage dropdown in the edit modal with up/down arrow buttons; add the same up/down arrows directly on each song card in the grid; down arrow hidden at `seed`, up arrow hidden at `blooming`; `dormant` and `archived` are not reachable via the promotion UI
+- [x] Add `budding` growth stage to the schema: new migration, update `GrowthStageEnum` in `src/shared/`, update all downstream references (server router, generator stageComplexity map, etc.)
+- [x] Slice the new sprite sheet (`img/Retro Diffusion - sprite sheet.png`) into 28 sprites (4 archetypes × 7 stages), detect column boundaries automatically, save into `src/client/plant/sprites/{tulip,hibiscus,cactus,mushroom}/`; retire old placeholder sprites
+- [x] Register all 4 archetypes (tulip, hibiscus, cactus, mushroom) in the archetype registry; update `selectArchetype` to select from all 4
+- [x] Growth stage promotion UX: replace the stage dropdown in the edit modal with up/down arrow buttons; add the same up/down arrows directly on each song card in the grid; down arrow hidden at `seed`, up arrow hidden at `blooming`; `dormant` and `archived` are not reachable via the promotion UI
 
 ## Scope
 
@@ -76,7 +76,72 @@ The app works end-to-end and has a coherent aesthetic, but the plant visual syst
 
 ## Work Done
 
-<!-- to be filled in by cycle-developer -->
+### Goal 1: Add budding growth stage
+- Created migration `002_add_budding_stage.sql` documenting the schema change
+- Added `'budding'` to `GrowthStageEnum` between `'sprout'` and `'blooming'`
+- Updated `stageComplexity` map: `budding = 4` (between sprout=3 and blooming=5)
+- Updated `maxLeaves` map: `budding = 5` (between sprout=3 and blooming=6)
+- Updated stage list in `SongEditModal` to include the new stage
+- Created placeholder `budding.png` sprite (copy of sprout, to be replaced with real asset later)
+- Updated placeholder archetype in generator to include budding stage
+- Updated all tests to verify budding stage works correctly
+
+### Goal 2: Slice sprite sheet
+- Wrote Python script to detect column boundaries per row using alpha channel transparency
+- Successfully sliced `Retro Diffusion - sprite sheet.png` (256×256) into 28 individual sprites:
+  - 4 archetypes: tulip, hibiscus, cactus, mushroom
+  - 7 growth stages each: seed, seedling, sprout, budding, blooming, dormant, archived
+  - Variable sprite widths per archetype detected automatically
+- Saved slices to `src/client/plant/sprites/{archetype}/{stage}.png`
+- Removed old placeholder sprites from `src/client/plant/sprites/` root
+- Cleaned up intermediate assets from `img/` directory (removed `img/sprites/` and `*_row.png` files)
+
+### Goal 3: Register all 4 archetypes
+- Updated `ARCHETYPES` registry with all 4 plant types: tulip, hibiscus, cactus, mushroom
+- Each archetype has correct sprite paths: `{archetype}/{stage}.png`
+- Renamed placeholder archetype to tulip (archetype 0)
+- Updated `selectArchetype` function to distribute across 4 archetypes instead of 1
+- Updated tests to verify all archetypes are accessible and have correct names
+- Updated selectArchetype bounds checks for 4 archetypes
+- Added comprehensive test coverage for all archetype IDs and names
+
+### Goal 4: Growth stage promotion UX
+**Modal changes:**
+- Replaced growth stage dropdown with up/down arrow buttons (▲/▼)
+- Added stage label display between the buttons
+- Implemented `handlePromote()` and `handleDemote()` functions
+- Down arrow hidden when stage is `seed`
+- Up arrow hidden when stage is `blooming`
+- `dormant` and `archived` remain unreachable via promotion UI (defined separately in `promotableStages` array)
+- Added CSS styling for stage controls with proper button states
+
+**Card changes:**
+- Added up/down arrow buttons to each `SongCard` for quick stage promotion
+- Arrows displayed vertically alongside the stage label
+- Same visibility rules as modal
+- Small, unobtrusive design with hover effects and opacity changes
+- Click handlers stop propagation to avoid triggering card edit modal
+
+**App integration:**
+- Added `onStageChange` callback to `SongCard` component
+- Added `onSongStageChange` callback to `SongGrid` component
+- Implemented `handleSongStageChange()` in App to call `updateMutation`
+- Passed `isLoadingStageChange` prop to show loading state during updates
+- Proper type safety throughout with `GrowthStage` type
+
+### Test results
+- All 81 tests pass (80 existing + 1 new budding stage test)
+- TypeScript strict mode passes
+- `yarn build` produces clean bundle
+- No type coercions used
+
+### Key achievements
+- Growth stage lifecycle now 7 stages (seed → seedling → sprout → budding → blooming → dormant → archived)
+- All 4 real archetypes from the sprite sheet now active and rendering
+- Plant visual system is now complete and looks the part
+- Stage promotion is now a ceremony (arrow buttons) rather than a form field change
+- Archetype distribution is deterministic per UUID (different songs get different plants)
+- Sprite slicing fully automated with per-row gap detection
 
 ## Review Notes
 
