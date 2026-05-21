@@ -36,9 +36,9 @@ export const PlantVisual: React.FC<PlantVisualProps> = ({ id, stage }) => {
       const scaledWidth = img.naturalWidth * scale;
       const scaledHeight = img.naturalHeight * scale;
 
-      // Center the sprite on canvas
+      // Horizontally center, vertically bottom-align the sprite
       const x = (canvas.width - scaledWidth) / 2;
-      const y = (canvas.height - scaledHeight) / 2;
+      const y = canvas.height - scaledHeight;
 
       ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
 
