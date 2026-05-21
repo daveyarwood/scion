@@ -13,6 +13,7 @@ export interface PlantData {
 interface Archetype {
   id: number;
   name: string;
+  accentRamp: [string, string, string, string];
 }
 
 /**
@@ -41,15 +42,49 @@ const seededRandom = (seed: number, index: number = 0): number => {
 };
 
 const ARCHETYPES: Archetype[] = [
-  { id: 0, name: 'tulip' },
-  { id: 1, name: 'hibiscus' },
-  { id: 2, name: 'cactus' },
-  { id: 3, name: 'mushroom' },
+  {
+    id: 0,
+    name: 'tulip',
+    accentRamp: ['#4b192b', '#812737', '#c54c86', '#e67392'],
+  },
+  {
+    id: 1,
+    name: 'hibiscus',
+    accentRamp: ['#4b192b', '#812737', '#c54c86', '#e67392'],
+  },
+  {
+    id: 2,
+    name: 'cactus',
+    accentRamp: ['#4b192b', '#812737', '#c54c86', '#e67392'],
+  },
+  {
+    id: 3,
+    name: 'mushroom',
+    accentRamp: ['#4b192b', '#812737', '#c54c86', '#e67392'],
+  },
+];
+
+/**
+ * Accent color ramps (shadow → light → lighter → highlight).
+ * Each ramp is a 4-color progression for palette swapping.
+ */
+const ACCENT_RAMPS: Array<[string, string, string, string]> = [
+  // Blue ramp
+  ['#254265', '#3975a9', '#51a2c9', '#81c6d8'],
+  // Purple/Pink ramp (original accent colors in sprites)
+  ['#492850', '#823a63', '#c54c86', '#e67392'],
+  // Red ramp
+  ['#af3233', '#e14c43', '#e47d4b', '#f4c37d'],
+  // Brown/Tan ramp
+  ['#6b4446', '#9c665e', '#d4a78d', '#ecc9ab'],
+  // Rust/Orange ramp
+  ['#984c39', '#c97743', '#ecaa66', '#f4c37d'],
 ];
 
 /**
  * Accent colors (non-green, non-neutral Gardener palette colors).
  * These are available for palette-swapping from #c54c86 in sprites.
+ * Deprecated: use ACCENT_RAMPS instead.
  */
 const ACCENT_COLORS = [
   '#254265', // dark-blue
@@ -118,6 +153,16 @@ export const selectAccentColor = (id: string): string => {
   const baseSeed = hashString(id);
   const colorIndex = Math.floor(seededRandom(baseSeed, 1) * ACCENT_COLORS.length);
   return ACCENT_COLORS[colorIndex];
+};
+
+/**
+ * Select an accent color ramp based on UUID.
+ * Returns a 4-color ramp (shadow → light → lighter → highlight) for palette remapping.
+ */
+export const selectAccentRamp = (id: string): [string, string, string, string] => {
+  const baseSeed = hashString(id);
+  const rampIndex = Math.floor(seededRandom(baseSeed, 1) * ACCENT_RAMPS.length);
+  return ACCENT_RAMPS[rampIndex];
 };
 
 /**

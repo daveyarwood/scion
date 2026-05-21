@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { GrowthStage } from '../../shared/index';
-import { generatePlant, getSpritePath } from '../plant/generator';
+import { generatePlant, getSpritePath, selectAccentRamp, parseHexToRGB, getArchetype } from '../plant/generator';
 import './PlantVisual.css';
 
 interface PlantVisualProps {
@@ -42,16 +42,52 @@ export const PlantVisual: React.FC<PlantVisualProps> = ({ id, stage }) => {
 
       ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
 
-      // TODO: palette ramp swap
-      // Each archetype should declare an `accentRamp` — an ordered list of source
-      // shades used for flowers/fruit in the sprite (shadow → highlight). At render
-      // time, the UUID deterministically selects a target Gardener palette ramp and
-      // each source shade is remapped to the corresponding target shade positionally.
-      //
-      // This requires palette-constrained sprites (exact indexed colors, no
-      // anti-aliasing) produced via Aseprite. The current placeholder sprites use
-      // hundreds of anti-aliased colors so no single-color swap is meaningful.
-      // Implement once real archetype sprites are available.
+      // Palette ramp swap: remap accent pixels from source ramp to target ramp
+      const archetype = getArchetype(plantData.archetypeId);
+      const sourceRamp = archetype.accentRamp;
+      const targetRamp = selectAccentRamp(id);
+
+      // Only perform palette swap if source and target ramps differ
+      if (sourceRamp !== targetRamp) {
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+
+        // Convert source and target ramp hex colors to RGB
+        const sourceRGB = sourceRamp.map(parseHexToRGB);
+        const targetRGB = targetRamp.map(parseHexToRGB);
+
+        // Map source RGB values to target RGB values
+        const colorMap = new Map<number, { r: number; g: number; b: number }>();
+        sourceRGB.forEach((rgb, index) => {
+          // Create a key from RGB values to match against pixel data
+          const key = (rgb.r << 16) | (rgb.g << 8) | rgb.b;
+          colorMap.set(key, targetRGB[index]);
+        });
+
+        // Iterate through pixels and remap accent colors
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          const a = data[i + 3];
+
+          // Skip fully transparent pixels
+          if (a === 0) continue;
+
+          // Check if this pixel matches any source ramp color
+          const key = (r << 16) | (g << 8) | b;
+          const targetColor = colorMap.get(key);
+
+          if (targetColor) {
+            data[i] = targetColor.r;
+            data[i + 1] = targetColor.g;
+            data[i + 2] = targetColor.b;
+            // Keep alpha unchanged
+          }
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+      }
     };
 
     img.onerror = () => {
