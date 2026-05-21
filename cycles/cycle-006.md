@@ -65,10 +65,10 @@ The app is visually coherent and fully functional end-to-end. Every song display
 
 ## Goals
 
-- [ ] Implement palette ramp swap in `PlantVisual.tsx`: each archetype declares an `accentRamp` (4 source shades shadow→highlight), `selectAccentColor` picks a target Gardener ramp by UUID, and `getImageData`/`putImageData` remaps accent pixels at render time
-- [ ] Fix duplicated `promotableStages` arrays in `SongCard.tsx` and `SongEditModal.tsx` — import `PROMOTABLE_STAGES` from `stageTransitions.ts` instead
-- [ ] Song card body preview: clamp body text to 2–3 lines with CSS `line-clamp` on cards
-- [ ] Empty state polish: replace the generic fallback with a garden-themed prompt; optionally include a small sprite illustration
+- [x] Implement palette ramp swap in `PlantVisual.tsx`: each archetype declares an `accentRamp` (4 source shades shadow→highlight), `selectAccentColor` picks a target Gardener ramp by UUID, and `getImageData`/`putImageData` remaps accent pixels at render time
+- [x] Fix duplicated `promotableStages` arrays in `SongCard.tsx` and `SongEditModal.tsx` — import `PROMOTABLE_STAGES` from `stageTransitions.ts` instead
+- [x] Song card body preview: clamp body text to 2–3 lines with CSS `line-clamp` on cards
+- [x] Empty state polish: replace the generic fallback with a garden-themed prompt; optionally include a small sprite illustration
 
 ## Scope
 
@@ -77,7 +77,48 @@ The app is visually coherent and fully functional end-to-end. Every song display
 
 ## Work Done
 
-<!-- to be filled in by cycle-developer -->
+**Goal 1: Palette ramp swap in `PlantVisual.tsx`**
+- Added `accentRamp` field to `Archetype` interface as a 4-tuple of hex colors (shadow→light→lighter→highlight)
+- Created `ACCENT_RAMPS` array with 5 target color ramps: blue, purple/pink, red, brown/tan, and rust/orange
+- Added `selectAccentRamp(id: string)` function that deterministically selects a target ramp by UUID
+- Implemented pixel remapping in `PlantVisual.tsx` using `getImageData`/`putImageData`:
+  - After drawing the sprite, extract the canvas image data
+  - Build a color map from source ramp RGB values to target ramp RGB values
+  - Iterate through pixels and remap exact RGB matches
+  - Use `putImageData` to write remapped pixels back to canvas
+- All sprite accent pixels now automatically remap to unique per-UUID colors (when using palette-constrained sprites)
+
+**Goal 2: Fix duplicated `promotableStages`**
+- Updated `SongCard.tsx` to import `PROMOTABLE_STAGES`, `getPromotedStage`, and `getDemotedStage` from `stageTransitions.ts`
+- Updated `SongEditModal.tsx` with the same imports
+- Replaced local stage index logic with calls to `getPromotedStage()` and `getDemotedStage()` functions
+- Removed duplicate array definitions from both components
+
+**Goal 3: Song card body preview**
+- Verified that `.song-body` CSS class already has proper line-clamping:
+  - `display: -webkit-box` (enables line-clamp support)
+  - `-webkit-line-clamp: 3` (clamps to 3 lines, which meets the 2–3 line requirement)
+  - `-webkit-box-orient: vertical` (required for line-clamp to work)
+  - `overflow: hidden` (hides overflow text)
+- Goal was already complete; no changes needed
+
+**Goal 4: Empty state polish**
+- Replaced generic "No seeds yet" message with garden-themed UI in `SongGrid.tsx`
+- Added `PlantVisual` import to render a seed sprite in the empty state
+- Updated empty state markup with:
+  - `.empty-state-illustration` div containing a `<PlantVisual id="seed-placeholder" stage="seed" />`
+  - Heading: "Your garden is empty"
+  - Prompt: "Plant your first seed to get started"
+- Added comprehensive CSS styling in `SongGrid.css`:
+  - `.empty-state` container with centered text and padding
+  - `.empty-state-illustration` with flexbox centering and reduced opacity (0.6)
+  - Responsive styling for tablet and mobile breakpoints
+  - Typography matching the lo-fi aesthetic (Courier New font, dark-green heading)
+
+**Test Results:**
+- All 116 tests pass (39 stageTransitions + 32 generator + 14 shared + 9 dateFormat + 10 router + 12 migrate)
+- Build succeeds with no errors
+- No regressions introduced
 
 ## Review Notes
 
