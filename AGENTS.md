@@ -30,28 +30,30 @@ scion/
 
 ## Current state
 
-Full-stack working application with garden-themed UI and pixel art plant sprites (cycle 005). The following is in place and working:
+Full-stack working application with garden-themed UI, pixel art plant sprites, and per-song palette-swapped accent colors (cycle 006). The following is in place and working:
 
 - Monorepo with TypeScript (strict, project references), Vite, Vitest, ESLint, Prettier
 - `migrations/001_initial_schema.sql` — `songs` table (`id`, `title`, `body`, `plot_id`, `growth_stage`, `created_at`, `updated_at`) plus `schema_migrations` tracking table; `migrations/002_add_budding_stage.sql` documents the `budding` stage addition
 - `scripts/migrate.ts` — migration runner, 12 passing tests
+- `scripts/check-palette.py` — verifies PNG sprites use only the 10 allowed palette colors
+- `scripts/slice-sprites.py` — slices a sprite sheet into individual archetype/stage PNGs using alpha-gap detection
 - `yarn dev` runs Vite client + Express server concurrently via `concurrently` (no separate dev.ts script)
 - `src/shared/index.ts` — `GrowthStageEnum` (7 stages: seed → seedling → sprout → budding → blooming → dormant → archived), `SongSchema`, `CreateSongInput`, `UpdateSongInput`, `UpdateSongWithId`; 14 passing tests
 - `src/server/` — Express + tRPC server with full song CRUD (`song.list`, `song.create`, `song.get`, `song.update`, `song.delete`); raw SQL via better-sqlite3; zero type coercions; 10 passing tests
-- `src/client/` — React app with tRPC + React Query client, Gardener-palette lo-fi UI, responsive song-card grid, "New Seed" form, click-to-edit modal, direct stage promotion/demotion arrows on each card and in the modal
-- `src/client/plant/generator.ts` — archetype registry with 4 archetypes (tulip, hibiscus, cactus, mushroom); deterministic archetype/accent-color selection seeded by UUID; exports `selectArchetype`, `getArchetype`, `getSpritePath`, `selectAccentColor`, `parseHexToRGB`, `generatePlant`; 32 passing tests
+- `src/client/` — React app with tRPC + React Query client, Gardener-palette lo-fi UI, responsive song-card grid, "New Seed" form, click-to-edit modal, direct stage promotion/demotion arrows on each card and in the modal; garden-themed empty state with seed sprite illustration
+- `src/client/plant/generator.ts` — archetype registry with 4 archetypes (tulip, hibiscus, cactus, mushroom); deterministic archetype and accent ramp selection seeded by UUID; exports `selectArchetype`, `getArchetype`, `getSpritePath`, `selectAccentColor`, `selectAccentRamp`, `parseHexToRGB`, `generatePlant`; 39 passing tests
 - `src/client/plant/stageTransitions.ts` — pure stage transition utilities (`getPromotedStage`, `getDemotedStage`, `canPromote`, `canDemote`, `PROMOTABLE_STAGES`); 39 passing tests
 - `src/client/components/dateFormat.ts` — pure date formatting utility; 9 passing tests
-- `src/client/components/PlantVisual.tsx` — canvas-based pixel art sprite renderer; nearest-neighbor scaling (4×); all 4 archetypes wired; palette ramp swap deferred (sprites are not yet palette-constrained)
+- `src/client/components/PlantVisual.tsx` — canvas-based pixel art sprite renderer; nearest-neighbor scaling (3×); all 4 archetypes wired; palette ramp swap implemented via `getImageData`/`putImageData` — each song's accent pixels (petals, mushroom caps) are remapped to a UUID-derived color ramp at render time
 - `src/client/plant/sprites/{tulip,hibiscus,cactus,mushroom}/` — 7 PNG sprites per archetype (28 total); bundled via Vite `import.meta.url`
 - `src/client/plant/sprites/SPRITES.md` — sprite generation prompt, Aseprite cleanup workflow, palette constraints, and slicing instructions
-- 116 tests total, all passing; TypeScript strict mode passes; build produces a working bundle
+- 123 tests total, all passing; TypeScript strict mode passes; build produces a working bundle
 
 Not yet built (deferred):
 - Audio file uploads, plots UI, withering/decay, Alda integration
 - Client-side routing (React Router); currently a single-page app with modal for edit
-- Palette ramp swap in `PlantVisual.tsx` — infrastructure (`selectAccentColor`, `parseHexToRGB`, `accentRamp` design in SPRITES.md) is ready; requires palette-constrained sprites produced via Aseprite cleanup workflow
 - Automatic growth stage advancement (currently manual via arrow buttons)
+- **Note**: The palette ramp swap is implemented in `PlantVisual.tsx`, but the current sprites were not cleaned up through the Aseprite palette-constraint workflow. Accent pixels in the sprites may not exactly match the 4 source ramp colors, so the pixel-level remap may not fire reliably on all sprites. The Aseprite cleanup workflow is documented in SPRITES.md.
 
 ## Coding conventions
 
