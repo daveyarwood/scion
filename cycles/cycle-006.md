@@ -65,11 +65,15 @@ The app is visually coherent and fully functional end-to-end. Every song display
 
 ## Goals
 
-<!-- to be filled in during human planning conversation -->
+- [ ] Implement palette ramp swap in `PlantVisual.tsx`: each archetype declares an `accentRamp` (4 source shades shadow→highlight), `selectAccentColor` picks a target Gardener ramp by UUID, and `getImageData`/`putImageData` remaps accent pixels at render time
+- [ ] Fix duplicated `promotableStages` arrays in `SongCard.tsx` and `SongEditModal.tsx` — import `PROMOTABLE_STAGES` from `stageTransitions.ts` instead
+- [ ] Song card body preview: clamp body text to 2–3 lines with CSS `line-clamp` on cards
+- [ ] Empty state polish: replace the generic fallback with a garden-themed prompt; optionally include a small sprite illustration
 
 ## Scope
 
-<!-- to be filled in during human planning conversation -->
+- In scope: palette ramp swap, promotableStages deduplication, card body preview, empty state polish
+- Deferred: React Router, plots UI, audio uploads, withering/decay
 
 ## Work Done
 
