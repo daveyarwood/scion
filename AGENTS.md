@@ -30,24 +30,28 @@ scion/
 
 ## Current state
 
-Full-stack working application with garden-themed UI and pixel art plant sprites (cycle 004). The following is in place and working:
+Full-stack working application with garden-themed UI and pixel art plant sprites (cycle 005). The following is in place and working:
 
 - Monorepo with TypeScript (strict, project references), Vite, Vitest, ESLint, Prettier
-- `migrations/001_initial_schema.sql` — `songs` table (`id`, `title`, `body`, `plot_id`, `growth_stage`, `created_at`, `updated_at`) plus `schema_migrations` tracking table
+- `migrations/001_initial_schema.sql` — `songs` table (`id`, `title`, `body`, `plot_id`, `growth_stage`, `created_at`, `updated_at`) plus `schema_migrations` tracking table; `migrations/002_add_budding_stage.sql` documents the `budding` stage addition
 - `scripts/migrate.ts` — migration runner, 12 passing tests
 - `yarn dev` runs Vite client + Express server concurrently via `concurrently` (no separate dev.ts script)
-- `src/shared/index.ts` — `GrowthStageEnum`, `SongSchema`, `CreateSongInput`, `UpdateSongInput`, `UpdateSongWithId`; 14 passing tests
+- `src/shared/index.ts` — `GrowthStageEnum` (7 stages: seed → seedling → sprout → budding → blooming → dormant → archived), `SongSchema`, `CreateSongInput`, `UpdateSongInput`, `UpdateSongWithId`; 14 passing tests
 - `src/server/` — Express + tRPC server with full song CRUD (`song.list`, `song.create`, `song.get`, `song.update`, `song.delete`); raw SQL via better-sqlite3; zero type coercions; 10 passing tests
-- `src/client/` — React app with tRPC + React Query client, Gardener-palette lo-fi UI, responsive song-card grid, "New Seed" form, click-to-edit modal with stage selector and delete
-- `src/client/plant/generator.ts` — archetype registry, deterministic archetype/accent-color selection seeded by UUID; exports `selectArchetype`, `getArchetype`, `selectAccentColor`, `parseHexToRGB`; tests cover all exported functions
-- `src/client/components/PlantVisual.tsx` — canvas-based pixel art sprite renderer; nearest-neighbor scaling (4×); one placeholder archetype wired, palette ramp swap deferred
-- `src/client/plant/sprites/` — six PNG sprites for the placeholder archetype (seed through archived); bundled via Vite `import.meta.url`
-- 80 tests total, all passing; TypeScript strict mode passes; build produces a working bundle
+- `src/client/` — React app with tRPC + React Query client, Gardener-palette lo-fi UI, responsive song-card grid, "New Seed" form, click-to-edit modal, direct stage promotion/demotion arrows on each card and in the modal
+- `src/client/plant/generator.ts` — archetype registry with 4 archetypes (tulip, hibiscus, cactus, mushroom); deterministic archetype/accent-color selection seeded by UUID; exports `selectArchetype`, `getArchetype`, `getSpritePath`, `selectAccentColor`, `parseHexToRGB`, `generatePlant`; 32 passing tests
+- `src/client/plant/stageTransitions.ts` — pure stage transition utilities (`getPromotedStage`, `getDemotedStage`, `canPromote`, `canDemote`, `PROMOTABLE_STAGES`); 39 passing tests
+- `src/client/components/dateFormat.ts` — pure date formatting utility; 9 passing tests
+- `src/client/components/PlantVisual.tsx` — canvas-based pixel art sprite renderer; nearest-neighbor scaling (4×); all 4 archetypes wired; palette ramp swap deferred (sprites are not yet palette-constrained)
+- `src/client/plant/sprites/{tulip,hibiscus,cactus,mushroom}/` — 7 PNG sprites per archetype (28 total); bundled via Vite `import.meta.url`
+- `src/client/plant/sprites/SPRITES.md` — sprite generation prompt, Aseprite cleanup workflow, palette constraints, and slicing instructions
+- 116 tests total, all passing; TypeScript strict mode passes; build produces a working bundle
 
 Not yet built (deferred):
 - Audio file uploads, plots UI, withering/decay, Alda integration
 - Client-side routing (React Router); currently a single-page app with modal for edit
-- Automatic growth stage advancement (currently manual via the edit modal dropdown)
+- Palette ramp swap in `PlantVisual.tsx` — infrastructure (`selectAccentColor`, `parseHexToRGB`, `accentRamp` design in SPRITES.md) is ready; requires palette-constrained sprites produced via Aseprite cleanup workflow
+- Automatic growth stage advancement (currently manual via arrow buttons)
 
 ## Coding conventions
 
