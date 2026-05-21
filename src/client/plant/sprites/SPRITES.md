@@ -141,13 +141,64 @@ slicing.
    loading the wrong palette before converting.
 
 7. **Slice into individual sprites**
-   - Use the column-boundary detection approach from cycle 005 (alpha gap analysis) or
-     slice manually if the sheet has uniform column widths
-   - Output files to `src/client/plant/sprites/{archetype}/{stage}.png`
+
+   Run the following Python snippet from the repo root. It detects row bands and column
+   segments by alpha gap analysis, crops each sprite to its tight content bounding box,
+   and bottom-aligns it on a 64px-tall canvas before saving.
+
+   ```python
+   from PIL import Image
+   import numpy as np
+
+   img = Image.open('img/<your-aseprite-export>.png').convert('RGBA')
+   arr = np.array(img)
+   h, w = arr.shape[:2]
+   opaque = arr[:,:,3] > 10
+
+   def find_bands(has_content):
+       in_band = False; bands = []
+       for i, v in enumerate(has_content):
+           if v and not in_band: start = i; in_band = True
+           elif not v and in_band: bands.append((start, i)); in_band = False
+       if in_band: bands.append((start, len(has_content)))
+       return bands
+
+   archetypes = ['tulip', 'hibiscus', 'cactus', 'mushroom']
+   stages = ['seed', 'seedling', 'sprout', 'budding', 'blooming', 'dormant', 'archived']
+   CANVAS_H = 64
+
+   row_bands = find_bands(opaque.any(axis=1))
+   assert len(row_bands) == 4, f"Expected 4 rows, got {len(row_bands)}"
+
+   for i, (rs, re) in enumerate(row_bands):
+       row_arr = arr[rs:re]
+       col_segs = find_bands((row_arr[:,:,3] > 10).any(axis=0))
+       assert len(col_segs) == 7, f"Expected 7 cols for {archetypes[i]}, got {len(col_segs)}"
+       for j, (cs, ce) in enumerate(col_segs):
+           sprite = arr[rs:re, cs:ce]
+           # Tight crop to content bounding box
+           opq = sprite[:,:,3] > 10
+           rows_c = np.where(opq.any(axis=1))[0]
+           cols_c = np.where(opq.any(axis=0))[0]
+           cropped = sprite[rows_c[0]:rows_c[-1]+1, cols_c[0]:cols_c[-1]+1]
+           ch, cw = cropped.shape[:2]
+           # Bottom-align on fixed-height canvas
+           canvas = np.zeros((CANVAS_H, cw, 4), dtype=np.uint8)
+           canvas[CANVAS_H-ch:] = cropped
+           Image.fromarray(canvas).save(
+               f'src/client/plant/sprites/{archetypes[i]}/{stages[j]}.png'
+           )
+           print(f'{archetypes[i]}/{stages[j]}: {cw}x{ch} -> {cw}x{CANVAS_H}')
+   ```
+
+   After slicing, run the palette compliance check from step 6 against the individual
+   sprite files to confirm nothing went wrong.
+
+   **Notes on the slicing approach:**
+   - Retro Diffusion does not guarantee consistent vertical alignment within rows — some
+     archetypes are bottom-aligned, others are centered. The tight-crop + bottom-align
+     step is essential; skipping it produces inconsistent ground lines across archetypes.
+   - Always slice from the Aseprite-exported file, not from the raw Retro Diffusion
+     output. The raw sheet is in `img/` for reference but must not be sliced directly.
    - Stage filenames must match the `GrowthStage` enum values exactly:
      `seed`, `seedling`, `sprout`, `budding`, `blooming`, `dormant`, `archived`
-
-   > **⚠ Known issue — slicing algorithm needs improvement**
-   > The current slicing approach has known problems that have not yet been fixed.
-   > Before re-slicing a new sheet, check the cycle log for a task describing exactly
-   > what is wrong and fix the slicer first.
