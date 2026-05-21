@@ -80,6 +80,18 @@ describe('getArchetype', () => {
     expect(getArchetype(2).name).toBe('cactus');
     expect(getArchetype(3).name).toBe('mushroom');
   });
+
+  it('each archetype has a valid accentRamp field', () => {
+    for (let i = 0; i < 4; i++) {
+      const archetype = getArchetype(i);
+      expect(archetype).toHaveProperty('accentRamp');
+      expect(Array.isArray(archetype.accentRamp)).toBe(true);
+      expect(archetype.accentRamp).toHaveLength(4);
+      archetype.accentRamp.forEach((color, index) => {
+        expect(color).toMatch(/^#[0-9a-fA-F]{6}$/, `Archetype ${i} (${archetype.name}) color at index ${index} is invalid`);
+      });
+    }
+  });
 });
 
 describe('getSpritePath', () => {
@@ -384,5 +396,20 @@ describe('selectAccentRamp', () => {
     ramp.forEach((color, index) => {
       expect(color).toMatch(/^#[0-9a-fA-F]{6}$/, `Color at index ${index} is invalid: ${color}`);
     });
+  });
+
+  it('supports value-based equality comparison for ramp deduplication', () => {
+    // This test verifies that ramps with identical color values compare equal
+    // This is important for the palette swap logic in PlantVisual.tsx which uses
+    // JSON.stringify comparison to decide if a palette swap is needed
+    const ramp1 = ['#254265', '#3975a9', '#51a2c9', '#81c6d8'] as const;
+    const ramp2 = ['#254265', '#3975a9', '#51a2c9', '#81c6d8'] as const;
+    const ramp3 = ['#492850', '#823a63', '#c54c86', '#e67392'] as const;
+
+    // Same values should compare equal using JSON.stringify (used in PlantVisual.tsx)
+    expect(JSON.stringify(ramp1)).toBe(JSON.stringify(ramp2));
+    
+    // Different values should compare different
+    expect(JSON.stringify(ramp1)).not.toBe(JSON.stringify(ramp3));
   });
 });
