@@ -31,8 +31,8 @@ export const PlantVisual: React.FC<PlantVisualProps> = ({ id, stage }) => {
       // Disable smoothing for pixel-perfect rendering
       ctx.imageSmoothingEnabled = false;
 
-      // Draw sprite at 4x scale using the image's natural dimensions
-      const scale = 4;
+      // Draw sprite at 3x scale using the image's natural dimensions
+      const scale = 3;
       const scaledWidth = img.naturalWidth * scale;
       const scaledHeight = img.naturalHeight * scale;
 
@@ -63,5 +63,5 @@ export const PlantVisual: React.FC<PlantVisualProps> = ({ id, stage }) => {
     img.src = spritePath;
   }, [stage, plantData.archetypeId]);
 
-  return <canvas ref={canvasRef} className="plant-visual" width={180} height={180} />;
+  return <canvas ref={canvasRef} className="plant-visual" width={128} height={192} />;
 };
