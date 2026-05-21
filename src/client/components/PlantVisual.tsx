@@ -97,7 +97,7 @@ export const PlantVisual: React.FC<PlantVisualProps> = ({ id, stage }) => {
     };
 
     img.src = spritePath;
-  }, [stage, plantData.archetypeId]);
+  }, [stage, plantData.archetypeId, id]);
 
   return <canvas ref={canvasRef} className="plant-visual" width={128} height={192} />;
 };

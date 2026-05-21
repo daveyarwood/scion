@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Song, GrowthStage } from '../../shared/index';
 import { PlantVisual } from './PlantVisual';
 import { formatDate } from './dateFormat';
-import { PROMOTABLE_STAGES, getPromotedStage, getDemotedStage } from '../plant/stageTransitions';
+import { getPromotedStage, getDemotedStage } from '../plant/stageTransitions';
 import './SongCard.css';
 
 interface SongCardProps {

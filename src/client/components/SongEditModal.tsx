@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Song, GrowthStage, UpdateSongWithId } from '../../shared/index';
-import { PROMOTABLE_STAGES, getPromotedStage, getDemotedStage } from '../plant/stageTransitions';
+import { getPromotedStage, getDemotedStage } from '../plant/stageTransitions';
 import './SongEditModal.css';
 
 interface SongEditModalProps {
