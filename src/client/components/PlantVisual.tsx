@@ -48,7 +48,8 @@ export const PlantVisual: React.FC<PlantVisualProps> = ({ id, stage }) => {
       const targetRamp = selectAccentRamp(id);
 
       // Only perform palette swap if source and target ramps differ
-      if (sourceRamp !== targetRamp) {
+      const rampsAreDifferent = JSON.stringify(sourceRamp) !== JSON.stringify(targetRamp);
+      if (rampsAreDifferent) {
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const data = imageData.data;
 
