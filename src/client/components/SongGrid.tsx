@@ -1,5 +1,6 @@
 import React from 'react';
 import { Song, GrowthStage } from '../../shared/index';
+import { PlantVisual } from './PlantVisual';
 import { SongCard } from './SongCard';
 import './SongGrid.css';
 
@@ -19,7 +20,11 @@ export const SongGrid: React.FC<SongGridProps> = ({
   if (songs.length === 0) {
     return (
       <div className="empty-state">
-        <p>No seeds yet. Create your first song idea to get started!</p>
+        <div className="empty-state-illustration">
+          <PlantVisual id="seed-placeholder" stage="seed" />
+        </div>
+        <h2>Your garden is empty</h2>
+        <p>Plant your first seed to get started</p>
       </div>
     );
   }

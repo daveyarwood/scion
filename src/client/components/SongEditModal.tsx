@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Song, GrowthStage, UpdateSongWithId } from '../../shared/index';
+import { PROMOTABLE_STAGES, getPromotedStage, getDemotedStage } from '../plant/stageTransitions';
 import './SongEditModal.css';
 
 interface SongEditModalProps {
@@ -55,19 +56,17 @@ export const SongEditModal: React.FC<SongEditModalProps> = ({
   };
 
   // Helper function to get next/prev stages (excluding dormant and archived)
-  const promotableStages: GrowthStage[] = ['seed', 'seedling', 'sprout', 'budding', 'blooming'];
-
   const handlePromote = () => {
-    const currentIndex = promotableStages.indexOf(growthStage);
-    if (currentIndex >= 0 && currentIndex < promotableStages.length - 1) {
-      setGrowthStage(promotableStages[currentIndex + 1]);
+    const newStage = getPromotedStage(growthStage);
+    if (newStage) {
+      setGrowthStage(newStage);
     }
   };
 
   const handleDemote = () => {
-    const currentIndex = promotableStages.indexOf(growthStage);
-    if (currentIndex > 0) {
-      setGrowthStage(promotableStages[currentIndex - 1]);
+    const newStage = getDemotedStage(growthStage);
+    if (newStage) {
+      setGrowthStage(newStage);
     }
   };
 

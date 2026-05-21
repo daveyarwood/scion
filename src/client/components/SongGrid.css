@@ -5,15 +5,64 @@
   margin-top: 2rem;
 }
 
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  margin-top: 2rem;
+}
+
+.empty-state-illustration {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.empty-state-illustration canvas {
+  opacity: 0.6;
+}
+
+.empty-state h2 {
+  font-size: 1.5rem;
+  color: var(--color-dark-green);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.empty-state p {
+  font-size: 1rem;
+  color: var(--color-dark-gray);
+  font-family: 'Courier New', monospace;
+}
+
 @media (max-width: 768px) {
   .song-grid {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 1rem;
+  }
+
+  .empty-state {
+    padding: 3rem 1.5rem;
+  }
+
+  .empty-state h2 {
+    font-size: 1.25rem;
   }
 }
 
 @media (max-width: 480px) {
   .song-grid {
     grid-template-columns: 1fr;
+  }
+
+  .empty-state {
+    padding: 2rem 1rem;
+  }
+
+  .empty-state h2 {
+    font-size: 1.1rem;
+  }
+
+  .empty-state p {
+    font-size: 0.9rem;
   }
 }

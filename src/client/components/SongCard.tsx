@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Song, GrowthStage } from '../../shared/index';
 import { PlantVisual } from './PlantVisual';
 import { formatDate } from './dateFormat';
+import { PROMOTABLE_STAGES, getPromotedStage, getDemotedStage } from '../plant/stageTransitions';
 import './SongCard.css';
 
 interface SongCardProps {
@@ -19,22 +20,18 @@ export const SongCard: React.FC<SongCardProps> = ({
 }) => {
   const [pressing, setPressing] = useState(false);
 
-  const promotableStages: GrowthStage[] = ['seed', 'seedling', 'sprout', 'budding', 'blooming'];
-
   const handlePromote = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const currentIndex = promotableStages.indexOf(song.growth_stage);
-    if (currentIndex >= 0 && currentIndex < promotableStages.length - 1) {
-      const newStage = promotableStages[currentIndex + 1];
+    const newStage = getPromotedStage(song.growth_stage);
+    if (newStage) {
       onStageChange?.(newStage);
     }
   };
 
   const handleDemote = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const currentIndex = promotableStages.indexOf(song.growth_stage);
-    if (currentIndex > 0) {
-      const newStage = promotableStages[currentIndex - 1];
+    const newStage = getDemotedStage(song.growth_stage);
+    if (newStage) {
       onStageChange?.(newStage);
     }
   };
