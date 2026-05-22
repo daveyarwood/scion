@@ -9,22 +9,21 @@
  */
 
 import * as readline from 'readline';
+import { z } from 'zod';
 
 const BASE_URL = 'http://localhost:3000/trpc';
 
-interface Song {
-  id: string;
-  title: string;
-}
+const SongSummarySchema = z.object({ id: z.string(), title: z.string() });
+const ListResponseSchema = z.object({ result: z.object({ data: z.array(SongSummarySchema) }) });
 
-const listSongs = async (): Promise<Song[]> => {
+const listSongs = async (): Promise<z.infer<typeof SongSummarySchema>[]> => {
   const response = await fetch(`${BASE_URL}/song.list`, {
     headers: { 'Content-Type': 'application/json' },
   });
   if (!response.ok) {
     throw new Error(`Failed to list songs: ${response.status} ${await response.text()}`);
   }
-  const data = (await response.json()) as { result: { data: Song[] } };
+  const data = ListResponseSchema.parse(await response.json());
   return data.result.data;
 };
 

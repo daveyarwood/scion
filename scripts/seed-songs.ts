@@ -10,6 +10,7 @@
  */
 
 import { execSync } from 'child_process';
+import { z } from 'zod';
 
 const BASE_URL = 'http://localhost:3000/trpc';
 const DEFAULT_COUNT = 20;
@@ -50,6 +51,8 @@ const getWords = (n: number): string[] => {
     .filter((w) => w.length >= 3 && w.length <= 10);
 };
 
+const CreateResponseSchema = z.object({ result: z.object({ data: z.object({ id: z.string() }) }) });
+
 const createSong = async (title: string, body: string, growthStage: string): Promise<void> => {
   // Create the song (always starts as 'seed')
   const createResponse = await fetch(`${BASE_URL}/song.create`, {
@@ -63,7 +66,7 @@ const createSong = async (title: string, body: string, growthStage: string): Pro
     throw new Error(`Failed to create "${title}": ${createResponse.status} ${text}`);
   }
 
-  const created = (await createResponse.json()) as { result: { data: { id: string } } };
+  const created = CreateResponseSchema.parse(await createResponse.json());
   const id = created.result.data.id;
 
   // Update the growth stage if not 'seed'
