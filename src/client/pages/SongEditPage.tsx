@@ -10,12 +10,9 @@ import './SongEditPage.css';
 export const SongEditPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  
-  if (!id) {
-    return <div>Invalid song ID</div>;
-  }
 
-  const songQuery = trpc.song.get.useQuery(id);
+  // Initialize queries before any conditional returns
+  const songQuery = trpc.song.get.useQuery(id || '', { enabled: !!id });
   const updateMutation = trpc.song.update.useMutation({
     onSuccess: () => {
       songQuery.refetch();
@@ -27,6 +24,7 @@ export const SongEditPage: React.FC = () => {
     },
   });
 
+  // Initialize state before any conditional returns
   const [title, setTitle] = useState<string>('');
   const [body, setBody] = useState<string>('');
   const [growthStage, setGrowthStage] = useState<GrowthStage>('seed');
@@ -44,6 +42,11 @@ export const SongEditPage: React.FC = () => {
       setInitialized(true);
     }
   }, [songQuery.data, initialized]);
+
+  // Check for invalid ID after hooks
+  if (!id) {
+    return <div>Invalid song ID</div>;
+  }
 
   if (songQuery.isLoading) {
     return <div className="loading">loading song...</div>;
