@@ -4,7 +4,7 @@ import { UpdateSongWithId, GrowthStage } from '../../shared/index';
 import { trpc } from '../trpc';
 import { getPromotedStage, getDemotedStage } from '../plant/stageTransitions';
 import { PlantVisual } from '../components/PlantVisual';
-import '../components/SongEditModal.css'; // Reuse modal styles
+import { generateTitle } from '../../shared/titleGenerator';
 import './SongEditPage.css';
 
 export const SongEditPage: React.FC = () => {
@@ -153,14 +153,25 @@ export const SongEditPage: React.FC = () => {
             <form onSubmit={handleSave} className="modal-form">
               <div className="form-group">
                 <label htmlFor="song-edit-title">title *</label>
-                <input
-                  id="song-edit-title"
-                  type="text"
-                  value={title}
-                  onChange={(e) => { setTitle(e.target.value); setIsDirty(true); }}
-                  required
-                  disabled={isLoading}
-                />
+                <div className="title-field-row">
+                  <input
+                    id="song-edit-title"
+                    type="text"
+                    value={title}
+                    onChange={(e) => { setTitle(e.target.value); setIsDirty(true); }}
+                    required
+                    disabled={isLoading}
+                  />
+                  <button
+                    type="button"
+                    className="btn-dice"
+                    onClick={() => { setTitle(generateTitle()); setIsDirty(true); }}
+                    disabled={isLoading}
+                    title="generate a random title"
+                  >
+                    ⚄
+                  </button>
+                </div>
               </div>
 
               <div className="form-group">

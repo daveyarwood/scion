@@ -1,3 +1,186 @@
+/* ── Form styles (migrated from SongEditModal.css) ────────────────────── */
+
+.modal-error {
+  background-color: #f9f5f5;
+  border: 2px solid var(--color-dark-red);
+  color: var(--color-dark-red);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.modal-form .form-group {
+  margin-bottom: 0;
+}
+
+.modal-form label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-black);
+  font-family: 'Courier New', monospace;
+  display: block;
+  text-transform: lowercase;
+}
+
+.modal-form input,
+.modal-form textarea,
+.modal-form select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--color-dark-gray);
+  border-radius: 0;
+  font-family: 'Courier New', monospace;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  background-color: white;
+}
+
+.modal-form input:focus,
+.modal-form textarea:focus,
+.modal-form select:focus {
+  outline: none;
+  border-color: var(--color-medium-green);
+  box-shadow: 3px 3px 0 var(--color-pale-green);
+}
+
+.modal-form input:disabled,
+.modal-form textarea:disabled,
+.modal-form select:disabled {
+  background-color: var(--color-light-gray);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.modal-form textarea {
+  resize: vertical;
+}
+
+.modal-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  border-top: 2px solid var(--color-dark-gray);
+  padding-top: 1.5rem;
+  margin-top: 1rem;
+}
+
+.modal-footer .btn {
+  flex-shrink: 0;
+}
+
+.btn.btn-delete {
+  background-color: var(--color-dark-red);
+  border-color: var(--color-darkest-red);
+  color: var(--color-cream);
+}
+
+.btn.btn-delete:hover:not(:disabled) {
+  background-color: var(--color-red);
+  border-color: var(--color-dark-red);
+  color: var(--color-cream);
+}
+
+.btn-cancel {
+  background-color: var(--color-light-gray);
+  color: var(--color-black);
+  border-color: var(--color-dark-gray);
+}
+
+.btn-cancel:hover:not(:disabled) {
+  background-color: var(--color-gray);
+  border-color: var(--color-black);
+}
+
+.stage-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border: 2px solid var(--color-dark-gray);
+  border-radius: 0;
+  background-color: white;
+}
+
+.stage-btn {
+  background-color: var(--color-pale-green);
+  border: 2px solid var(--color-medium-green);
+  color: var(--color-black);
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 0;
+  transition: all 0.2s;
+  font-weight: 600;
+}
+
+.stage-btn:hover:not(:disabled) {
+  background-color: var(--color-medium-green);
+  color: white;
+  transform: scale(1.1);
+}
+
+.stage-btn:disabled {
+  background-color: var(--color-light-gray);
+  border-color: var(--color-gray);
+  color: var(--color-gray);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.stage-label {
+  flex: 1;
+  text-align: center;
+  font-weight: 600;
+  color: var(--color-black);
+  font-family: 'Courier New', monospace;
+  font-size: 0.95rem;
+  text-transform: lowercase;
+}
+
+/* ── Title field with dice button ─────────────────────────────────────── */
+
+.title-field-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.title-field-row input {
+  flex: 1;
+}
+
+.btn-dice {
+  flex-shrink: 0;
+  background-color: var(--color-pale-green);
+  border: 2px solid var(--color-medium-green);
+  color: var(--color-black);
+  padding: 0 0.75rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  border-radius: 0;
+  transition: all 0.2s;
+  line-height: 1;
+}
+
+.btn-dice:hover:not(:disabled) {
+  background-color: var(--color-medium-green);
+  color: white;
+}
+
+.btn-dice:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Page layout ──────────────────────────────────────────────────────── */
+
 .song-edit-page {
   min-height: 100vh;
   display: flex;

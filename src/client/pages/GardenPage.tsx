@@ -3,18 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { Song, GrowthStage } from '../../shared/index';
 import { trpc } from '../trpc';
 import { SongGrid } from '../components/SongGrid';
-import { CreateSongForm } from '../components/CreateSongForm';
 
 export const GardenPage: React.FC = () => {
-  const [showCreateForm, setShowCreateForm] = useState(false);
   const [loadingSongId, setLoadingSongId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const listQuery = trpc.song.list.useQuery(undefined, { staleTime: 0 });
   const createMutation = trpc.song.create.useMutation({
-    onSuccess: () => {
-      listQuery.refetch();
-      setShowCreateForm(false);
+    onSuccess: (newSong) => {
+      navigate(`/songs/${newSong.id}`);
     },
   });
   const updateMutation = trpc.song.update.useMutation({
@@ -27,11 +24,8 @@ export const GardenPage: React.FC = () => {
     },
   });
 
-  const handleCreateSong = (title: string, body: string) => {
-    createMutation.mutate({
-      title,
-      body: body || undefined,
-    });
+  const handleNewSeed = () => {
+    createMutation.mutate({});
   };
 
   const handleSongClick = (song: Song) => {
@@ -55,14 +49,14 @@ export const GardenPage: React.FC = () => {
 
       <main className="app-main">
         <div className="controls">
-          <button className="btn btn-primary" onClick={() => setShowCreateForm(!showCreateForm)}>
-            {showCreateForm ? 'cancel' : '+ new seed'}
+          <button
+            className="btn btn-primary"
+            onClick={handleNewSeed}
+            disabled={createMutation.isPending}
+          >
+            {createMutation.isPending ? 'planting...' : '+ new seed'}
           </button>
         </div>
-
-        {showCreateForm && (
-          <CreateSongForm onSubmit={handleCreateSong} isLoading={createMutation.isPending} />
-        )}
 
         {listQuery.isLoading && <div className="loading">loading songs...</div>}
         {listQuery.error && (
