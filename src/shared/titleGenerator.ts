@@ -61,19 +61,12 @@ const LONG_TEMPLATES: Template[] = [
   () => `${pickPluralNoun()} of the ${pickNoun()}`,
   () => `${pickVerb()} and ${pickVerb()}`,
   () => `${pickVerb()}, ${pickVerb()}, ${pickVerb()}`,
-  // "[adj] [noun], [adj] [noun]"
   () => `${pickAdj()} ${pickNoun()}, ${pickAdj()} ${pickNoun()}`,
-  // "[number] [plural noun]"
   () => `${pickNumber()} ${pickPluralNoun()}`,
-  // "this [noun]"
   () => `this ${pickNoun()}`,
-  // "that [noun]"
   () => `that ${pickNoun()}`,
-  // "[noun] vs. [noun]"
   () => `${pickNoun()} vs. ${pickNoun()}`,
-  // "so [adjective]"
   () => `so ${pickAdj()}`,
-  // "my [noun]"
   () => `my ${pickNoun()}`,
 ]
 
