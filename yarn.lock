@@ -1430,6 +1430,11 @@ color-name@~1.1.4:
   resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.4.tgz#c2a09a87acbde69543de6f63fa3995c826c536a2"
   integrity sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==
 
+commander@^2.20.3:
+  version "2.20.3"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.3.tgz#fd485e84c03eb4881c20722ba48035e8531aeb33"
+  integrity sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==
+
 concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
@@ -4056,6 +4061,11 @@ unbox-primitive@^1.1.0:
     has-symbols "^1.1.0"
     which-boxed-primitive "^1.1.1"
 
+underscore@>=1.3.1:
+  version "1.13.8"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.13.8.tgz#a93a21186c049dbf0e847496dba72b7bd8c1e92b"
+  integrity sha512-DXtD3ZtEQzc7M8m4cXotyHR+FAS18C64asBYY5vqZexfYryNNnDc02W4hKg3rdQuqOYas1jkseX0+nZXjTXnvQ==
+
 "undici-types@>=7.24.0 <7.24.7":
   version "7.24.6"
   resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-7.24.6.tgz#61275b485d7fd4e9d269c7cf04ec2873c9cc0f91"
@@ -4226,6 +4236,20 @@ word-wrap@^1.2.5:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/word-wrap/-/word-wrap-1.2.5.tgz#d2c45c6dd4fbce621a66f136cbe328afd0410b34"
   integrity sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==
+
+wordnet-db@^3.1.14:
+  version "3.1.14"
+  resolved "https://registry.yarnpkg.com/wordnet-db/-/wordnet-db-3.1.14.tgz#7ba1ec2cb5730393f0856efcc738a60085426199"
+  integrity sha512-zVyFsvE+mq9MCmwXUWHIcpfbrHHClZWZiVOzKSxNJruIcFn2RbY55zkhiAMMxM8zCVSmtNiViq8FsAZSFpMYag==
+
+wordpos@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/wordpos/-/wordpos-2.1.0.tgz#417850354588170674cf6dd7cfaaacabc8927801"
+  integrity sha512-0fGpg8Fv7vT8dFBw1fl3JX2ooqbtcWXUFUOzoD5O6CQ+0QIV9h+MC2N3zHmcD6+295OYzfXXxKSQJiim0nakJA==
+  dependencies:
+    commander "^2.20.3"
+    underscore ">=1.3.1"
+    wordnet-db "^3.1.14"
 
 wrap-ansi@^7.0.0:
   version "7.0.0"
