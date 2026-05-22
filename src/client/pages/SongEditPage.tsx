@@ -30,25 +30,23 @@ export const SongEditPage: React.FC = () => {
   const [growthStage, setGrowthStage] = useState<GrowthStage>('seed');
   const [error, setError] = useState<string | null>(null);
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
-  const [initializedForId, setInitializedForId] = useState<string | null>(null);
+  const [isDirty, setIsDirty] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  // Initialize form state from song data when query succeeds.
-  // Reset initializedForId when id changes so navigating to the same song
-  // again always re-syncs from fresh data.
+  // Sync form from server data unless the user has unsaved edits.
+  // isDirty is reset on id change and after a successful save.
   React.useEffect(() => {
-    setInitializedForId(null);
+    setIsDirty(false);
   }, [id]);
 
   React.useEffect(() => {
-    if (songQuery.data && songQuery.data.id !== initializedForId) {
+    if (songQuery.data && !isDirty) {
       const song = songQuery.data;
       setTitle(song.title);
       setBody(song.body);
       setGrowthStage(song.growth_stage);
-      setInitializedForId(song.id);
     }
-  }, [songQuery.data, initializedForId]);
+  }, [songQuery.data, isDirty]);
 
   // Check for invalid ID after hooks
   if (!id) {
@@ -79,6 +77,7 @@ export const SongEditPage: React.FC = () => {
         updateMutation.mutate(updates, {
           onSuccess: () => {
             setSaved(true);
+            setIsDirty(false);
             setTimeout(() => setSaved(false), 2000);
             resolve();
           },
@@ -113,6 +112,7 @@ export const SongEditPage: React.FC = () => {
     const newStage = getPromotedStage(growthStage);
     if (newStage) {
       setGrowthStage(newStage);
+      setIsDirty(true);
     }
   };
 
@@ -120,6 +120,7 @@ export const SongEditPage: React.FC = () => {
     const newStage = getDemotedStage(growthStage);
     if (newStage) {
       setGrowthStage(newStage);
+      setIsDirty(true);
     }
   };
 
@@ -150,7 +151,7 @@ export const SongEditPage: React.FC = () => {
                   id="song-edit-title"
                   type="text"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e) => { setTitle(e.target.value); setIsDirty(true); }}
                   required
                   disabled={isLoading}
                 />
@@ -161,7 +162,7 @@ export const SongEditPage: React.FC = () => {
                 <textarea
                   id="song-edit-body"
                   value={body}
-                  onChange={(e) => setBody(e.target.value)}
+                  onChange={(e) => { setBody(e.target.value); setIsDirty(true); }}
                   disabled={isLoading}
                   rows={8}
                 />
