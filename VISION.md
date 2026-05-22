@@ -93,11 +93,11 @@ The `seed-songs.ts` script generates two-word titles from `/usr/share/dict/words
 
 ## Navigation and routing
 
-React Router (`react-router-dom`) is planned for cycle 008:
-- `/` — garden grid
-- `/songs/:id` — song edit/detail page
+React Router (`react-router-dom`) was added in cycle 008:
+- `/` — garden grid (`GardenPage`)
+- `/songs/:id` — song edit/detail page (`SongEditPage`)
 
-The edit page replaces the modal and provides room for the node-based content system, plant visual display, and future appearance editing controls.
+The edit page replaced the old modal and provides room for the node-based content system, plant visual display, and future appearance editing controls.
 
 ## Appearance editing
 

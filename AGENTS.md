@@ -30,31 +30,33 @@ scion/
 
 ## Current state
 
-Full-stack working application with garden-themed UI, pixel art plant sprites, and per-song palette-swapped accent colors (cycle 007). The following is in place and working:
+Full-stack working application with garden-themed UI, pixel art plant sprites, per-song palette-swapped accent colors, React Router, and a dedicated full-page song edit view (cycle 008). The following is in place and working:
 
 - Monorepo with TypeScript (strict, project references), Vite, Vitest, ESLint, Prettier
-- `migrations/001_initial_schema.sql` — `songs` table (`id`, `title`, `body`, `plot_id`, `growth_stage`, `created_at`, `updated_at`) plus `schema_migrations` tracking table; `migrations/002_add_budding_stage.sql` documents the `budding` stage addition
+- `migrations/001_initial_schema.sql` — `songs` table (`id`, `title`, `body`, `plot_id`, `growth_stage`, `created_at`, `updated_at`) plus `schema_migrations` tracking table; `migrations/002_add_budding_stage.sql` adds the `budding` stage; `migrations/003_add_archetype_and_accent_ramp.sql` adds `archetype` (text) and `accent_ramp` (text, JSON array) columns
 - `scripts/migrate.ts` — migration runner, 12 passing tests
 - `scripts/seed-songs.ts` — creates N songs (default 20) via tRPC HTTP API; `yarn seed` shorthand
 - `scripts/clear-songs.ts` — deletes all songs via tRPC HTTP API; `--force` flag skips confirmation; `yarn clear` shorthand
 - `scripts/check-palette.py` — verifies PNG sprites use only the 10 allowed palette colors
 - `scripts/slice-sprites.py` — slices a sprite sheet into individual archetype/stage PNGs using alpha-gap detection
 - `yarn dev` runs Vite client + Express server concurrently via `concurrently` (no separate dev.ts script)
-- `src/shared/index.ts` — `GrowthStageEnum` (7 stages: seed → seedling → sprout → budding → blooming → dormant → archived), `SongSchema`, `CreateSongInput`, `UpdateSongInput`, `UpdateSongWithId`; 14 passing tests
-- `src/server/` — Express + tRPC server with full song CRUD (`song.list`, `song.create`, `song.get`, `song.update`, `song.delete`); raw SQL via better-sqlite3; zero type coercions; 12 passing tests
-- `src/client/` — React app with tRPC + React Query client, Gardener-palette lo-fi UI, responsive song-card grid, "New Seed" form, click-to-edit modal, direct stage promotion/demotion arrows on each card and in the modal; garden-themed empty state with seed sprite illustration
-- `src/client/plant/generator.ts` — archetype registry with 4 archetypes (tulip, hibiscus, cactus, mushroom); deterministic archetype and accent ramp selection seeded by UUID; exports `selectArchetype`, `getArchetype`, `getSpritePath`, `selectAccentRamp`, `parseHexToRGB`, `generatePlant`; 35 passing tests; `ACCENT_RAMPS` expanded to 11 Gardener-palette ramps (cycle 007)
+- `src/shared/index.ts` — `GrowthStageEnum` (7 stages: seed → seedling → sprout → budding → blooming → dormant → archived), `SongSchema`, `CreateSongInput`, `UpdateSongInput`, `UpdateSongWithId`; 20 passing tests
+- `src/shared/plant.ts` — pure plant generation functions (`selectArchetype`, `selectAccentRamp`, `ACCENT_RAMPS`); usable by both client and server; 10 passing tests
+- `src/server/` — Express + tRPC server with full song CRUD (`song.list`, `song.create`, `song.get`, `song.update`, `song.delete`); populates `archetype` and `accent_ramp` on `song.create` using `src/shared/plant.ts`; raw SQL via better-sqlite3; zero type coercions; 17 passing tests
+- `src/client/` — React app with React Router (`react-router-dom`); two routes: `/` (garden grid, `GardenPage.tsx`) and `/songs/:id` (full-page editor, `SongEditPage.tsx`); tRPC + React Query; Gardener-palette lo-fi UI; all UI chrome lowercase; garden-themed empty state with seed sprite illustration
+- `src/client/plant/generator.ts` — archetype registry with 4 archetypes (tulip, hibiscus, cactus, mushroom); exports `getArchetype`, `getSpritePath`, `parseHexToRGB`, `generatePlant`; 35 passing tests; `ACCENT_RAMPS` (11 ramps) and `selectArchetype`/`selectAccentRamp` now live in `src/shared/plant.ts`
 - `src/client/plant/stageTransitions.ts` — pure stage transition utilities (`getPromotedStage`, `getDemotedStage`, `canPromote`, `canDemote`, `PROMOTABLE_STAGES`); 39 passing tests
 - `src/client/components/dateFormat.ts` — pure date formatting utility; 9 passing tests
-- `src/client/components/PlantVisual.tsx` — canvas-based pixel art sprite renderer; nearest-neighbor scaling (3×); all 4 archetypes wired; palette ramp swap implemented via `getImageData`/`putImageData` — each song's accent pixels (petals, mushroom caps) are remapped to a UUID-derived color ramp at render time
+- `src/client/components/PlantVisual.tsx` — canvas-based pixel art sprite renderer; nearest-neighbor scaling (3×); all 4 archetypes wired; palette ramp swap via `getImageData`/`putImageData`; accepts `archetype` and `accentRamp` props (stored DB values), falls back to UUID-derived values; 6 passing tests
 - `src/client/plant/sprites/{tulip,hibiscus,cactus,mushroom}/` — 7 PNG sprites per archetype (28 total); bundled via Vite `import.meta.url`
 - `src/client/plant/sprites/SPRITES.md` — sprite generation prompt, Aseprite cleanup workflow, palette constraints, and slicing instructions
-- 121 tests total, all passing; TypeScript strict mode passes; build produces a working bundle
+- 148 tests total, all passing; TypeScript strict mode passes; build produces a working bundle
 
 Not yet built (deferred):
-- Audio file uploads, plots UI, withering/decay, Alda integration
-- Client-side routing (React Router); currently a single-page app with modal for edit
+- Audio file uploads, labels/plots UI, withering/decay, Alda integration
+- Sort by `updated_at`, stage-filter chips, title search
 - Automatic growth stage advancement (currently manual via arrow buttons)
+- Appearance editing controls on the edit page (archetype and accent ramp are stored but not user-editable yet)
 - **Note**: Sprites were re-sliced in cycle 006 from the Aseprite-cleaned sheet and contain the exact source accent ramp colors. The palette ramp swap fires correctly; each song renders with a UUID-derived accent color.
 
 ## Coding conventions
