@@ -63,11 +63,14 @@ The app is fully functional end-to-end and has reached its original visual desig
 
 ## Goals
 
-<!-- to be filled in during human planning conversation -->
+- [ ] Replace `ACCENT_RAMPS` in `generator.ts` with 11 fully Gardener-palette ramps; remove dead `ACCENT_COLORS` array and `selectAccentColor` function and all associated tests
+- [ ] Add `scripts/seed-songs.ts` — creates 20 songs via tRPC HTTP API (`http://localhost:3000`) with random two-word titles from `/usr/share/dict/words` and short placeholder body text, spread across random growth stages
+- [ ] Add `scripts/clear-songs.ts` — fetches all songs via tRPC HTTP API then deletes each one; accepts a `--force` flag to skip the confirmation prompt
 
 ## Scope
 
-<!-- to be filled in during human planning conversation -->
+- In scope: accent ramp expansion, dead code removal, seed and clear dev scripts
+- Deferred: React Router, sort by updated_at, stage filter UI, plots, window.confirm replacement
 
 ## Work Done
 
