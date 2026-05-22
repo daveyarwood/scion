@@ -142,4 +142,16 @@ describe('song.delete', () => {
       'Song not found'
     );
   });
+
+  it('rejects invalid UUID format', async () => {
+    const caller = appRouter.createCaller({});
+
+    await expect(caller.song.delete({ id: 'not-a-uuid' })).rejects.toThrow();
+  });
+
+  it('requires id field', async () => {
+    const caller = appRouter.createCaller({});
+
+    await expect(caller.song.delete({ id: '' } as any)).rejects.toThrow();
+  });
 });
