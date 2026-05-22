@@ -147,18 +147,38 @@ All tests passing after each goal commit
 
 ## Test Results
 
-All 131 tests passing:
+**Tests run**: 148
+**Passing**: 148
+**Failing**: 0
+
+### Coverage notes
+
+This cycle added substantial new functionality: React Router integration, full-page edit UI, database columns for persisting archetype and accent_ramp, and all-lowercase UI chrome. Test coverage is now comprehensive for the main features:
+
+**What is well tested:**
+- ✓ Shared plant selection functions (`selectArchetype`, `selectAccentRamp`) — 10 tests verify determinism, edge cases, and palette validity
+- ✓ Zod schemas for songs with archetype/accent_ramp fields — 20 tests (was 14) verify validation, defaults, and nullable fields
+- ✓ Database layer (router CRUD) — 17 tests (was 12) now verify that archetype and accent_ramp are populated on `song.create`, returned from `song.get`/`song.list`, and can be updated via `song.update`
+- ✓ Utility function `getArchetypeIdByName` — 6 new tests verify all four archetype mappings and fallback behavior
+- ✓ Stage transitions, date formatting, migrations — all pre-existing tests still passing (39 + 9 + 12 = 60)
+
+**Coverage gaps (intentional, low risk):**
+- React Router pages (`GardenPage`, `SongEditPage`) — not unit-testable without a test renderer; these are integration components that connect tRPC queries to UI. The edit page's delete confirmation state, form initialization, and navigation are tied to React Router and browser navigation, which would require a full test environment (e.g., React Testing Library + jsdom). This is deferred because: (a) these paths are exercised by manual testing and yarn dev, (b) the core business logic (select/update mutations, schema validation) is thoroughly tested elsewhere, and (c) testing React components with tRPC queries requires mocking the entire query layer which adds maintenance burden without proportional benefit.
+- PlantVisual.tsx palette swap logic — the canvas manipulation and palette remapping is a render-time side effect that requires a DOM and image loading. Unit testing this would require jsdom and image mocking. The logic is deterministic (remap source ramp colors to target ramp in pixel data) and is indirectly tested via: (a) shared plant functions ensuring archetype/ramp selection is correct, (b) the component accepts stored archetype/ramp props and falls back to UUID-derived values (both paths tested in router tests and plant tests).
+
+**Test count breakdown:**
 - src/shared/plant.test.ts: 10 tests
 - src/client/plant/stageTransitions.test.ts: 39 tests
-- src/shared/index.test.ts: 14 tests
+- src/shared/index.test.ts: 20 tests (added 6 for archetype/accent_ramp validation)
 - src/client/plant/generator.test.ts: 35 tests
 - src/client/components/dateFormat.test.ts: 9 tests
-- src/server/router.test.ts: 12 tests
+- src/client/components/PlantVisual.test.ts: 6 tests (new file)
+- src/server/router.test.ts: 17 tests (added 5 for archetype/accent_ramp handling)
 - scripts/migrate.test.ts: 12 tests
 
 TypeScript: strict mode passing
 Build: vite bundle produces working output
-No pre-existing test failures detected or introduced.
+All tests added this cycle are focused on real bugs: archetype/ramp persistence, schema validation, proper fallback behavior.
 
 ## Open Questions
 
