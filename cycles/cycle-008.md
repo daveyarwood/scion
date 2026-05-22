@@ -64,11 +64,15 @@ The application is complete as an end-to-end functional v0 sketchbook. All the f
 
 ## Goals
 
-<!-- To be filled in after brainstorm review -->
+- [ ] **Replace `window.confirm` delete with inline confirmation** — add `isConfirmingDelete` state to `SongEditModal.tsx`; first click shows "really delete? [confirm] [cancel]" within the modal
+- [ ] **React Router** — add `react-router-dom`; wire up `/` (garden grid) and `/songs/:id` (song edit page); the edit page is the modal content promoted to a full page — same fields, same controls, same plant visual; the stale-state modal bug goes away as a side effect since the edit page is always freshly mounted
+- [ ] **Store `archetype` and `accent_ramp` in the DB** — add a migration with `archetype` (text) and `accent_ramp` (text, stores the 4 hex values as a JSON array) columns to `songs`; populate on `song.create` by randomly picking at creation time; update `song.get` / `song.list` to return these fields; update the client to use stored values instead of deriving from UUID; this decouples visual identity from generator code changes and sets up future user-editable appearance
+- [ ] **All-lowercase UI** — apply `text-transform: lowercase` (or just change the string literals) to all UI chrome: labels, button text, stage names, headings, navigation; user-inputted data (song titles, body text) is exempt
 
 ## Scope
 
-<!-- To be filled in after brainstorm review -->
+- In scope: inline delete confirmation, React Router with edit page, stored archetype/accent_ramp columns, all-lowercase UI chrome
+- Deferred: sort by `updated_at`, stage-filter chips, title search, plots, audio uploads, stage tooltips, animated backgrounds
 
 ## Work Done
 
