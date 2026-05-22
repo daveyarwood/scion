@@ -36,7 +36,7 @@ export type Song = z.infer<typeof SongSchema>;
 
 // Input schema for creating a song (excludes id, timestamps)
 const createSongInputSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
+  title: z.string().min(1, 'Title is required').optional(),
   body: z.string().optional().default(''),
   plot_id: z.string().uuid().nullable().optional(),
   archetype: z.string().optional(),

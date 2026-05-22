@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { SongSchema, CreateSongInput, UpdateSongWithId, Song } from '../shared/index';
 import { selectArchetype, selectAccentRamp } from '../shared/plant';
+import { generateTitle } from '../shared/titleGenerator';
 import { getDb } from './db';
 
 const t = initTRPC.create();
@@ -35,9 +36,9 @@ export const appRouter = t.router({
       const id = uuidv4();
       const now = new Date().toISOString();
       
-      // Populate archetype and accent_ramp from UUID if not provided
       const archetype = input.archetype || selectArchetype(id);
       const accentRamp = input.accent_ramp || JSON.stringify(selectAccentRamp(id));
+      const title = input.title || generateTitle();
 
       const stmt = db.prepare<[string, string, string, null | string, string, string, string, string, string]>(
         `
@@ -46,7 +47,7 @@ export const appRouter = t.router({
       `
       );
 
-      stmt.run(id, input.title, input.body || '', input.plot_id || null, 'seed', now, now, archetype, accentRamp);
+      stmt.run(id, title, input.body || '', input.plot_id || null, 'seed', now, now, archetype, accentRamp);
 
       const row = db.prepare<[string], Song>('SELECT * FROM songs WHERE id = ?').get(id);
       if (!row) throw new Error('Failed to retrieve created song');
