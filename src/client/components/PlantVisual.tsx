@@ -6,12 +6,16 @@ import './PlantVisual.css';
 interface PlantVisualProps {
   id: string;
   stage: GrowthStage;
+  archetype?: string | null;
+  accentRamp?: string | null;
 }
 
-export const PlantVisual: React.FC<PlantVisualProps> = ({ id, stage }) => {
+export const PlantVisual: React.FC<PlantVisualProps> = ({ id, stage, archetype: storedArchetype, accentRamp: storedAccentRamp }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const plantData = generatePlant(id);
-
+  
+  // Use stored values if available, otherwise derive from UUID
+  const plantData = storedArchetype ? { archetypeId: getArchetypeIdByName(storedArchetype) } : generatePlant(id);
+  
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -45,7 +49,19 @@ export const PlantVisual: React.FC<PlantVisualProps> = ({ id, stage }) => {
       // Palette ramp swap: remap accent pixels from source ramp to target ramp
       const archetype = getArchetype(plantData.archetypeId);
       const sourceRamp = archetype.accentRamp;
-      const targetRamp = selectAccentRamp(id);
+      
+      // Use stored accent ramp if available, otherwise derive from UUID
+      let targetRamp: [string, string, string, string];
+      if (storedAccentRamp) {
+        try {
+          targetRamp = JSON.parse(storedAccentRamp);
+        } catch {
+          // If JSON parsing fails, fall back to UUID-derived
+          targetRamp = selectAccentRamp(id);
+        }
+      } else {
+        targetRamp = selectAccentRamp(id);
+      }
 
       // Only perform palette swap if source and target ramps differ
       const rampsAreDifferent = JSON.stringify(sourceRamp) !== JSON.stringify(targetRamp);
@@ -98,7 +114,21 @@ export const PlantVisual: React.FC<PlantVisualProps> = ({ id, stage }) => {
     };
 
     img.src = spritePath;
-  }, [stage, plantData.archetypeId, id]);
+  }, [stage, plantData.archetypeId, id, storedArchetype, storedAccentRamp]);
 
   return <canvas ref={canvasRef} className="plant-visual" width={128} height={192} />;
+};
+
+/**
+ * Convert archetype name to ID.
+ * Maps: 'tulip' → 0, 'hibiscus' → 1, 'cactus' → 2, 'mushroom' → 3
+ */
+const getArchetypeIdByName = (name: string): number => {
+  const nameMap: Record<string, number> = {
+    tulip: 0,
+    hibiscus: 1,
+    cactus: 2,
+    mushroom: 3,
+  };
+  return nameMap[name] ?? 0;
 };

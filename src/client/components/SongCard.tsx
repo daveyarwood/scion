@@ -49,7 +49,7 @@ export const SongCard: React.FC<SongCardProps> = ({
       onMouseLeave={() => setPressing(false)}
     >
       <div className="song-card-header">
-        <PlantVisual id={song.id} stage={song.growth_stage} />
+        <PlantVisual id={song.id} stage={song.growth_stage} archetype={song.archetype} accentRamp={song.accent_ramp} />
         <div className="song-stage-controls">
           <button
             className="stage-btn-card stage-promote"

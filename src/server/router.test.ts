@@ -9,9 +9,17 @@ process.env.DB_PATH = ':memory:';
 
 beforeAll(() => {
   const db = getDb();
-  const schemaPath = path.join(process.cwd(), 'migrations', '001_initial_schema.sql');
-  const schema = fs.readFileSync(schemaPath, 'utf-8');
-  db.exec(schema);
+  const schemaPath1 = path.join(process.cwd(), 'migrations', '001_initial_schema.sql');
+  const schema1 = fs.readFileSync(schemaPath1, 'utf-8');
+  db.exec(schema1);
+  
+  const schemaPath2 = path.join(process.cwd(), 'migrations', '002_add_budding_stage.sql');
+  const schema2 = fs.readFileSync(schemaPath2, 'utf-8');
+  db.exec(schema2);
+  
+  const schemaPath3 = path.join(process.cwd(), 'migrations', '003_add_archetype_and_accent_ramp.sql');
+  const schema3 = fs.readFileSync(schemaPath3, 'utf-8');
+  db.exec(schema3);
 });
 
 afterAll(() => {

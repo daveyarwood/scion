@@ -25,6 +25,8 @@ export const SongSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   body: z.string().optional().default(''),
   plot_id: z.string().uuid().nullable().optional(),
+  archetype: z.string().nullable().optional(),
+  accent_ramp: z.string().nullable().optional(), // JSON array string: ["#color1","#color2","#color3","#color4"]
   growth_stage: GrowthStageEnum.default('seed'),
   created_at: z.string(),
   updated_at: z.string(),
@@ -37,6 +39,8 @@ const createSongInputSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   body: z.string().optional().default(''),
   plot_id: z.string().uuid().nullable().optional(),
+  archetype: z.string().optional(),
+  accent_ramp: z.string().optional(),
 });
 
 export const CreateSongInput = createSongInputSchema;
@@ -48,6 +52,8 @@ const updateSongInputSchema = z.object({
   body: z.string().optional(),
   growth_stage: GrowthStageEnum.optional(),
   plot_id: z.string().uuid().nullable().optional(),
+  archetype: z.string().optional(),
+  accent_ramp: z.string().optional(),
 });
 
 export const UpdateSongInput = updateSongInputSchema;
@@ -60,6 +66,8 @@ const updateSongWithIdSchema = z.object({
   body: z.string().optional(),
   growth_stage: GrowthStageEnum.optional(),
   plot_id: z.string().uuid().nullable().optional(),
+  archetype: z.string().optional(),
+  accent_ramp: z.string().optional(),
 });
 
 export const UpdateSongWithId = updateSongWithIdSchema;

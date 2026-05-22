@@ -1,4 +1,5 @@
 import { GrowthStage } from '../../shared/index';
+import { selectArchetype as selectArchetypeName, selectAccentRamp, ACCENT_RAMPS } from '../../shared/plant';
 
 export interface PlantData {
   archetypeId: number;
@@ -9,31 +10,6 @@ interface Archetype {
   name: string;
   accentRamp: [string, string, string, string];
 }
-
-/**
- * Simple hash function to convert a string into a numeric seed.
- * Deterministic: same input always produces same output.
- */
-const hashString = (str: string): number => {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    // Convert to 32-bit integer
-    hash = hash & hash;
-  }
-  // Convert to positive number between 0 and 1
-  return (Math.abs(hash) % 10000) / 10000;
-};
-
-/**
- * Generate a pseudo-random number from a seed.
- * Deterministic: same seed always produces same output.
- */
-const seededRandom = (seed: number, index: number = 0): number => {
-  const combined = (seed * (index + 1) * 9973) % 1;
-  return Math.abs(Math.sin(combined * 12.9898) * 43758.5453) % 1;
-};
 
 const ARCHETYPES: Archetype[] = [
   {
@@ -59,41 +35,13 @@ const ARCHETYPES: Archetype[] = [
 ];
 
 /**
- * Accent color ramps (shadow → highlight), all from the Gardener palette.
- * Each ramp is a 4-color progression used for palette-swapping sprite accent
- * pixels at render time. selectAccentRamp picks one deterministically by UUID.
- */
-const ACCENT_RAMPS: Array<[string, string, string, string]> = [
-  // Blue
-  ['#254265', '#3975a9', '#51a2c9', '#81c6d8'],
-  // Blue (dark shift)
-  ['#1b2034', '#254265', '#3975a9', '#51a2c9'],
-  // Blue (pale shift)
-  ['#3975a9', '#51a2c9', '#81c6d8', '#b8dee7'],
-  // Brown
-  ['#6b4446', '#9c665e', '#d4a78d', '#ecc9ab'],
-  // Brown (dark shift)
-  ['#442e37', '#6b4446', '#9c665e', '#d4a78d'],
-  // Rust/Orange
-  ['#984c39', '#c97743', '#ecaa66', '#f4c37d'],
-  // Red
-  ['#af3233', '#e14c43', '#e47d4b', '#f4c37d'],
-  // Maroon/Red
-  ['#4b192b', '#812737', '#af3233', '#e14c43'],
-  // Pink/Magenta (original sprite accent ramp)
-  ['#492850', '#823a63', '#c54c86', '#e67392'],
-  // Pink (pale shift)
-  ['#823a63', '#c54c86', '#e67392', '#efa9b5'],
-  // Purple
-  ['#322030', '#492850', '#823a63', '#c54c86'],
-];
-
-/**
- * Select an archetype based on UUID.
+ * Select an archetype ID based on UUID.
+ * Wraps the shared selectArchetypeName function and converts the name to an ID.
  */
 export const selectArchetype = (id: string): number => {
-  const baseSeed = hashString(id);
-  return Math.floor(seededRandom(baseSeed, 0) * ARCHETYPES.length);
+  const name = selectArchetypeName(id);
+  const archetype = ARCHETYPES.find((a) => a.name === name);
+  return archetype?.id ?? 0;
 };
 
 /**
@@ -127,15 +75,8 @@ export const parseHexToRGB = (hex: string): { r: number; g: number; b: number } 
   };
 };
 
-/**
- * Select an accent color ramp based on UUID.
- * Returns a 4-color ramp (shadow → light → lighter → highlight) for palette remapping.
- */
-export const selectAccentRamp = (id: string): [string, string, string, string] => {
-  const baseSeed = hashString(id);
-  const rampIndex = Math.floor(seededRandom(baseSeed, 1) * ACCENT_RAMPS.length);
-  return ACCENT_RAMPS[rampIndex];
-};
+// Re-export shared functions for convenience
+export { selectAccentRamp, ACCENT_RAMPS };
 
 /**
  * Generate plant visual parameters deterministically from a song UUID.
