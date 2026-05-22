@@ -149,8 +149,8 @@
 }
 
 .btn-delete:hover:not(:disabled) {
-  background-color: var(--color-dark-red);
-  color: var(--color-cream);
+  background-color: #f0e8e8;
+  border-color: var(--color-dark-red);
 }
 
 .btn-secondary {
