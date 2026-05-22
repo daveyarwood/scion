@@ -62,11 +62,6 @@ export const GardenPage: React.FC = () => {
         {listQuery.error && (
           <div className="error">error loading songs: {listQuery.error.message}</div>
         )}
-
-        {listQuery.isLoading && <div className="loading">loading songs...</div>}
-        {listQuery.error && (
-          <div className="error">Error loading songs: {listQuery.error.message}</div>
-        )}
         {listQuery.data && (
           <SongGrid 
             songs={listQuery.data} 
