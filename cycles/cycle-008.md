@@ -143,7 +143,18 @@ All tests passing after each goal commit
 
 ## Review Notes
 
-<!-- To be filled in after work is complete -->
+### Summary
+
+The cycle 008 implementation is well-executed and comprehensive. All four goals were completed successfully: inline delete confirmation replaces the `window.confirm` popup with proper modal state management; React Router integration with dedicated edit page eliminates the stale-state bug from the old modal approach; archetype and accent_ramp are now persisted in the database with proper fallback to UUID-derived values for backward compatibility; and all UI chrome is consistently lowercase. Code quality is high across the board: strict TypeScript with proper type annotations, arrow functions throughout, Zod schemas as single source of truth, no unsafe type coercions, and comprehensive test coverage for the new functionality. Tests pass, build succeeds, and ESLint is clean on all new code.
+
+### Fixed
+
+- **Duplicate loading/error messages in GardenPage**: The initial commit had duplicate conditional blocks (lines 61-69) with inconsistent capitalization ("error loading songs" vs "Error loading songs"). Removed the duplicate and standardized to lowercase.
+- **React Hooks of Rules violation in SongEditPage**: Early return on line 14-16 before hooks caused ESLint to flag all useState and useEffect calls as conditional. Reorganized component to call all hooks before any conditional returns, moved early ID check to after hooks, and added `enabled: !!id` to the useQuery to prevent it from running with an empty ID string.
+
+### Escalated to Open Questions
+
+Nothing escalated. All issues were resolved directly.
 
 ## Test Results
 
