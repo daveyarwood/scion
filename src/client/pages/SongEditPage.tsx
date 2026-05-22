@@ -11,11 +11,17 @@ export const SongEditPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
+  const utils = trpc.useUtils();
+
   // Initialize queries before any conditional returns
   const songQuery = trpc.song.get.useQuery(id || '', { enabled: !!id, staleTime: 0 });
   const updateMutation = trpc.song.update.useMutation({
-    onSuccess: () => {
+    onSuccess: (updatedSong) => {
       songQuery.refetch();
+      // Update the list cache so the garden page is correct immediately on back navigation
+      utils.song.list.setData(undefined, (prev) =>
+        prev?.map((s) => (s.id === updatedSong.id ? updatedSong : s))
+      );
     },
   });
   const deleteMutation = trpc.song.delete.useMutation({
