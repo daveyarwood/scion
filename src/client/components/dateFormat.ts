@@ -11,5 +11,5 @@ export const formatDate = (dateString: string): string => {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
-  });
+  }).toLowerCase();
 };
