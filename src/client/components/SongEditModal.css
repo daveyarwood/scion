@@ -143,14 +143,15 @@
 }
 
 .btn-delete {
-  background-color: #f9f5f5;
-  border-color: var(--color-dark-red);
-  color: var(--color-dark-red);
+  background-color: var(--color-dark-red);
+  border-color: var(--color-darkest-red);
+  color: var(--color-cream);
 }
 
 .btn-delete:hover:not(:disabled) {
-  background-color: #f0e8e8;
+  background-color: var(--color-red);
   border-color: var(--color-dark-red);
+  color: var(--color-cream);
 }
 
 .btn-secondary {
