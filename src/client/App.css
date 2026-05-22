@@ -110,6 +110,7 @@ body {
   font-size: 2rem;
   margin-bottom: 0.5rem;
   letter-spacing: 1px;
+  text-transform: lowercase;
 }
 
 .app-header p {

@@ -41,6 +41,54 @@
   min-width: 300px;
 }
 
+.delete-confirm-prompt {
+  width: 100%;
+  flex-basis: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background-color: #f9f5f5;
+  border: 2px solid var(--color-dark-red);
+  color: var(--color-dark-red);
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.delete-confirm-prompt span {
+  flex: 1;
+}
+
+.delete-confirm-yes,
+.delete-confirm-no {
+  background: none;
+  border: none;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  text-decoration: underline;
+  text-transform: lowercase;
+}
+
+.delete-confirm-yes {
+  color: var(--color-dark-red);
+  font-weight: 700;
+}
+
+.delete-confirm-yes:hover:not(:disabled) {
+  color: var(--color-red);
+}
+
+.delete-confirm-no {
+  color: var(--color-dark-gray);
+}
+
+.delete-confirm-no:hover:not(:disabled) {
+  color: var(--color-charcoal);
+}
+
 @media (max-width: 768px) {
   .song-edit-container {
     flex-direction: column;

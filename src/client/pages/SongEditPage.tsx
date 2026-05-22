@@ -31,6 +31,7 @@ export const SongEditPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
   const [initialized, setInitialized] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   // Initialize form state from song data when query succeeds
   React.useEffect(() => {
@@ -70,7 +71,11 @@ export const SongEditPage: React.FC = () => {
       
       await new Promise<void>((resolve, reject) => {
         updateMutation.mutate(updates, {
-          onSuccess: () => resolve(),
+          onSuccess: () => {
+            setSaved(true);
+            setTimeout(() => setSaved(false), 2000);
+            resolve();
+          },
           onError: (error) => reject(error),
         });
       });
@@ -80,12 +85,6 @@ export const SongEditPage: React.FC = () => {
   };
 
   const handleDelete = async () => {
-    if (!isConfirmingDelete) {
-      // First click: show confirmation
-      setIsConfirmingDelete(true);
-      return;
-    }
-    // Second click: execute delete
     setError(null);
     try {
       await new Promise<void>((resolve, reject) => {
@@ -98,6 +97,10 @@ export const SongEditPage: React.FC = () => {
       setError(err instanceof Error ? err.message : 'failed to delete');
       setIsConfirmingDelete(false);
     }
+  };
+
+  const handleDeleteClick = () => {
+    setIsConfirmingDelete(true);
   };
 
   const handlePromote = () => {
@@ -121,7 +124,7 @@ export const SongEditPage: React.FC = () => {
   return (
     <div className="song-edit-page">
       <header className="app-header">
-        <h1>🌱 Scion</h1>
+        <h1>scion</h1>
         <p>a personal creative sketchbook for musical fragments</p>
       </header>
 
@@ -184,38 +187,38 @@ export const SongEditPage: React.FC = () => {
               </div>
 
               <div className="modal-footer">
-                <button type="submit" className="btn btn-primary" disabled={isLoading || isConfirmingDelete}>
-                  {isLoading ? 'saving...' : 'save'}
-                </button>
-                {!isConfirmingDelete ? (
-                  <button
-                    type="button"
-                    className="btn btn-delete"
-                    onClick={handleDelete}
-                    disabled={isLoading}
-                  >
-                    delete
-                  </button>
-                ) : (
-                  <>
+                {isConfirmingDelete && (
+                  <div className="delete-confirm-prompt">
+                    <span>delete this song?</span>
                     <button
                       type="button"
-                      className="btn btn-delete"
+                      className="delete-confirm-yes"
                       onClick={handleDelete}
                       disabled={isLoading}
                     >
-                      confirm delete
+                      yes, delete
                     </button>
                     <button
                       type="button"
-                      className="btn btn-secondary"
+                      className="delete-confirm-no"
                       onClick={() => setIsConfirmingDelete(false)}
                       disabled={isLoading}
                     >
                       cancel
                     </button>
-                  </>
+                  </div>
                 )}
+                <button type="submit" className="btn btn-primary" disabled={isLoading}>
+                  {isLoading ? 'saving...' : saved ? 'saved ✓' : 'save'}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-delete"
+                  onClick={handleDeleteClick}
+                  disabled={isLoading}
+                >
+                  delete
+                </button>
                 <button
                   type="button"
                   className="btn btn-cancel"

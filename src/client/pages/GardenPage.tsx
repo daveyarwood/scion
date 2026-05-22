@@ -7,6 +7,7 @@ import { CreateSongForm } from '../components/CreateSongForm';
 
 export const GardenPage: React.FC = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [loadingSongId, setLoadingSongId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const listQuery = trpc.song.list.useQuery();
@@ -19,6 +20,10 @@ export const GardenPage: React.FC = () => {
   const updateMutation = trpc.song.update.useMutation({
     onSuccess: () => {
       listQuery.refetch();
+      setLoadingSongId(null);
+    },
+    onError: () => {
+      setLoadingSongId(null);
     },
   });
 
@@ -34,6 +39,7 @@ export const GardenPage: React.FC = () => {
   };
 
   const handleSongStageChange = (song: Song, newStage: GrowthStage) => {
+    setLoadingSongId(song.id);
     updateMutation.mutate({
       id: song.id,
       growth_stage: newStage,
@@ -43,7 +49,7 @@ export const GardenPage: React.FC = () => {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>🌱 Scion</h1>
+        <h1>scion</h1>
         <p>a personal creative sketchbook for musical fragments</p>
       </header>
 
@@ -63,11 +69,11 @@ export const GardenPage: React.FC = () => {
           <div className="error">error loading songs: {listQuery.error.message}</div>
         )}
         {listQuery.data && (
-          <SongGrid 
-            songs={listQuery.data} 
+          <SongGrid
+            songs={listQuery.data}
             onSongClick={handleSongClick}
             onSongStageChange={handleSongStageChange}
-            isLoadingStageChange={updateMutation.isPending}
+            loadingSongId={loadingSongId}
           />
         )}
       </main>

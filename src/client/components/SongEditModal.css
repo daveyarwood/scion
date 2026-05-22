@@ -130,6 +130,7 @@
 
 .modal-footer {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.75rem;
   justify-content: flex-end;
   border-top: 2px solid var(--color-dark-gray);

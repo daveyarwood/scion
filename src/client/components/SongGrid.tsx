@@ -8,14 +8,14 @@ interface SongGridProps {
   songs: Song[];
   onSongClick?: (song: Song) => void;
   onSongStageChange?: (song: Song, newStage: GrowthStage) => void;
-  isLoadingStageChange?: boolean;
+  loadingSongId?: string | null;
 }
 
 export const SongGrid: React.FC<SongGridProps> = ({ 
   songs, 
   onSongClick, 
   onSongStageChange,
-  isLoadingStageChange = false 
+  loadingSongId = null 
 }) => {
   if (songs.length === 0) {
     return (
@@ -37,7 +37,7 @@ export const SongGrid: React.FC<SongGridProps> = ({
           song={song} 
           onClick={() => onSongClick?.(song)}
           onStageChange={(newStage) => onSongStageChange?.(song, newStage)}
-          isLoadingStageChange={isLoadingStageChange}
+          isLoadingStageChange={loadingSongId === song.id}
         />
       ))}
     </div>
