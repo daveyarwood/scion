@@ -142,13 +142,13 @@
   flex-shrink: 0;
 }
 
-.btn-delete {
+.btn.btn-delete {
   background-color: var(--color-dark-red);
   border-color: var(--color-darkest-red);
   color: var(--color-cream);
 }
 
-.btn-delete:hover:not(:disabled) {
+.btn.btn-delete:hover:not(:disabled) {
   background-color: var(--color-red);
   border-color: var(--color-dark-red);
   color: var(--color-cream);
