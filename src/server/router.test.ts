@@ -128,7 +128,7 @@ describe('song.delete', () => {
       title: 'Delete Test',
     });
 
-    const result = await caller.song.delete(created.id);
+    const result = await caller.song.delete({ id: created.id });
     expect(result.success).toBe(true);
 
     const retrieved = await caller.song.get(created.id);
@@ -138,7 +138,7 @@ describe('song.delete', () => {
   it('throws for non-existent song', async () => {
     const caller = appRouter.createCaller({});
 
-    await expect(caller.song.delete('550e8400-e29b-41d4-a716-446655440000')).rejects.toThrow(
+    await expect(caller.song.delete({ id: '550e8400-e29b-41d4-a716-446655440000' })).rejects.toThrow(
       'Song not found'
     );
   });

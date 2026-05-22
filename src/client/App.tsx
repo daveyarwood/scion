@@ -53,7 +53,7 @@ export const App: React.FC = () => {
   const handleDeleteSong = async () => {
     if (!selectedSong) return;
     return new Promise<void>((resolve, reject) => {
-      deleteMutation.mutate(selectedSong.id, {
+      deleteMutation.mutate({ id: selectedSong.id }, {
         onSuccess: () => {
           resolve();
         },

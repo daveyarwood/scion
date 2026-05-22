@@ -1,5 +1,6 @@
 import { initTRPC } from '@trpc/server';
 import { v4 as uuidv4 } from 'uuid';
+import { z } from 'zod';
 import { SongSchema, CreateSongInput, UpdateSongWithId, Song } from '../shared/index';
 import { getDb } from './db';
 
@@ -93,11 +94,8 @@ export const appRouter = t.router({
 
     // Delete a song
     delete: t.procedure
-      .input((value) => {
-        if (typeof value !== 'string') throw new Error('id must be a string');
-        return value;
-      })
-      .mutation(({ input: id }) => {
+      .input(z.object({ id: z.string().uuid() }))
+      .mutation(({ input: { id } }) => {
         const db = getDb();
 
         // Check if song exists
