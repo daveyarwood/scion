@@ -46,13 +46,13 @@ export const SongEditPage: React.FC = () => {
   }, [id]);
 
   React.useEffect(() => {
-    if (songQuery.data && !isDirty) {
+    if (songQuery.data && !songQuery.isFetching && !isDirty) {
       const song = songQuery.data;
       setTitle(song.title);
       setBody(song.body);
       setGrowthStage(song.growth_stage);
     }
-  }, [songQuery.data, isDirty]);
+  }, [songQuery.data, songQuery.isFetching, isDirty]);
 
   // Check for invalid ID after hooks
   if (!id) {

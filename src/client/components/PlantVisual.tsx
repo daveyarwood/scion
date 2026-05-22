@@ -23,15 +23,18 @@ export const PlantVisual: React.FC<PlantVisualProps> = ({ id, stage, archetype: 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Clear canvas
-    ctx.fillStyle = 'transparent';
+    // Clear canvas immediately
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Load sprite image
     const spritePath = new URL(`../plant/sprites/${getSpritePath(plantData.archetypeId, stage)}`, import.meta.url).href;
 
     const img = new Image();
+    let cancelled = false;
+
     img.onload = () => {
+      if (cancelled) return;
+
       // Disable smoothing for pixel-perfect rendering
       ctx.imageSmoothingEnabled = false;
 
@@ -108,12 +111,17 @@ export const PlantVisual: React.FC<PlantVisualProps> = ({ id, stage, archetype: 
     };
 
     img.onerror = () => {
+      if (cancelled) return;
       // Fallback: fill with a neutral color if sprite fails to load
       ctx.fillStyle = '#659939';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     };
 
     img.src = spritePath;
+
+    return () => {
+      cancelled = true;
+    };
   }, [stage, plantData.archetypeId, id, storedArchetype, storedAccentRamp]);
 
   return <canvas ref={canvasRef} className="plant-visual" width={128} height={192} />;
