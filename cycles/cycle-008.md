@@ -193,4 +193,43 @@ All tests added this cycle are focused on real bugs: archetype/ramp persistence,
 
 ## Open Questions
 
-<!-- To be filled in as needed -->
+<!-- None -->
+
+## Post-cycle bugfixes (live testing session)
+
+After the cycle review and test pass, live testing surfaced a number of bugs that were fixed in a follow-on session.
+
+**Bug: create seed not working**
+- Root cause: migrations `002_add_budding_stage` and `003_add_archetype_and_accent_ramp` had never been applied to the live database.
+- Fix: ran `scripts/migrate.ts`.
+
+**Bug: "Scion" not lowercase in browser tab**
+- Fix: `<title>scion</title>` in `index.html`.
+
+**Bug: "Scion" h1 not lowercase; plant emoji in header**
+- Fix: removed `🌱`, changed `Scion` → `scion` in both page headers; added `text-transform: lowercase` to `.app-header h1`.
+
+**Bug: no visual feedback when clicking save**
+- Fix: added `saved` state to `SongEditPage`; save button shows `saved!` for 2 seconds after success. Used `width: 7.5rem; flex-shrink: 0` on `.btn-save` to prevent resize. Used `saved!` instead of `saved ✓` — the checkmark character caused the button to grow taller in Courier New.
+
+**Bug: clicking a stage arrow caused all arrows on the page to flicker**
+- Root cause: `updateMutation.isPending` was a single boolean shared across all cards.
+- Fix: replaced `isLoadingStageChange: boolean` with `loadingSongId: string | null` threaded from `GardenPage` → `SongGrid` → `SongCard`.
+
+**Bug: delete confirmation used button-swap pattern**
+- Redesigned: save/delete/back buttons are always stable; clicking delete shows a full-width inline prompt (`delete this song? | yes, delete | cancel`) above the button row via `flex-wrap` on the footer.
+
+**Bug: delete button not visually distinct (appeared cream)**
+- Root cause: `.btn-delete` had equal specificity to `.btn` and lost to the base cream background.
+- Fix: changed selector to `.btn.btn-delete`; set filled `var(--color-dark-red)` background with cream text at rest, `var(--color-red)` on hover.
+
+**Bug: edit page showed stale growth stage after changing it on the list page**
+- Root cause: `initialized: boolean` guard locked in the first data received (stale cache), blocking the fresh fetch from updating the form.
+- Fix: replaced with `isDirty: boolean`. Form syncs from server whenever `!isDirty && !songQuery.isFetching`. User edits set `isDirty = true`; successful save and `id` change reset it. Added `staleTime: 0` to `song.get`.
+
+**Bug: brief flash of stale stage on back navigation from edit to garden**
+- Fix: added `staleTime: 0` to `song.list`; on successful save, immediately update the list cache via `utils.song.list.setData` so the garden is correct before navigation.
+
+**Bug: multiple growth stage sprites layered on top of each other**
+- Root cause: two rapid syncs (stale then fresh data) sent two `stage` values to `PlantVisual` in quick succession; the stale `img.onload` fired after the canvas was cleared for the new render.
+- Fix: added `cancelled` flag in the `PlantVisual` effect; cleanup sets `cancelled = true`; `onload`/`onerror` are no-ops if cancelled.
