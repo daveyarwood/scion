@@ -23,41 +23,77 @@ const pickAdj = () => Math.random() < 0.5 ? pick(ADJECTIVES) : pick(COMMON_ADJEC
 const pickVerb = () => Math.random() < 0.5 ? pick(VERBS) : pick(COMMON_VERBS)
 const pickGerund = () => Math.random() < 0.5 ? pick(GERUNDS) : pick(COMMON_GERUNDS)
 
+const pickNumber = () => pick([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 17, 33, 100])
+
 type Template = () => string
 
-const TEMPLATES: Template[] = [
-  // "the [noun]"
-  () => `the ${pickNoun()}`,
-  // "[adjective] [noun]"
-  () => `${pickAdj()} ${pickNoun()}`,
-  // "[adjective] [plural noun]"
-  () => `${pickAdj()} ${pickPluralNoun()}`,
-  // "[adjective]"
-  () => pickAdj(),
-  // "[noun]"
+/** Short templates safe to use inside recursive slots. */
+const SHORT_TEMPLATES: Template[] = [
   () => pickNoun(),
-  // "[plural noun]"
-  () => pickPluralNoun(),
-  // "[-ing verb]"
+  () => pickVerb(),
   () => pickGerund(),
-  // "[verb] the [noun]"
-  () => `${pickVerb()} the ${pickNoun()}`,
-  // "[verb] the [adjective] [noun]"
-  () => `${pickVerb()} the ${pickAdj()} ${pickNoun()}`,
-  // "the [adjective] [noun]"
-  () => `the ${pickAdj()} ${pickNoun()}`,
-  // "[noun] and [noun]"
+  () => pickAdj(),
+  () => `the ${pickNoun()}`,
   () => `${pickNoun()} and ${pickNoun()}`,
-
-  // "[gerund] [plural noun]"
-  () => `${pickGerund()} ${pickPluralNoun()}`,
-  // "[noun] of [plural noun]"
-  () => `${pickNoun()} of ${pickPluralNoun()}`,
-  // "the [noun] and the [noun]"
-  () => `the ${pickNoun()} and the ${pickNoun()}`,
-  // "[plural noun] of the [noun]"
-  () => `${pickPluralNoun()} of the ${pickNoun()}`,
+  () => `${pickVerb()} and ${pickVerb()}`,
+  () => `${pickAdj()} ${pickNoun()}`,
+  () => `the ${pickAdj()} ${pickNoun()}`,
 ]
 
-/** Generate a random song title. */
-export const generateTitle = (): string => pick(TEMPLATES)()
+/** Exclamation templates. */
+const EXCLAMATION_TEMPLATES: Template[] = [
+  () => `${pickNoun()}!`,
+  () => `${pickVerb()}!`,
+]
+
+const short = () =>
+  Math.random() < 0.15
+    ? pick(EXCLAMATION_TEMPLATES)()
+    : pick(SHORT_TEMPLATES)()
+
+/** Long (non-recursive) templates. */
+const LONG_TEMPLATES: Template[] = [
+  () => `${pickAdj()} ${pickPluralNoun()}`,
+  () => `${pickVerb()} the ${pickNoun()}`,
+  () => `${pickVerb()} the ${pickAdj()} ${pickNoun()}`,
+  () => `the ${pickAdj()} ${pickNoun()}`,
+  () => `${pickNoun()} and ${pickNoun()}`,
+  () => `${pickGerund()} ${pickPluralNoun()}`,
+  () => `${pickNoun()} of ${pickPluralNoun()}`,
+  () => `the ${pickNoun()} and the ${pickNoun()}`,
+  () => `${pickPluralNoun()} of the ${pickNoun()}`,
+  () => `${pickVerb()} and ${pickVerb()}`,
+  () => `${pickVerb()}, ${pickVerb()}, ${pickVerb()}`,
+  // "[number] [plural noun]"
+  () => `${pickNumber()} ${pickPluralNoun()}`,
+  // "this [noun]"
+  () => `this ${pickNoun()}`,
+  // "that [noun]"
+  () => `that ${pickNoun()}`,
+  // "[noun] vs. [noun]"
+  () => `${pickNoun()} vs. ${pickNoun()}`,
+  // "so [adjective]"
+  () => `so ${pickAdj()}`,
+  // "my [noun]"
+  () => `my ${pickNoun()}`,
+]
+
+/** Recursive templates using slashes and parentheses. */
+const RECURSIVE_TEMPLATES: Template[] = [
+  () => `${short()} / ${short()}`,
+  () => `${short()} (${short()})`,
+  () => `(${short()}) ${short()}`,
+  () => `${short()} (pt. 1)`,
+]
+
+/**
+ * Generate a random song title.
+ * Weighted across tiers: short ~55%, long ~30%, recursive ~10%, exclamation ~5%
+ */
+export const generateTitle = (): string => {
+  const r = Math.random()
+  if (r < 0.55) return pick(SHORT_TEMPLATES)()
+  if (r < 0.85) return pick(LONG_TEMPLATES)()
+  if (r < 0.95) return pick(RECURSIVE_TEMPLATES)()
+  return pick(EXCLAMATION_TEMPLATES)()
+}
