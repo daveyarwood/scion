@@ -1183,6 +1183,7 @@ export const ADJECTIVES = [
   'secret',
   'sedated',
   'seismic',
+  'space',
   'subsidized',
   'substitute',
   'subterranean',
