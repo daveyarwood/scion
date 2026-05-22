@@ -64,10 +64,10 @@ The application is complete as an end-to-end functional v0 sketchbook. All the f
 
 ## Goals
 
-- [ ] **Replace `window.confirm` delete with inline confirmation** — add `isConfirmingDelete` state to `SongEditModal.tsx`; first click shows "really delete? [confirm] [cancel]" within the modal
-- [ ] **React Router** — add `react-router-dom`; wire up `/` (garden grid) and `/songs/:id` (song edit page); the edit page is the modal content promoted to a full page — same fields, same controls, same plant visual; the stale-state modal bug goes away as a side effect since the edit page is always freshly mounted
-- [ ] **Store `archetype` and `accent_ramp` in the DB** — add a migration with `archetype` (text) and `accent_ramp` (text, stores the 4 hex values as a JSON array) columns to `songs`; populate on `song.create` by randomly picking at creation time; update `song.get` / `song.list` to return these fields; update the client to use stored values instead of deriving from UUID; this decouples visual identity from generator code changes and sets up future user-editable appearance
-- [ ] **All-lowercase UI** — apply `text-transform: lowercase` (or just change the string literals) to all UI chrome: labels, button text, stage names, headings, navigation; user-inputted data (song titles, body text) is exempt
+- [x] **Replace `window.confirm` delete with inline confirmation** — add `isConfirmingDelete` state to `SongEditModal.tsx`; first click shows "really delete? [confirm] [cancel]" within the modal
+- [x] **React Router** — add `react-router-dom`; wire up `/` (garden grid) and `/songs/:id` (song edit page); the edit page is the modal content promoted to a full page — same fields, same controls, same plant visual; the stale-state modal bug goes away as a side effect since the edit page is always freshly mounted
+- [x] **Store `archetype` and `accent_ramp` in the DB** — add a migration with `archetype` (text) and `accent_ramp` (text, stores the 4 hex values as a JSON array) columns to `songs`; populate on `song.create` by randomly picking at creation time; update `song.get` / `song.list` to return these fields; update the client to use stored values instead of deriving from UUID; this decouples visual identity from generator code changes and sets up future user-editable appearance
+- [x] **All-lowercase UI** — apply `text-transform: lowercase` (or just change the string literals) to all UI chrome: labels, button text, stage names, headings, navigation; user-inputted data (song titles, body text) is exempt
 
 ## Scope
 
@@ -76,7 +76,70 @@ The application is complete as an end-to-end functional v0 sketchbook. All the f
 
 ## Work Done
 
-<!-- To be filled in during the cycle -->
+**Goal 1: Inline Delete Confirmation**
+- Added `isConfirmingDelete` boolean state to SongEditModal
+- First delete click shows confirmation buttons ("confirm delete" / "cancel")
+- Second click executes the delete
+- All buttons updated to lowercase labels
+- Added .btn-secondary CSS style class
+
+**Goal 2: React Router + Edit Page**
+- Added react-router-dom dependency
+- Created GardenPage.tsx with garden grid UI (refactored from App.tsx)
+- Created SongEditPage.tsx with full-page editor containing:
+  - Plant visual display with stored archetype/accent_ramp fallback to UUID
+  - Title and body inputs  
+  - Stage promotion/demotion controls
+  - Inline delete confirmation
+  - Save, delete, and back navigation buttons
+- Updated App.tsx to use BrowserRouter with routes for `/` and `/songs/:id`
+- Song cards now navigate to edit page instead of opening modal
+- Stale-state modal bug eliminated as side effect of fresh mount on navigation
+
+**Goal 3: Store Archetype and Accent Ramp in DB**
+- Created src/shared/plant.ts with pure plant generation functions:
+  - selectArchetype(id: string): returns archetype name string
+  - selectAccentRamp(id: string): returns 4-color ramp tuple
+  - ACCENT_RAMPS export: 11 Gardener-palette ramps
+- Added 10 new tests for shared plant functions (131 total tests)
+- Created migration 003_add_archetype_and_accent_ramp.sql:
+  - Added archetype TEXT column (nullable)
+  - Added accent_ramp TEXT column (nullable, stores JSON array string)
+- Updated SongSchema, CreateSongInput, UpdateSongInput, UpdateSongWithId to include archetype and accent_ramp fields
+- Modified song.create to populate archetype and accent_ramp using shared functions
+- Modified song.update to handle archetype and accent_ramp updates
+- Updated PlantVisual.tsx to accept archetype and accentRamp props, using stored values when present and falling back to UUID-derived values
+- Updated SongCard to pass archetype and accent_ramp to PlantVisual
+- Updated router tests to load all three migrations for in-memory DB setup
+
+**Goal 4: All-Lowercase UI Chrome**
+- Applied text-transform: lowercase CSS to UI elements:
+  - .btn class (all buttons)
+  - .form-group label
+  - .modal-form label
+  - .stage-label (growth stage display)
+  - .empty-state h2 (empty state heading)
+  - .app-header p (subtitle)
+  - .song-stage (card stage display)
+- Changed all button labels to lowercase: 'save', 'delete', 'cancel', 'close', 'back', 'create seed', '+new seed'
+- Changed all form labels to lowercase: 'title', 'notes', 'growth stage'
+- Changed loading/error messages to lowercase
+- Changed modal headers and empty state text to lowercase
+- Changed tooltips and aria-labels to lowercase
+- Removed .charAt(0).toUpperCase() capitalization from stage display in SongEditModal
+- Preserved user-entered data (song titles, body text) without any case transforms
+- Added lowercase to GardenPage and SongEditPage headers/text
+
+**Summary**
+All four goals completed successfully. The application now has:
+1. Better delete UX with inline confirmation (no modal popups)
+2. Full React Router integration with dedicated edit page at /songs/:id, eliminating the stale-state bug
+3. Persistent archetype and accent_ramp in the database, enabling future user-customizable appearance
+4. Consistent all-lowercase UI chrome while preserving user data as-is
+
+Test count: 131 tests (10 new tests for shared plant functions)
+TypeScript: strict mode passing
+All tests passing after each goal commit
 
 ## Review Notes
 
@@ -84,7 +147,18 @@ The application is complete as an end-to-end functional v0 sketchbook. All the f
 
 ## Test Results
 
-<!-- To be filled in after tests are run -->
+All 131 tests passing:
+- src/shared/plant.test.ts: 10 tests
+- src/client/plant/stageTransitions.test.ts: 39 tests
+- src/shared/index.test.ts: 14 tests
+- src/client/plant/generator.test.ts: 35 tests
+- src/client/components/dateFormat.test.ts: 9 tests
+- src/server/router.test.ts: 12 tests
+- scripts/migrate.test.ts: 12 tests
+
+TypeScript: strict mode passing
+Build: vite bundle produces working output
+No pre-existing test failures detected or introduced.
 
 ## Open Questions
 
