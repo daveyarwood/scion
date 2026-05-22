@@ -138,7 +138,7 @@ export const SongEditPage: React.FC = () => {
     <div className="song-edit-page">
       <header className="app-header">
         <h1>scion</h1>
-        <p>a personal creative sketchbook for musical fragments</p>
+        <p>where song ideas grow</p>
       </header>
 
       <main className="song-edit-main">
