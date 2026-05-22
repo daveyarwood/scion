@@ -41,6 +41,10 @@
   min-width: 300px;
 }
 
+.btn-save {
+  min-width: 6rem;
+}
+
 .delete-confirm-prompt {
   width: 100%;
   flex-basis: 100%;

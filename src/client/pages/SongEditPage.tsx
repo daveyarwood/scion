@@ -208,7 +208,7 @@ export const SongEditPage: React.FC = () => {
                     </button>
                   </div>
                 )}
-                <button type="submit" className="btn btn-primary" disabled={isLoading}>
+                <button type="submit" className="btn btn-primary btn-save" disabled={isLoading}>
                   {isLoading ? 'saving...' : saved ? 'saved ✓' : 'save'}
                 </button>
                 <button
