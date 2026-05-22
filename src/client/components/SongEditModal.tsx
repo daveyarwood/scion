@@ -24,6 +24,7 @@ export const SongEditModal: React.FC<SongEditModalProps> = ({
   const [body, setBody] = useState(song.body);
   const [growthStage, setGrowthStage] = useState<GrowthStage>(song.growth_stage);
   const [error, setError] = useState<string | null>(null);
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
 
   if (!isOpen) return null;
 
@@ -43,15 +44,19 @@ export const SongEditModal: React.FC<SongEditModalProps> = ({
   };
 
   const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this song?')) {
+    if (!isConfirmingDelete) {
+      // First click: show confirmation
+      setIsConfirmingDelete(true);
       return;
     }
+    // Second click: execute delete
     setError(null);
     try {
       await onDelete();
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete');
+      setIsConfirmingDelete(false);
     }
   };
 
@@ -80,6 +85,7 @@ export const SongEditModal: React.FC<SongEditModalProps> = ({
     setBody(song.body);
     setGrowthStage(song.growth_stage);
     setError(null);
+    setIsConfirmingDelete(false);
     onClose();
   };
 
@@ -145,24 +151,45 @@ export const SongEditModal: React.FC<SongEditModalProps> = ({
           </div>
 
           <div className="modal-footer">
-            <button type="submit" className="btn btn-primary" disabled={isLoading}>
+            <button type="submit" className="btn btn-primary" disabled={isLoading || isConfirmingDelete}>
               {isLoading ? 'Saving...' : 'Save'}
             </button>
-            <button
-              type="button"
-              className="btn btn-delete"
-              onClick={handleDelete}
-              disabled={isLoading}
-            >
-              {isLoading ? 'Deleting...' : 'Delete'}
-            </button>
+            {!isConfirmingDelete ? (
+              <button
+                type="button"
+                className="btn btn-delete"
+                onClick={handleDelete}
+                disabled={isLoading}
+              >
+                delete
+              </button>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="btn btn-delete"
+                  onClick={handleDelete}
+                  disabled={isLoading}
+                >
+                  confirm delete
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setIsConfirmingDelete(false)}
+                  disabled={isLoading}
+                >
+                  cancel
+                </button>
+              </>
+            )}
             <button
               type="button"
               className="btn btn-cancel"
               onClick={handleClose}
               disabled={isLoading}
             >
-              Cancel
+              close
             </button>
           </div>
         </form>

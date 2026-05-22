@@ -150,6 +150,17 @@
   color: var(--color-cream);
 }
 
+.btn-secondary {
+  background-color: var(--color-light-gray);
+  color: var(--color-black);
+  border-color: var(--color-dark-gray);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--color-gray);
+  border-color: var(--color-black);
+}
+
 .btn-cancel {
   background-color: var(--color-light-gray);
   color: var(--color-black);
