@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generatePlant, selectArchetype, getArchetype, getSpritePath, selectAccentColor, parseHexToRGB, selectAccentRamp } from './generator';
+import { generatePlant, selectArchetype, getArchetype, getSpritePath, parseHexToRGB, selectAccentRamp } from './generator';
 
 describe('selectArchetype', () => {
   it('returns a valid archetype index', () => {
@@ -104,66 +104,6 @@ describe('getSpritePath', () => {
 
   it('falls back to tulip for invalid archetype ID', () => {
     expect(getSpritePath(999, 'seed')).toBe('tulip/seed.png');
-  });
-});
-
-describe('selectAccentColor', () => {
-  it('returns a valid hex color', () => {
-    const color = selectAccentColor('550e8400-e29b-41d4-a716-446655440000');
-    expect(color).toMatch(/^#[0-9a-fA-F]{6}$/);
-  });
-
-  it('returns the same color for the same UUID', () => {
-    const uuid = '550e8400-e29b-41d4-a716-446655440000';
-    const color1 = selectAccentColor(uuid);
-    const color2 = selectAccentColor(uuid);
-    expect(color1).toBe(color2);
-  });
-
-  it('may return different colors for different UUIDs', () => {
-    const uuid1 = '550e8400-e29b-41d4-a716-446655440000';
-    const uuid2 = '550e8400-e29b-41d4-a716-446655440001';
-    const color1 = selectAccentColor(uuid1);
-    const color2 = selectAccentColor(uuid2);
-    // Both are valid colors, but may differ
-    expect(color1).toMatch(/^#[0-9a-fA-F]{6}$/);
-    expect(color2).toMatch(/^#[0-9a-fA-F]{6}$/);
-  });
-
-  it('always returns a color from the defined palette', () => {
-    // Test multiple UUIDs to ensure all results are from the palette
-    const validAccentColors = [
-      '#254265', // dark-blue
-      '#3975a9', // blue
-      '#51a2c9', // light-blue
-      '#81c6d8', // sky-blue
-      '#6b4446', // dark-brown
-      '#9c665e', // brown
-      '#d4a78d', // tan
-      '#984c39', // rust
-      '#c97743', // burnt-orange
-      '#ecaa66', // warm-tan
-      '#af3233', // dark-red
-      '#e14c43', // red
-      '#e47d4b', // orange-red
-      '#492850', // purple
-      '#823a63', // magenta
-      '#c54c86', // bright-magenta
-      '#e67392', // pink
-    ];
-
-    const testUUIDs = [
-      '550e8400-e29b-41d4-a716-446655440000',
-      '650e8400-e29b-41d4-a716-446655440000',
-      '750e8400-e29b-41d4-a716-446655440000',
-      'ffffffff-ffff-ffff-ffff-ffffffffffff',
-      '00000000-0000-0000-0000-000000000000',
-    ];
-
-    testUUIDs.forEach((uuid) => {
-      const color = selectAccentColor(uuid);
-      expect(validAccentColors).toContain(color);
-    });
   });
 });
 
@@ -366,13 +306,18 @@ describe('selectAccentRamp', () => {
   });
 
   it('always returns a ramp from the defined palette', () => {
-    // Expected ramps (blue, purple/pink, red, brown/tan, rust/orange)
     const validRamps = [
       ['#254265', '#3975a9', '#51a2c9', '#81c6d8'],
-      ['#492850', '#823a63', '#c54c86', '#e67392'],
-      ['#af3233', '#e14c43', '#e47d4b', '#f4c37d'],
+      ['#1b2034', '#254265', '#3975a9', '#51a2c9'],
+      ['#3975a9', '#51a2c9', '#81c6d8', '#b8dee7'],
       ['#6b4446', '#9c665e', '#d4a78d', '#ecc9ab'],
+      ['#442e37', '#6b4446', '#9c665e', '#d4a78d'],
       ['#984c39', '#c97743', '#ecaa66', '#f4c37d'],
+      ['#af3233', '#e14c43', '#e47d4b', '#f4c37d'],
+      ['#4b192b', '#812737', '#af3233', '#e14c43'],
+      ['#492850', '#823a63', '#c54c86', '#e67392'],
+      ['#823a63', '#c54c86', '#e67392', '#efa9b5'],
+      ['#322030', '#492850', '#823a63', '#c54c86'],
     ];
 
     const testUUIDs = [
