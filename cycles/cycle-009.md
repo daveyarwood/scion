@@ -99,3 +99,30 @@ N/A — informal cycle, no separate reviewer pass.
 
 - Should the 50/50 blend ratio between eclectic and common pools be tunable? Currently hardcoded in `pickNoun` etc. Could be a named constant if we want to experiment further.
 - `scripts/generate-word-lists.ts` remains in the repo as a dev utility. Worth keeping or should it be deleted?
+
+## Post-cycle iterations
+
+Several rounds of improvements to the title generator after the cycle closed:
+
+### Word lists
+- Added CS/distributed systems terms to `NOUNS`/`PLURAL_NOUNS`: `arbitration`, `backpressure`, `byzantine`, `cache`, `consensus`, `daemon`, `deadlock`, `entropy`, `failover`, `gossip`, `heartbeat`, `idempotence`, `jitter`, `latency`, `mutex`, `partition`, `quorum`, `replication`, `resilience`, `rollback`, `sharding`, `timeout`, `tombstone`, `topology`, `transaction`, `vector`, `watchdog`, and more
+- Added colors to `ADJECTIVES` in two tiers: plain (`crimson`, `indigo`, `teal`, etc.) and specific/painterly (`celadon`, `cerulean`, `gamboge`, `ochre`, `vermillion`, `viridian`, `woad`, etc.)
+- Added words to `COMMON_ADJECTIVES`: `basic`, `first`, `right`
+- Added `whisper`/`whispering` to `COMMON_VERBS`/`COMMON_GERUNDS`
+- Added eclectic adjectives: `bona fide`, `designer`, `electric`, `ghost`, `impossible`, `invisible`, `lovely`, `makeshift`, `mixed`, `permanent`, `secret`, `substitute`
+- Added nouns: `conduit`, `pugilist` (and plurals)
+- Removed `hippopotamus`/`hippopotamuses` — too silly
+- Fixed `arms` → `arm` in `COMMON_NOUNS`
+
+### Templates
+- Added to EXTENDED: `this [noun]`, `that [noun]`, `my [noun]`, `so [adj]`, `too [adj]`, `[noun] vs. [noun]`, `[number] [plural noun]`, `[adj] [noun], [adj] [noun]`, `[plural noun] and [plural noun]`
+- Added to SIMPLE: `[adj] [plural noun]`, `[plural noun] and [plural noun]`, `[verb] and [verb]`
+- Added exclamation templates: `[noun]!`, `[verb]!`
+- Added recursive templates: `[short] / [short]`, `[short] ([short])`, `([short]) [short]`, `[any] (pt. 1)`
+
+### Structure
+- Introduced four tiers: SIMPLE (~55%), EXTENDED (~30%), RECURSIVE (~10%), EXCLAMATION (~5%)
+- Renamed `SHORT_TEMPLATES` → `SIMPLE_TEMPLATES`, `LONG_TEMPLATES` → `EXTENDED_TEMPLATES` — names reflect the role (nesting safety vs. top-level only) rather than length
+- Added `simple()` helper (picks from SIMPLE with 15% chance of exclamation)
+- Added `any()` helper (50/50 simple vs. extended) — used by `(pt. 1)` template so it can wrap either tier
+- Fixed `prettier` config: set `semi: false` to match existing code style
