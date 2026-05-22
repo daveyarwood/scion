@@ -91,10 +91,6 @@ Tests must verify actual exported implementation code, not logic defined within 
 - Requiring a running server or making HTTP calls from tests
 - Testing React component internals (use exported functions or snapshot tests if needed)
 
-## Design decisions (documented, not built)
+## Design decisions and future direction
 
-- **Withering/decay**: Song plants could wither if not developed. Deferred — document as future idea only.
-- **Alda integration**: Input Alda notation text, play it back via the Alda engine. Deferred — document as future idea only.
-- **Audio file uploads**: Upload recordings to the local server, store path in DB. Deferred a few cycles — backend architecture already accommodates it.
-- **Plots**: Grouping mechanism for song ideas (by project, genre, etc.). Data model includes `plot_id` from day one; UI deferred.
-- **Social/collaboration**: Future monetization direction. Not in scope for local-first phase.
+See [VISION.md](./VISION.md) for product vision, deferred features, aesthetic direction, and the rationale behind key design decisions.
