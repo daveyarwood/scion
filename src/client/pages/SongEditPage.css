@@ -1,0 +1,53 @@
+.song-edit-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.song-edit-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.song-edit-container {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+  max-width: 900px;
+  background-color: var(--color-cream);
+  border: 3px solid var(--color-dark-gray);
+  padding: 2rem;
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.song-edit-visual {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.song-edit-form-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 300px;
+}
+
+@media (max-width: 768px) {
+  .song-edit-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .song-edit-visual {
+    justify-content: center;
+  }
+}
