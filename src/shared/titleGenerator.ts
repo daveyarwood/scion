@@ -17,11 +17,11 @@ const pick = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)]
  * Pick from either the eclectic or common pool.
  * Roughly 50/50 blend — tweak weights here to adjust the mix.
  */
-const pickNoun = () => Math.random() < 0.5 ? pick(NOUNS) : pick(COMMON_NOUNS)
-const pickPluralNoun = () => Math.random() < 0.5 ? pick(PLURAL_NOUNS) : pick(COMMON_PLURAL_NOUNS)
-const pickAdj = () => Math.random() < 0.5 ? pick(ADJECTIVES) : pick(COMMON_ADJECTIVES)
-const pickVerb = () => Math.random() < 0.5 ? pick(VERBS) : pick(COMMON_VERBS)
-const pickGerund = () => Math.random() < 0.5 ? pick(GERUNDS) : pick(COMMON_GERUNDS)
+const pickNoun = () => (Math.random() < 0.5 ? pick(NOUNS) : pick(COMMON_NOUNS))
+const pickPluralNoun = () => (Math.random() < 0.5 ? pick(PLURAL_NOUNS) : pick(COMMON_PLURAL_NOUNS))
+const pickAdj = () => (Math.random() < 0.5 ? pick(ADJECTIVES) : pick(COMMON_ADJECTIVES))
+const pickVerb = () => (Math.random() < 0.5 ? pick(VERBS) : pick(COMMON_VERBS))
+const pickGerund = () => (Math.random() < 0.5 ? pick(GERUNDS) : pick(COMMON_GERUNDS))
 
 const pickNumber = () => pick([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 17, 33, 100])
 
@@ -35,21 +35,17 @@ const SHORT_TEMPLATES: Template[] = [
   () => pickAdj(),
   () => `the ${pickNoun()}`,
   () => `${pickNoun()} and ${pickNoun()}`,
+  () => `${pickPluralNoun()} and ${pickPluralNoun()}`,
   () => `${pickVerb()} and ${pickVerb()}`,
   () => `${pickAdj()} ${pickNoun()}`,
+  () => `${pickAdj()} ${pickPluralNoun()}`,
   () => `the ${pickAdj()} ${pickNoun()}`,
 ]
 
 /** Exclamation templates. */
-const EXCLAMATION_TEMPLATES: Template[] = [
-  () => `${pickNoun()}!`,
-  () => `${pickVerb()}!`,
-]
+const EXCLAMATION_TEMPLATES: Template[] = [() => `${pickNoun()}!`, () => `${pickVerb()}!`]
 
-const short = () =>
-  Math.random() < 0.15
-    ? pick(EXCLAMATION_TEMPLATES)()
-    : pick(SHORT_TEMPLATES)()
+const short = () => (Math.random() < 0.15 ? pick(EXCLAMATION_TEMPLATES)() : pick(SHORT_TEMPLATES)())
 
 /** Long (non-recursive) templates. */
 const LONG_TEMPLATES: Template[] = [
@@ -58,12 +54,15 @@ const LONG_TEMPLATES: Template[] = [
   () => `${pickVerb()} the ${pickAdj()} ${pickNoun()}`,
   () => `the ${pickAdj()} ${pickNoun()}`,
   () => `${pickNoun()} and ${pickNoun()}`,
+  () => `${pickPluralNoun()} and ${pickPluralNoun()}`,
   () => `${pickGerund()} ${pickPluralNoun()}`,
   () => `${pickNoun()} of ${pickPluralNoun()}`,
   () => `the ${pickNoun()} and the ${pickNoun()}`,
   () => `${pickPluralNoun()} of the ${pickNoun()}`,
   () => `${pickVerb()} and ${pickVerb()}`,
   () => `${pickVerb()}, ${pickVerb()}, ${pickVerb()}`,
+  // "[adj] [noun], [adj] [noun]"
+  () => `${pickAdj()} ${pickNoun()}, ${pickAdj()} ${pickNoun()}`,
   // "[number] [plural noun]"
   () => `${pickNumber()} ${pickPluralNoun()}`,
   // "this [noun]"
