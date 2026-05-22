@@ -53,7 +53,7 @@ Not yet built (deferred):
 - Audio file uploads, plots UI, withering/decay, Alda integration
 - Client-side routing (React Router); currently a single-page app with modal for edit
 - Automatic growth stage advancement (currently manual via arrow buttons)
-- **Note**: The palette ramp swap is implemented in `PlantVisual.tsx`, but the current sprites were not cleaned up through the Aseprite palette-constraint workflow. Accent pixels in the sprites may not exactly match the 4 source ramp colors, so the pixel-level remap may not fire reliably on all sprites. The Aseprite cleanup workflow is documented in SPRITES.md.
+- **Note**: Sprites were re-sliced in cycle 006 from the Aseprite-cleaned sheet and contain the exact source accent ramp colors. The palette ramp swap fires correctly; each song renders with a UUID-derived accent color.
 
 ## Coding conventions
 
