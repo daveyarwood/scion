@@ -44,7 +44,7 @@ export const GardenPage: React.FC = () => {
     <div className="app">
       <header className="app-header">
         <h1>🌱 Scion</h1>
-        <p>A personal creative sketchbook for musical fragments</p>
+        <p>a personal creative sketchbook for musical fragments</p>
       </header>
 
       <main className="app-main">
@@ -56,6 +56,11 @@ export const GardenPage: React.FC = () => {
 
         {showCreateForm && (
           <CreateSongForm onSubmit={handleCreateSong} isLoading={createMutation.isPending} />
+        )}
+
+        {listQuery.isLoading && <div className="loading">loading songs...</div>}
+        {listQuery.error && (
+          <div className="error">error loading songs: {listQuery.error.message}</div>
         )}
 
         {listQuery.isLoading && <div className="loading">loading songs...</div>}

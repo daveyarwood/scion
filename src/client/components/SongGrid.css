@@ -26,6 +26,7 @@
   color: var(--color-dark-green);
   margin-bottom: 0.5rem;
   font-weight: 600;
+  text-transform: lowercase;
 }
 
 .empty-state p {

@@ -67,7 +67,7 @@
 
 .song-stage {
   color: var(--color-dark-gray);
-  text-transform: capitalize;
+  text-transform: lowercase;
   font-weight: 500;
   font-family: 'Courier New', monospace;
   font-size: 0.8rem;

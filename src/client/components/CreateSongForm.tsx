@@ -22,11 +22,11 @@ export const CreateSongForm: React.FC<CreateSongFormProps> = ({ onSubmit, isLoad
   return (
     <form className="create-song-form" onSubmit={handleSubmit}>
       <div className="form-group">
-        <label htmlFor="title">Title *</label>
+        <label htmlFor="title">title *</label>
         <input
           id="title"
           type="text"
-          placeholder="Song title..."
+          placeholder="song title..."
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
@@ -35,10 +35,10 @@ export const CreateSongForm: React.FC<CreateSongFormProps> = ({ onSubmit, isLoad
       </div>
 
       <div className="form-group">
-        <label htmlFor="body">Notes (optional)</label>
+        <label htmlFor="body">notes (optional)</label>
         <textarea
           id="body"
-          placeholder="Initial ideas, lyrics, mood..."
+          placeholder="initial ideas, lyrics, mood..."
           value={body}
           onChange={(e) => setBody(e.target.value)}
           disabled={isLoading}
@@ -47,7 +47,7 @@ export const CreateSongForm: React.FC<CreateSongFormProps> = ({ onSubmit, isLoad
       </div>
 
       <button type="submit" className="btn btn-primary" disabled={isLoading || !title.trim()}>
-        {isLoading ? 'Creating...' : 'Create Seed'}
+        {isLoading ? 'creating...' : 'create seed'}
       </button>
     </form>
   );

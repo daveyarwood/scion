@@ -19,6 +19,7 @@
   margin-bottom: 0.5rem;
   color: var(--color-black);
   font-family: 'Courier New', monospace;
+  text-transform: lowercase;
 }
 
 .form-group input,

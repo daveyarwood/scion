@@ -50,7 +50,7 @@ export const SongEditPage: React.FC = () => {
   }
 
   if (songQuery.error || !songQuery.data) {
-    return <div className="error">Error loading song: {songQuery.error?.message || 'Song not found'}</div>;
+    return <div className="error">error loading song: {songQuery.error?.message || 'song not found'}</div>;
   }
 
   const song = songQuery.data;
@@ -72,7 +72,7 @@ export const SongEditPage: React.FC = () => {
         });
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save');
+      setError(err instanceof Error ? err.message : 'failed to save');
     }
   };
 
@@ -92,7 +92,7 @@ export const SongEditPage: React.FC = () => {
         });
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete');
+      setError(err instanceof Error ? err.message : 'failed to delete');
       setIsConfirmingDelete(false);
     }
   };
@@ -119,7 +119,7 @@ export const SongEditPage: React.FC = () => {
     <div className="song-edit-page">
       <header className="app-header">
         <h1>🌱 Scion</h1>
-        <p>A personal creative sketchbook for musical fragments</p>
+        <p>a personal creative sketchbook for musical fragments</p>
       </header>
 
       <main className="song-edit-main">
@@ -133,7 +133,7 @@ export const SongEditPage: React.FC = () => {
 
             <form onSubmit={handleSave} className="modal-form">
               <div className="form-group">
-                <label htmlFor="song-edit-title">Title *</label>
+                <label htmlFor="song-edit-title">title *</label>
                 <input
                   id="song-edit-title"
                   type="text"
@@ -145,7 +145,7 @@ export const SongEditPage: React.FC = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="song-edit-body">Notes</label>
+                <label htmlFor="song-edit-body">notes</label>
                 <textarea
                   id="song-edit-body"
                   value={body}

@@ -55,8 +55,8 @@ export const SongCard: React.FC<SongCardProps> = ({
             className="stage-btn-card stage-promote"
             onClick={handlePromote}
             disabled={isLoadingStageChange || isAtMaxPromotableStage}
-            title="Promote to next stage"
-            aria-label="Promote stage"
+            title="promote to next stage"
+            aria-label="promote stage"
           >
             ▲
           </button>
@@ -65,8 +65,8 @@ export const SongCard: React.FC<SongCardProps> = ({
             className="stage-btn-card stage-demote"
             onClick={handleDemote}
             disabled={isLoadingStageChange || isAtMinStage}
-            title="Demote to earlier stage"
-            aria-label="Demote stage"
+            title="demote to earlier stage"
+            aria-label="demote stage"
           >
             ▼
           </button>

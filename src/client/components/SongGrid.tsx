@@ -23,8 +23,8 @@ export const SongGrid: React.FC<SongGridProps> = ({
         <div className="empty-state-illustration">
           <PlantVisual id="seed-placeholder" stage="seed" />
         </div>
-        <h2>Your garden is empty</h2>
-        <p>Plant your first seed to get started</p>
+        <h2>your garden is empty</h2>
+        <p>plant your first seed to get started</p>
       </div>
     );
   }

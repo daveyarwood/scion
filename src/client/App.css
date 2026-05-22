@@ -115,6 +115,7 @@ body {
 .app-header p {
   font-size: 0.9rem;
   opacity: 0.95;
+  text-transform: lowercase;
 }
 
 .app-main {
@@ -143,6 +144,7 @@ body {
   color: var(--color-dark-gray);
   font-family: 'Courier New', monospace;
   letter-spacing: 0.5px;
+  text-transform: lowercase;
 }
 
 .btn:hover:not(:disabled) {

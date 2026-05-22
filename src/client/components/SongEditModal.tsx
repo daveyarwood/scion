@@ -93,7 +93,7 @@ export const SongEditModal: React.FC<SongEditModalProps> = ({
     <div className="modal-overlay" onClick={handleClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Edit Song</h2>
+          <h2>edit song</h2>
           <button className="modal-close-btn" onClick={handleClose} disabled={isLoading}>
             ✕
           </button>
@@ -103,7 +103,7 @@ export const SongEditModal: React.FC<SongEditModalProps> = ({
 
         <form onSubmit={handleSave} className="modal-form">
           <div className="form-group">
-            <label htmlFor="modal-title">Title *</label>
+            <label htmlFor="modal-title">title *</label>
             <input
               id="modal-title"
               type="text"
@@ -115,7 +115,7 @@ export const SongEditModal: React.FC<SongEditModalProps> = ({
           </div>
 
           <div className="form-group">
-            <label htmlFor="modal-body">Notes</label>
+            <label htmlFor="modal-body">notes</label>
             <textarea
               id="modal-body"
               value={body}
@@ -126,24 +126,24 @@ export const SongEditModal: React.FC<SongEditModalProps> = ({
           </div>
 
           <div className="form-group">
-            <label>Growth Stage</label>
+            <label>growth stage</label>
             <div className="stage-controls">
               <button
                 type="button"
                 className="stage-btn stage-demote"
                 onClick={handleDemote}
                 disabled={isLoading || isAtMinStage}
-                title="Demote to earlier stage"
+                title="demote to earlier stage"
               >
                 ◀
               </button>
-              <span className="stage-label">{growthStage.charAt(0).toUpperCase() + growthStage.slice(1)}</span>
+              <span className="stage-label">{growthStage}</span>
               <button
                 type="button"
                 className="stage-btn stage-promote"
                 onClick={handlePromote}
                 disabled={isLoading || isAtMaxPromotableStage}
-                title="Promote to next stage"
+                title="promote to next stage"
               >
                 ▶
               </button>
@@ -152,7 +152,7 @@ export const SongEditModal: React.FC<SongEditModalProps> = ({
 
           <div className="modal-footer">
             <button type="submit" className="btn btn-primary" disabled={isLoading || isConfirmingDelete}>
-              {isLoading ? 'Saving...' : 'Save'}
+              {isLoading ? 'saving...' : 'save'}
             </button>
             {!isConfirmingDelete ? (
               <button

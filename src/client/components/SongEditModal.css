@@ -36,6 +36,7 @@
   font-size: 1.5rem;
   color: var(--color-black);
   font-family: 'Courier New', monospace;
+  text-transform: lowercase;
 }
 
 .modal-close-btn {
@@ -83,6 +84,7 @@
   color: var(--color-black);
   font-family: 'Courier New', monospace;
   display: block;
+  text-transform: lowercase;
 }
 
 .modal-form input,
@@ -215,4 +217,5 @@
   color: var(--color-black);
   font-family: 'Courier New', monospace;
   font-size: 0.95rem;
+  text-transform: lowercase;
 }
