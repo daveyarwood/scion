@@ -10,7 +10,7 @@ export const GardenPage: React.FC = () => {
   const [loadingSongId, setLoadingSongId] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const listQuery = trpc.song.list.useQuery();
+  const listQuery = trpc.song.list.useQuery(undefined, { staleTime: 0 });
   const createMutation = trpc.song.create.useMutation({
     onSuccess: () => {
       listQuery.refetch();
