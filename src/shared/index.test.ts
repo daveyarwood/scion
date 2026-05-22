@@ -128,3 +128,81 @@ describe('UpdateSongInput', () => {
     expect(result.success).toBe(false);
   });
 });
+
+describe('SongSchema with archetype and accent_ramp', () => {
+  const validSong = {
+    id: '550e8400-e29b-41d4-a716-446655440000',
+    title: 'Test Song',
+    body: 'A test song body',
+    plot_id: null,
+    archetype: 'tulip',
+    accent_ramp: '["#254265","#3975a9","#51a2c9","#81c6d8"]',
+    growth_stage: 'seed' as const,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+
+  it('validates a song with archetype and accent_ramp', () => {
+    const result = SongSchema.safeParse(validSong);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.archetype).toBe('tulip');
+      expect(result.data.accent_ramp).toBe('["#254265","#3975a9","#51a2c9","#81c6d8"]');
+    }
+  });
+
+  it('accepts null archetype and accent_ramp', () => {
+    const song = { ...validSong, archetype: null, accent_ramp: null };
+    const result = SongSchema.safeParse(song);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.archetype).toBeNull();
+      expect(result.data.accent_ramp).toBeNull();
+    }
+  });
+
+  it('accepts missing archetype and accent_ramp (undefined)', () => {
+    const song = { ...validSong, archetype: undefined, accent_ramp: undefined };
+    const result = SongSchema.safeParse(song);
+    expect(result.success).toBe(true);
+  });
+});
+
+describe('CreateSongInput with archetype and accent_ramp', () => {
+  it('validates create input with archetype and accent_ramp', () => {
+    const input = {
+      title: 'New Song',
+      archetype: 'hibiscus',
+      accent_ramp: '["#6b4446","#9c665e","#d4a78d","#ecc9ab"]',
+    };
+    const result = CreateSongInput.safeParse(input);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.archetype).toBe('hibiscus');
+      expect(result.data.accent_ramp).toBe('["#6b4446","#9c665e","#d4a78d","#ecc9ab"]');
+    }
+  });
+
+  it('validates create input without archetype and accent_ramp', () => {
+    const input = {
+      title: 'New Song',
+    };
+    const result = CreateSongInput.safeParse(input);
+    expect(result.success).toBe(true);
+  });
+});
+
+describe('UpdateSongInput with archetype and accent_ramp', () => {
+  it('validates update with archetype and accent_ramp', () => {
+    const input = {
+      archetype: 'cactus',
+      accent_ramp: '["#984c39","#c97743","#ecaa66","#f4c37d"]',
+    };
+    const result = UpdateSongInput.safeParse(input);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.archetype).toBe('cactus');
+      expect(result.data.accent_ramp).toBe('["#984c39","#c97743","#ecaa66","#f4c37d"]');
+    }
+  });
+});

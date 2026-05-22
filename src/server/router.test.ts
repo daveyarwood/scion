@@ -33,6 +33,24 @@ describe('song.list', () => {
     const result = await caller.song.list();
     expect(Array.isArray(result)).toBe(true);
   });
+
+  it('returns archetype and accent_ramp in list results', async () => {
+    const caller = appRouter.createCaller({});
+    
+    // Clear any existing songs first by creating a fresh caller
+    await caller.song.create({
+      title: 'First Song',
+    });
+
+    const result = await caller.song.list();
+    expect(result.length).toBeGreaterThan(0);
+    
+    // Verify each song in the list has archetype and accent_ramp
+    result.forEach((song) => {
+      expect(song.archetype).toBeDefined();
+      expect(song.accent_ramp).toBeDefined();
+    });
+  });
 });
 
 describe('song.create', () => {
@@ -61,6 +79,38 @@ describe('song.create', () => {
     expect(result.title).toBe('Song with Body');
     expect(result.body).toBe('This is the body');
   });
+
+  it('populates archetype and accent_ramp from UUID if not provided', async () => {
+    const caller = appRouter.createCaller({});
+
+    const result = await caller.song.create({
+      title: 'Test Song',
+    });
+
+    expect(result.archetype).toBeDefined();
+    expect(['tulip', 'hibiscus', 'cactus', 'mushroom']).toContain(result.archetype);
+    expect(result.accent_ramp).toBeDefined();
+    // accent_ramp should be a JSON array string with 4 hex colors
+    const parsed = JSON.parse(result.accent_ramp!);
+    expect(Array.isArray(parsed)).toBe(true);
+    expect(parsed.length).toBe(4);
+    parsed.forEach((color: string) => {
+      expect(color).toMatch(/^#[0-9a-fA-F]{6}$/);
+    });
+  });
+
+  it('allows explicit archetype and accent_ramp on creation', async () => {
+    const caller = appRouter.createCaller({});
+
+    const result = await caller.song.create({
+      title: 'Custom Plant Song',
+      archetype: 'mushroom',
+      accent_ramp: '["#322030","#492850","#823a63","#c54c86"]',
+    });
+
+    expect(result.archetype).toBe('mushroom');
+    expect(result.accent_ramp).toBe('["#322030","#492850","#823a63","#c54c86"]');
+  });
 });
 
 describe('song.get', () => {
@@ -76,6 +126,19 @@ describe('song.get', () => {
     expect(retrieved).toBeDefined();
     expect(retrieved?.id).toBe(created.id);
     expect(retrieved?.title).toBe('Get Test Song');
+  });
+
+  it('returns archetype and accent_ramp from song.get', async () => {
+    const caller = appRouter.createCaller({});
+
+    const created = await caller.song.create({
+      title: 'Get Test Song',
+    });
+
+    const retrieved = await caller.song.get(created.id);
+
+    expect(retrieved?.archetype).toBeDefined();
+    expect(retrieved?.accent_ramp).toBeDefined();
   });
 
   it('returns null for non-existent song', async () => {
@@ -114,6 +177,23 @@ describe('song.update', () => {
     });
 
     expect(updated.growth_stage).toBe('blooming');
+  });
+
+  it('updates archetype and accent_ramp', async () => {
+    const caller = appRouter.createCaller({});
+
+    const created = await caller.song.create({
+      title: 'Update Appearance Test',
+    });
+
+    const updated = await caller.song.update({
+      id: created.id,
+      archetype: 'cactus',
+      accent_ramp: '["#984c39","#c97743","#ecaa66","#f4c37d"]',
+    });
+
+    expect(updated.archetype).toBe('cactus');
+    expect(updated.accent_ramp).toBe('["#984c39","#c97743","#ecaa66","#f4c37d"]');
   });
 
   it('throws for non-existent song', async () => {
