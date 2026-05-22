@@ -86,6 +86,38 @@ The app is fully functional end-to-end and has reached its original visual desig
 
 ## Test Results
 
-<!-- to be filled in by cycle-tester -->
+**Tests run**: 121
+**Passing**: 121
+**Failing**: 0
+
+### Coverage notes
+
+All code changes this cycle have appropriate test coverage:
+
+- **Expanded ACCENT_RAMPS (5 → 11 ramps)**: Pure data structure change. The `selectAccentRamp` function already has comprehensive test coverage (6 tests) that validates correct ramp selection, determinism, and palette compliance. The expanded ramp set is automatically tested by the existing "always returns a ramp from the defined palette" test, which was updated with the new 11-ramp list.
+
+- **Removed dead code (ACCENT_COLORS / selectAccentColor)**: Dead code doesn't need test coverage. Associated tests were appropriately removed.
+
+- **Fixed song.delete input schema**: Changed from bare string validator to `z.object({ id: z.string().uuid() })`. Updated existing tests and added 2 new tests to verify Zod validation behavior:
+  - ✅ "rejects invalid UUID format" — verifies malformed UUIDs are rejected
+  - ✅ "requires id field" — verifies empty UUID strings are rejected
+  
+  Total delete tests increased from 2 to 4.
+
+- **Added dev scripts (seed-songs.ts, clear-songs.ts)**: These CLI utilities make HTTP requests to a live API and require the server to be running. Per the project testing philosophy ("No network calls", "No running servers", "CI-compatible"), these should NOT have unit tests. They are development helpers designed to run manually or in a separate CI job with server infrastructure. Both scripts have reasonable error handling appropriate for dev utilities.
+
+- **Supporting code**: All imported utility functions (from generator.ts, shared schemas, stage transitions) have comprehensive existing test coverage.
+
+### Failures
+
+All tests passing.
+
+### Test file summary
+- src/shared/index.test.ts — 14 tests (schemas and validation)
+- src/client/plant/stageTransitions.test.ts — 39 tests (stage transition logic)
+- src/client/plant/generator.test.ts — 35 tests (plant generation and color parsing)
+- src/client/components/dateFormat.test.ts — 9 tests (date formatting)
+- src/server/router.test.ts — 12 tests (tRPC endpoints; +2 new tests this cycle)
+- scripts/migrate.test.ts — 12 tests (database migrations)
 
 ## Open Questions
