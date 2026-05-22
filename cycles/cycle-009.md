@@ -1,6 +1,6 @@
 # Cycle 009
 
-**Date**: 2026-05-21
+**Date**: 2026-05-22
 
 ## Brainstorm
 
@@ -30,7 +30,6 @@ The app is genuinely usable as a daily creative sketchbook. The full-page edit v
 - **No filter or search**: No stage-filter tabs, no title search. Finding a specific song in a populated garden requires scrolling.
 - **Song cards show `created_at`, not `updated_at`**: The footer date on each card shows when the song was first created, not when it was last worked on. This is a one-line fix but subtly misleading.
 - **Appearance not user-editable**: `archetype` and `accent_ramp` are stored in the DB and wired through the UI, but the edit page has no controls to change them. The data model is ready; only the UI is missing.
-- **`SongEditModal` and related modal CSS still exist**: `SongEditModal.tsx`, `SongEditModal.css` are still present and `SongEditPage.css` imports the modal styles. The modal itself is no longer used (no route renders it); this is dead code.
 - **`plot_id` still untouched**: In the schema since migration 001, never surfaced in the UI.
 - **No `song.list` sort parameter**: The server always returns creation-order; sorting requires a server-side change.
 
@@ -42,51 +41,61 @@ The app is genuinely usable as a daily creative sketchbook. The full-page edit v
 
 ### Trajectory & observations
 
-- **The "sketchbook utility" path is clearly the most pressing.** Sort by `updated_at` and stage-filter chips were deferred from cycle 008's brainstorm. They were the top two suggestions then and they remain so now. With `yarn seed` making it trivial to fill the garden with 20+ songs, the inability to find the one you were just working on is the most immediately felt friction. One more cycle of deferral starts to feel like avoidance.
-- **Dead code is accumulating.** `SongEditModal.tsx`, `SongEditModal.css`, and the dead import in `SongEditPage.css` are no longer used. Leaving dead components around creates confusion for future work and should be cleaned up before the component tree grows further.
-- **The `updated_at` date on cards is a quick win.** Cards currently show `created_at` in their footer. Showing `updated_at` instead (or a smart "last edited" label) is a single-line change with real UX benefit. It pairs naturally with sort-by-updated_at.
-- **Appearance editing is close but not there.** The DB columns exist, the `PlantVisual` component accepts these as props, the edit page renders the plant. Adding an archetype selector and accent-ramp picker on the edit page is the next natural step and would make each song feel even more personal. This could be as simple as two small controls (a set of archetype icons, a row of color swatches) placed near the plant visual.
-- **The node-based content model from VISION.md will require the edit page to grow.** The current edit page layout (plant visual left, form right, fixed textarea) is sensible for a single body field but will need restructuring as `song_nodes` becomes a goal. That's probably 2–3 cycles out, but decisions made now (e.g. layout CSS) will either ease or complicate that transition.
-- **Labels are the right next organisation primitive.** VISION.md already decided: labels over plots. A many-to-many tag system would make the garden meaningful for multi-project use. But it's a non-trivial feature (new DB tables, tRPC procedures, label UI, filter by label) — probably a full cycle on its own.
+- **The "sketchbook utility" path is clearly most pressing.** Sort by `updated_at` and stage-filter chips were deferred from cycle 008's brainstorm. With `yarn seed` making it trivial to fill the garden with 20+ songs, the inability to find the one you were just working on is the most immediately felt friction.
+- **The title generator was the right call.** It changes what "planting a seed" feels like — from a chore (think of a name, type it in) to a ritual (press a button, get a strange and evocative prompt). Several generated titles (`non-provisional oyster`, `undermining songs`, `the requisitioned mother`) felt like genuine song ideas on their own.
+- **Dead code is gone.** `SongEditModal.tsx`, `SongEditModal.css`, and `CreateSongForm.tsx/css` were removed this cycle.
+- **Appearance editing is close but not there.** The DB columns exist, the `PlantVisual` component accepts these as props, the edit page renders the plant. Adding an archetype selector and accent-ramp picker is the next natural step.
 
-### Suggestions for this cycle
+### Suggestions for next cycle
 
-1. **Sort by `updated_at` (server + client)** — Change `ORDER BY created_at DESC` to `ORDER BY updated_at DESC` in `router.ts`; this is a one-line SQL change with no migration and is the single highest-leverage UX improvement available right now. Pair it with showing `updated_at` on card footers instead of `created_at`.
-
-2. **Stage-filter chips above the grid** — A row of clickable stage labels ("all / seed / seedling / sprout / ...") that filters the displayed cards client-side; pure UI addition with no backend changes; makes navigating a populated garden tractable and pairs naturally with sort-by-updated_at.
-
-3. **Title search** — A single text `<input>` in the garden controls bar that filters songs by title client-side; trivial to implement alongside stage-filter chips as part of a general "garden controls" section. These three (sort + filter + search) could reasonably be done as one cohesive "garden navigation" goal.
-
-4. **Remove dead modal code** — Delete `SongEditModal.tsx`, `SongEditModal.css`, and fix the import in `SongEditPage.css` to use its own styles directly; small cleanup that keeps the component tree honest and removes a source of confusion for future work.
-
-5. **Appearance editing on the edit page** — Add archetype and accent-ramp selectors to `SongEditPage`: a row of small archetype sprite thumbnails (click to select) and a row of color swatches (click to select ramp); wire to `song.update`; the data model is fully ready for this and it makes each song feel genuinely personal.
-
-6. **Show `updated_at` on song cards** — Change `song-date` in `SongCard.tsx` from `formatDate(song.created_at)` to `formatDate(song.updated_at)` with a "last edited" label; one-line change, immediately more useful.
-
-7. **Labels MVP** — Add a `labels` table and `song_labels` join table via a new migration; add `label.list`, `label.create`, `song.addLabel`, `song.removeLabel` tRPC procedures; show label chips on cards and an editable label list on the edit page; filter the garden by label. This is a full-cycle scope item but would make Scion genuinely useful for multi-project work.
-
-8. **Curated title name generator** — A dice icon next to the title field on the create form (and/or edit page) that generates a random name from curated word pools with templates (`[adjective] [noun]`, `the [adjective] [noun]`, etc.); client-side only, no server round-trip; makes the seed-planting ritual feel more playful (VISION.md already describes this).
+1. **Sort by `updated_at` (server + client)** — Change `ORDER BY created_at DESC` to `ORDER BY updated_at DESC`; one-line SQL change, no migration. Pair with showing `updated_at` on card footers.
+2. **Stage-filter chips above the grid** — Clickable stage labels that filter displayed cards client-side; pure UI, no backend changes.
+3. **Title search** — A text input in the garden controls bar that filters songs by title client-side. Sort + filter + search together make a cohesive "garden navigation" goal.
+4. **Appearance editing on the edit page** — Archetype thumbnails and accent-ramp swatches on `SongEditPage`; data model is fully ready.
+5. **Labels MVP** — `labels` table, `song_labels` join table, tRPC procedures, label chips on cards and edit page, filter by label. Full-cycle scope.
 
 ## Goals
 
-<!-- To be filled in by the human -->
+1. Build a title name generator with curated word pools and templates
+2. Change the new-seed flow: clicking "+ new seed" creates immediately and navigates to the edit page
+3. Remove dead modal code (`SongEditModal`, `CreateSongForm`)
 
 ## Scope
 
-<!-- To be filled in by the human -->
+- `src/shared/titleWords.ts` — hand-curated word lists (nouns, plural nouns, verbs, gerunds, adjectives) in two registers: eclectic/bureaucratic and common/everyday
+- `src/shared/titleGenerator.ts` — 15 templates, 50/50 blend between registers per slot
+- `src/server/router.ts` — `song.create` calls `generateTitle()` when `title` is omitted
+- `src/shared/index.ts` — `CreateSongInput.title` made optional
+- `src/client/pages/GardenPage.tsx` — "+ new seed" fires `createMutation.mutate({})` and navigates on success; no form, no toggle state
+- `src/client/pages/SongEditPage.tsx` — dice button (⚄) next to title field for client-side re-rolls
+- `src/client/pages/SongEditPage.css` — modal styles migrated in; new `.title-field-row` and `.btn-dice` styles
+- `scripts/seed-songs.ts` — stripped of `/usr/share/dict/words` logic; sends no title, logs server-returned title
+- Deleted: `src/client/components/SongEditModal.tsx`, `SongEditModal.css`, `CreateSongForm.tsx`, `CreateSongForm.css`
 
 ## Work Done
 
-<!-- To be filled in during the cycle -->
+- Installed `wordpos` as a dev dependency and wrote `scripts/generate-word-lists.ts` to explore WordNet output; concluded WordNet is too noisy for this purpose (too many technical/obscure terms) and switched to hand-curation
+- Wrote `src/shared/titleWords.ts` with an eclectic register (bureaucratic, geographic, zoological, institutional vocabulary) and a common register (everyday nouns, verbs, adjectives)
+- Wrote `src/shared/titleGenerator.ts` with 15 title templates; each slot blends 50/50 between eclectic and common pools, producing collisions like *"non-provisional oyster"*, *"die the discontinued bureaucrat"*, *"undermining songs"*, *"the requisitioned mother"*
+- Removed `[adjective] [noun] and [noun]` template after review — felt structurally awkward
+- Moved title files to `src/shared/` so server and client share a single source
+- Made `CreateSongInput.title` optional; server calls `generateTitle()` as default
+- Replaced "+ new seed" toggle-form flow with direct create-and-navigate
+- Added dice button to `SongEditPage` title field for instant client-side re-rolls
+- Migrated modal styles into `SongEditPage.css`; deleted all dead modal and form components
+- Simplified `seed-songs.ts`: removed `execSync`/`shuf` word fetching; songs now get server-generated titles
+- Removed `wordpos` from devDependencies (used only for exploration)
+- All 148 tests passing; TypeScript strict mode clean throughout
 
 ## Review Notes
 
-<!-- To be filled in after implementation -->
+N/A — informal cycle, no separate reviewer pass.
 
 ## Test Results
 
-<!-- To be filled in after implementation -->
+148 tests, all passing. No new tests added this cycle (title generator is pure and exercised manually; no logic regressions in modified server/client code).
 
 ## Open Questions
 
-<!-- To be filled in if needed -->
+- Should the 50/50 blend ratio between eclectic and common pools be tunable? Currently hardcoded in `pickNoun` etc. Could be a named constant if we want to experiment further.
+- `scripts/generate-word-lists.ts` remains in the repo as a dev utility. Worth keeping or should it be deleted?
