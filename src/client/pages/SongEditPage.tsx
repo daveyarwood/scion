@@ -34,8 +34,12 @@ export const SongEditPage: React.FC = () => {
   const [saved, setSaved] = useState(false);
 
   // Initialize form state from song data when query succeeds.
-  // Re-initializes whenever we load a new song id, but does not overwrite
-  // in-progress edits while on the same song (survives background refetches).
+  // Reset initializedForId when id changes so navigating to the same song
+  // again always re-syncs from fresh data.
+  React.useEffect(() => {
+    setInitializedForId(null);
+  }, [id]);
+
   React.useEffect(() => {
     if (songQuery.data && songQuery.data.id !== initializedForId) {
       const song = songQuery.data;
