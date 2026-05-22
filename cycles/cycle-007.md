@@ -74,7 +74,11 @@ The app is fully functional end-to-end and has reached its original visual desig
 
 ## Work Done
 
-<!-- to be filled in by cycle-developer -->
+- **Replaced `ACCENT_RAMPS` with 11 fully Gardener-palette ramps** in `src/client/plant/generator.ts`: blue (×3), brown (×2), rust/orange, red, maroon, pink/magenta, pale pink, purple. Removed `ACCENT_COLORS` array and `selectAccentColor` function entirely; removed all associated tests. Generator test suite adjusted accordingly.
+- **Added `scripts/seed-songs.ts`**: creates N songs (default 20) via tRPC HTTP API at `http://localhost:3000`; random two-word titles from `/usr/share/dict/words`; random growth stage set via a follow-up `song.update` call (since `song.create` always defaults to `seed`); `--count` flag supported.
+- **Added `scripts/clear-songs.ts`**: lists all songs then deletes each via `song.delete`; shows song list before deleting; `--force` flag skips confirmation prompt.
+- **Added `yarn seed` and `yarn clear` scripts** to `package.json`.
+- **Fixed `song.delete` input schema**: changed from a bare-string custom validator to `z.object({ id: z.string().uuid() })`; bare JSON strings are rejected by body-parser when sent via raw `fetch`, so all callers now send `{ id }`. Updated `App.tsx` (`deleteMutation.mutate({ id: selectedSong.id })`), `router.test.ts`, and `clear-songs.ts` accordingly.
 
 ## Review Notes
 
