@@ -12,7 +12,7 @@ export const SongEditPage: React.FC = () => {
   const navigate = useNavigate();
 
   // Initialize queries before any conditional returns
-  const songQuery = trpc.song.get.useQuery(id || '', { enabled: !!id });
+  const songQuery = trpc.song.get.useQuery(id || '', { enabled: !!id, staleTime: 0 });
   const updateMutation = trpc.song.update.useMutation({
     onSuccess: () => {
       songQuery.refetch();
@@ -30,19 +30,21 @@ export const SongEditPage: React.FC = () => {
   const [growthStage, setGrowthStage] = useState<GrowthStage>('seed');
   const [error, setError] = useState<string | null>(null);
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
-  const [initialized, setInitialized] = useState(false);
+  const [initializedForId, setInitializedForId] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
-  // Initialize form state from song data when query succeeds
+  // Initialize form state from song data when query succeeds.
+  // Re-initializes whenever we load a new song id, but does not overwrite
+  // in-progress edits while on the same song (survives background refetches).
   React.useEffect(() => {
-    if (songQuery.data && !initialized) {
+    if (songQuery.data && songQuery.data.id !== initializedForId) {
       const song = songQuery.data;
       setTitle(song.title);
       setBody(song.body);
       setGrowthStage(song.growth_stage);
-      setInitialized(true);
+      setInitializedForId(song.id);
     }
-  }, [songQuery.data, initialized]);
+  }, [songQuery.data, initializedForId]);
 
   // Check for invalid ID after hooks
   if (!id) {
