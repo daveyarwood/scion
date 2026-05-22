@@ -7,7 +7,7 @@
 /** Common everyday nouns — mixed in for variety and contrast */
 export const COMMON_NOUNS = [
   'afternoon',
-  'arms',
+  'arm',
   'bed',
   'blood',
   'body',
