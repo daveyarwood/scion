@@ -84,12 +84,20 @@ A many-to-many tag system for songs. Each label has a name and a randomly assign
 
 ## Song name generator
 
-The `seed-songs.ts` script generates two-word titles from `/usr/share/dict/words`. This is a useful pattern but produces low-quality names ("mailings amputees"). The vision for the UI:
+Fully implemented in cycle 009. The title generator uses hand-curated word lists in two registers (eclectic/bureaucratic and common/everyday) with 50/50 blending per slot, producing evocative collisions like "non-provisional oyster", "undermining songs", "the requisitioned mother".
 
-- Title field can be left blank
-- A dice icon next to the title field generates a random name on click
-- Names drawn from curated word pools with templates: `[adjective] [noun]`, `[verb]ing [noun]`, `the [adjective] [noun]`, etc.
-- Bundled client-side word lists — no server round-trip
+**Current implementation:**
+- `src/shared/titleWords.ts` — curated nouns, verbs, gerunds, adjectives in eclectic and common registers; includes CS/distributed systems terms and colors
+- `src/shared/titleGenerator.ts` — weighted template system: simple (~55%), extended (~30%), recursive (~10%), exclamation (~5%); 30+ templates including `[adj] [noun]`, `[verb] the [noun]`, `[noun] / [noun]`, `[noun]!`, `[any] (pt. 1)`, etc.
+- Server populates `title` on `song.create` when omitted (calls `generateTitle()`)
+- "+ new seed" button creates immediately and navigates to edit page (no form)
+- Dice button (⚄) on edit page for client-side re-rolls
+- `yarn seed` uses server-generated titles
+
+**Future ideas:**
+- Tunable blend ratio between eclectic/common registers (currently hardcoded 50/50)
+- User-provided word lists or custom templates
+- Per-song title history (show previously generated titles for that song)
 
 ## Navigation and routing
 

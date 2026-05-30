@@ -30,7 +30,7 @@ scion/
 
 ## Current state
 
-Full-stack working application with garden-themed UI, pixel art plant sprites, per-song palette-swapped accent colors, React Router, and a dedicated full-page song edit view (cycle 008). The following is in place and working:
+Full-stack working application with garden-themed UI, pixel art plant sprites, per-song palette-swapped accent colors, React Router, dedicated full-page song edit view (cycle 008), and title generator with curated word lists (cycle 009). The following is in place and working:
 
 - Monorepo with TypeScript (strict, project references), Vite, Vitest, ESLint, Prettier
 - `migrations/001_initial_schema.sql` — `songs` table (`id`, `title`, `body`, `plot_id`, `growth_stage`, `created_at`, `updated_at`) plus `schema_migrations` tracking table; `migrations/002_add_budding_stage.sql` adds the `budding` stage; `migrations/003_add_archetype_and_accent_ramp.sql` adds `archetype` (text) and `accent_ramp` (text, JSON array) columns
@@ -40,10 +40,11 @@ Full-stack working application with garden-themed UI, pixel art plant sprites, p
 - `scripts/check-palette.py` — verifies PNG sprites use only the 10 allowed palette colors
 - `scripts/slice-sprites.py` — slices a sprite sheet into individual archetype/stage PNGs using alpha-gap detection
 - `yarn dev` runs Vite client + Express server concurrently via `concurrently` (no separate dev.ts script)
-- `src/shared/index.ts` — `GrowthStageEnum` (7 stages: seed → seedling → sprout → budding → blooming → dormant → archived), `SongSchema`, `CreateSongInput`, `UpdateSongInput`, `UpdateSongWithId`; 20 passing tests
+- `src/shared/index.ts` — `GrowthStageEnum` (7 stages: seed → seedling → sprout → budding → blooming → dormant → archived), `SongSchema`, `CreateSongInput` (title optional), `UpdateSongInput`, `UpdateSongWithId`; 20 passing tests
 - `src/shared/plant.ts` — pure plant generation functions (`selectArchetype`, `selectAccentRamp`, `ACCENT_RAMPS`); usable by both client and server; 10 passing tests
-- `src/server/` — Express + tRPC server with full song CRUD (`song.list`, `song.create`, `song.get`, `song.update`, `song.delete`); populates `archetype` and `accent_ramp` on `song.create` using `src/shared/plant.ts`; raw SQL via better-sqlite3; zero type coercions; 17 passing tests
-- `src/client/` — React app with React Router (`react-router-dom`); two routes: `/` (garden grid, `GardenPage.tsx`) and `/songs/:id` (full-page editor, `SongEditPage.tsx`); tRPC + React Query; Gardener-palette lo-fi UI; all UI chrome lowercase; garden-themed empty state with seed sprite illustration
+- `src/shared/titleWords.ts` + `titleGenerator.ts` — curated word lists (eclectic + common registers, CS terms, colors) and weighted template system; server calls `generateTitle()` when title omitted from `song.create`; dice button on edit page for client-side re-rolls
+- `src/server/` — Express + tRPC server with full song CRUD (`song.list`, `song.create`, `song.get`, `song.update`, `song.delete`); populates `archetype`, `accent_ramp`, and `title` (if omitted) on `song.create`; raw SQL via better-sqlite3; zero type coercions; 17 passing tests
+- `src/client/` — React app with React Router (`react-router-dom`); two routes: `/` (garden grid, `GardenPage.tsx`) and `/songs/:id` (full-page editor, `SongEditPage.tsx`); tRPC + React Query; Gardener-palette lo-fi UI; all UI chrome lowercase; garden-themed empty state with seed sprite illustration; "+ new seed" button creates immediately and navigates to edit page
 - `src/client/plant/generator.ts` — archetype registry with 4 archetypes (tulip, hibiscus, cactus, mushroom); exports `getArchetype`, `getSpritePath`, `parseHexToRGB`, `generatePlant`; 35 passing tests; `ACCENT_RAMPS` (11 ramps) and `selectArchetype`/`selectAccentRamp` now live in `src/shared/plant.ts`
 - `src/client/plant/stageTransitions.ts` — pure stage transition utilities (`getPromotedStage`, `getDemotedStage`, `canPromote`, `canDemote`, `PROMOTABLE_STAGES`); 39 passing tests
 - `src/client/components/dateFormat.ts` — pure date formatting utility; 9 passing tests
