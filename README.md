@@ -2,7 +2,7 @@
 
 A personal creative sketchbook for musical fragments. Song ideas are represented as plants — living things you can tend and develop over time.
 
-![Scion screenshot showing the garden view with pixel art plant sprites](docs/screenshot.png)
+<img src="docs/screenshot.png" alt="Scion screenshot showing the garden view with pixel art plant sprites" width="600">
 
 For product vision, design decisions, and future ideas, see [VISION.md](./VISION.md).
 
