@@ -65,11 +65,25 @@ The app is a genuinely usable daily sketchbook. 148 tests, all passing. TypeScri
 
 ## Goals
 
-<!-- to be filled in during human planning conversation -->
+1. Sort song list by `updated_at` descending — change `ORDER BY` in `song.list` and show `updated_at` on card footers
+2. Add stage-filter chips above the garden grid — clickable stage labels that filter displayed cards client-side
+3. Add title search — text input that filters songs by title client-side, combining with stage-filter
 
 ## Scope
 
-<!-- to be filled in during human planning conversation -->
+In scope:
+- `src/server/router.ts` — change `song.list` from `ORDER BY created_at DESC` to `ORDER BY updated_at DESC`
+- `src/client/components/SongCard.tsx` — change date from `created_at` to `updated_at`
+- `src/client/pages/GardenPage.tsx` — stage-filter chip row above the grid + title search input; both as client-side filters that compose with each other
+- `src/client/pages/GardenPage.css` — chip bar, active/inactive chip styles, search input styling
+- Any new shared types/Zod schemas needed for the UI (none expected; these are client-side-only filters)
+
+Explicitly deferred:
+- `song.list` sort parameter (API evolution) — moving too fast; let the simple sort change land first and see how it feels
+- Appearance editing on the edit page — full-scope feature, save for a dedicated cycle
+- Tunable title generator blend ratio — creative stretch, save for later
+- Labels data model — save for a labels-dedicated cycle
+- `wordpos` / `scripts/generate-word-lists.ts` cleanup — user explicitly wants to keep these in the repo
 
 ## Work Done
 
