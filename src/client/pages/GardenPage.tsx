@@ -8,6 +8,7 @@ import './GardenPage.css';
 export const GardenPage: React.FC = () => {
   const [loadingSongId, setLoadingSongId] = useState<string | null>(null);
   const [filterStage, setFilterStage] = useState<GrowthStage | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
   const listQuery = trpc.song.list.useQuery(undefined, { staleTime: 0 });
@@ -47,8 +48,12 @@ export const GardenPage: React.FC = () => {
   };
 
   const songs = listQuery.data ?? [];
-  const filteredSongs =
-    filterStage === null ? songs : songs.filter((s) => s.growth_stage === filterStage);
+  const filteredSongs = songs.filter((s) => {
+    const matchesStage = filterStage === null || s.growth_stage === filterStage;
+    const matchesSearch =
+      searchQuery === '' || s.title.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesStage && matchesSearch;
+  });
 
   return (
     <div className="app">
@@ -66,6 +71,13 @@ export const GardenPage: React.FC = () => {
           >
             {createMutation.isPending ? 'planting...' : '+ new seed'}
           </button>
+          <input
+            type="text"
+            className="search-input"
+            placeholder="search titles..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
 
         <div className="stage-chips">

@@ -34,6 +34,28 @@
   color: var(--color-dark-gray);
 }
 
+.search-input {
+  padding: 0.4rem 0.8rem;
+  border: 2px solid var(--color-dark-gray);
+  border-radius: 0;
+  background-color: var(--color-cream);
+  color: var(--color-dark-gray);
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  min-width: 200px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-input::placeholder {
+  color: var(--color-light-gray);
+  text-transform: lowercase;
+}
+
+.search-input:focus {
+  border-color: var(--color-green);
+}
+
 .no-results {
   text-align: center;
   padding: 3rem 2rem;
