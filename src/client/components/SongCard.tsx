@@ -75,7 +75,7 @@ export const SongCard: React.FC<SongCardProps> = ({
       <h3 className="song-title">{song.title}</h3>
       {song.body && <p className="song-body">{song.body}</p>}
       <div className="song-footer">
-        <span className="song-date">{formatDate(song.created_at)}</span>
+        <span className="song-date">{formatDate(song.updated_at)}</span>
       </div>
     </div>
   );

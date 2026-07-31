@@ -13,7 +13,7 @@ export const appRouter = t.router({
     // List all songs
     list: t.procedure.query(() => {
       const db = getDb();
-      const rows = db.prepare<[], Song>('SELECT * FROM songs ORDER BY created_at DESC').all();
+      const rows = db.prepare<[], Song>('SELECT * FROM songs ORDER BY updated_at DESC').all();
       return rows.map((row) => SongSchema.parse(row));
     }),
 
