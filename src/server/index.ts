@@ -1,16 +1,16 @@
-import express, { Express } from 'express';
-import cors from 'cors';
-import { createExpressMiddleware } from '@trpc/server/adapters/express';
-import { appRouter } from './router';
+import express, { Express } from 'express'
+import cors from 'cors'
+import { createExpressMiddleware } from '@trpc/server/adapters/express'
+import { appRouter } from './router'
 
-const PORT = 3000;
+const PORT = 3000
 
 export const createServer = (): Express => {
-  const app = express();
+  const app = express()
 
   // Middleware
-  app.use(cors({ origin: 'http://localhost:5173' }));
-  app.use(express.json());
+  app.use(cors({ origin: 'http://localhost:5173' }))
+  app.use(express.json())
 
   // tRPC router
   app.use(
@@ -19,29 +19,29 @@ export const createServer = (): Express => {
       router: appRouter,
       createContext: () => ({}),
     })
-  );
+  )
 
   // Health check endpoint
   app.get('/health', (_req, res) => {
-    res.json({ status: 'ok' });
-  });
+    res.json({ status: 'ok' })
+  })
 
-  return app;
-};
+  return app
+}
 
 export const startServer = async (): Promise<void> => {
-  const app = createServer();
+  const app = createServer()
 
   app.listen(PORT, () => {
-    console.log(`[Server] Running on http://localhost:${PORT}`);
-    console.log(`[Server] tRPC endpoint at http://localhost:${PORT}/trpc`);
-  });
-};
+    console.log(`[Server] Running on http://localhost:${PORT}`)
+    console.log(`[Server] tRPC endpoint at http://localhost:${PORT}/trpc`)
+  })
+}
 
 // Run if this is the main module
 if (import.meta.url === `file://${process.argv[1]}`) {
   startServer().catch((err) => {
-    console.error('[Server] Failed to start:', err);
-    process.exit(1);
-  });
+    console.error('[Server] Failed to start:', err)
+    process.exit(1)
+  })
 }

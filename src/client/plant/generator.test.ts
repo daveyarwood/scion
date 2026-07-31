@@ -1,46 +1,53 @@
-import { describe, it, expect } from 'vitest';
-import { generatePlant, selectArchetype, getArchetype, getSpritePath, parseHexToRGB, selectAccentRamp } from './generator';
+import { describe, it, expect } from 'vitest'
+import {
+  generatePlant,
+  selectArchetype,
+  getArchetype,
+  getSpritePath,
+  parseHexToRGB,
+  selectAccentRamp,
+} from './generator'
 
 describe('selectArchetype', () => {
   it('returns a valid archetype index', () => {
-    const index = selectArchetype('550e8400-e29b-41d4-a716-446655440000');
-    expect(index).toBeGreaterThanOrEqual(0);
-    expect(Number.isInteger(index)).toBe(true);
-  });
+    const index = selectArchetype('550e8400-e29b-41d4-a716-446655440000')
+    expect(index).toBeGreaterThanOrEqual(0)
+    expect(Number.isInteger(index)).toBe(true)
+  })
 
   it('returns the same index for the same UUID', () => {
-    const uuid = '550e8400-e29b-41d4-a716-446655440000';
-    const index1 = selectArchetype(uuid);
-    const index2 = selectArchetype(uuid);
-    expect(index1).toBe(index2);
-  });
+    const uuid = '550e8400-e29b-41d4-a716-446655440000'
+    const index1 = selectArchetype(uuid)
+    const index2 = selectArchetype(uuid)
+    expect(index1).toBe(index2)
+  })
 
   it('may return different indices for different UUIDs', () => {
-    const uuid1 = '550e8400-e29b-41d4-a716-446655440000';
-    const uuid2 = '550e8400-e29b-41d4-a716-446655440001';
+    const uuid1 = '550e8400-e29b-41d4-a716-446655440000'
+    const uuid2 = '550e8400-e29b-41d4-a716-446655440001'
     // With 4 archetypes registered, different UUIDs may produce different indices
-    const index1 = selectArchetype(uuid1);
-    const index2 = selectArchetype(uuid2);
-    expect(typeof index1).toBe('number');
-    expect(typeof index2).toBe('number');
-  });
+    const index1 = selectArchetype(uuid1)
+    const index2 = selectArchetype(uuid2)
+    expect(typeof index1).toBe('number')
+    expect(typeof index2).toBe('number')
+  })
 
   it('handles edge case UUIDs (empty string, special chars)', () => {
     // Edge case: empty string
-    const emptyIndex = selectArchetype('');
-    expect(emptyIndex).toBeGreaterThanOrEqual(0);
-    expect(Number.isInteger(emptyIndex)).toBe(true);
+    const emptyIndex = selectArchetype('')
+    expect(emptyIndex).toBeGreaterThanOrEqual(0)
+    expect(Number.isInteger(emptyIndex)).toBe(true)
 
     // Edge case: very long string
-    const longIndex = selectArchetype('x'.repeat(1000));
-    expect(longIndex).toBeGreaterThanOrEqual(0);
-    expect(Number.isInteger(longIndex)).toBe(true);
+    const longIndex = selectArchetype('x'.repeat(1000))
+    expect(longIndex).toBeGreaterThanOrEqual(0)
+    expect(Number.isInteger(longIndex)).toBe(true)
 
     // Edge case: special characters
-    const specialIndex = selectArchetype('!@#$%^&*()');
-    expect(specialIndex).toBeGreaterThanOrEqual(0);
-    expect(Number.isInteger(specialIndex)).toBe(true);
-  });
+    const specialIndex = selectArchetype('!@#$%^&*()')
+    expect(specialIndex).toBeGreaterThanOrEqual(0)
+    expect(Number.isInteger(specialIndex)).toBe(true)
+  })
 
   it('always returns an index within valid range', () => {
     // Test multiple UUIDs to ensure all are within bounds
@@ -50,71 +57,74 @@ describe('selectArchetype', () => {
       '750e8400-e29b-41d4-a716-446655440000',
       'ffffffff-ffff-ffff-ffff-ffffffffffff',
       '00000000-0000-0000-0000-000000000000',
-    ];
+    ]
 
     testUUIDs.forEach((uuid) => {
-      const index = selectArchetype(uuid);
-      expect(index).toBeGreaterThanOrEqual(0);
-      expect(index).toBeLessThan(4); // Now 4 archetypes (tulip, hibiscus, cactus, mushroom)
-    });
-  });
-});
+      const index = selectArchetype(uuid)
+      expect(index).toBeGreaterThanOrEqual(0)
+      expect(index).toBeLessThan(4) // Now 4 archetypes (tulip, hibiscus, cactus, mushroom)
+    })
+  })
+})
 
 describe('getArchetype', () => {
   it('returns archetype by ID', () => {
-    const archetype = getArchetype(0);
-    expect(archetype).toBeDefined();
-    expect(archetype.id).toBe(0);
-    expect(archetype.name).toBe('tulip');
-  });
+    const archetype = getArchetype(0)
+    expect(archetype).toBeDefined()
+    expect(archetype.id).toBe(0)
+    expect(archetype.name).toBe('tulip')
+  })
 
   it('returns default archetype for invalid ID', () => {
-    const archetype = getArchetype(999);
-    expect(archetype.id).toBe(0);
-    expect(archetype.name).toBe('tulip');
-  });
+    const archetype = getArchetype(999)
+    expect(archetype.id).toBe(0)
+    expect(archetype.name).toBe('tulip')
+  })
 
   it('returns different archetypes by different IDs', () => {
-    expect(getArchetype(0).name).toBe('tulip');
-    expect(getArchetype(1).name).toBe('hibiscus');
-    expect(getArchetype(2).name).toBe('cactus');
-    expect(getArchetype(3).name).toBe('mushroom');
-  });
+    expect(getArchetype(0).name).toBe('tulip')
+    expect(getArchetype(1).name).toBe('hibiscus')
+    expect(getArchetype(2).name).toBe('cactus')
+    expect(getArchetype(3).name).toBe('mushroom')
+  })
 
   it('each archetype has a valid accentRamp field', () => {
     for (let i = 0; i < 4; i++) {
-      const archetype = getArchetype(i);
-      expect(archetype).toHaveProperty('accentRamp');
-      expect(Array.isArray(archetype.accentRamp)).toBe(true);
-      expect(archetype.accentRamp).toHaveLength(4);
+      const archetype = getArchetype(i)
+      expect(archetype).toHaveProperty('accentRamp')
+      expect(Array.isArray(archetype.accentRamp)).toBe(true)
+      expect(archetype.accentRamp).toHaveLength(4)
       archetype.accentRamp.forEach((color, index) => {
-        expect(color).toMatch(/^#[0-9a-fA-F]{6}$/, `Archetype ${i} (${archetype.name}) color at index ${index} is invalid`);
-      });
+        expect(color).toMatch(
+          /^#[0-9a-fA-F]{6}$/,
+          `Archetype ${i} (${archetype.name}) color at index ${index} is invalid`
+        )
+      })
     }
-  });
-});
+  })
+})
 
 describe('getSpritePath', () => {
   it('returns correct path for a known archetype and stage', () => {
-    expect(getSpritePath(0, 'seed')).toBe('tulip/seed.png');
-    expect(getSpritePath(1, 'blooming')).toBe('hibiscus/blooming.png');
-    expect(getSpritePath(2, 'sprout')).toBe('cactus/sprout.png');
-    expect(getSpritePath(3, 'archived')).toBe('mushroom/archived.png');
-  });
+    expect(getSpritePath(0, 'seed')).toBe('tulip/seed.png')
+    expect(getSpritePath(1, 'blooming')).toBe('hibiscus/blooming.png')
+    expect(getSpritePath(2, 'sprout')).toBe('cactus/sprout.png')
+    expect(getSpritePath(3, 'archived')).toBe('mushroom/archived.png')
+  })
 
   it('falls back to tulip for invalid archetype ID', () => {
-    expect(getSpritePath(999, 'seed')).toBe('tulip/seed.png');
-  });
-});
+    expect(getSpritePath(999, 'seed')).toBe('tulip/seed.png')
+  })
+})
 
 describe('generatePlant', () => {
-  const exampleUuid = '550e8400-e29b-41d4-a716-446655440000';
+  const exampleUuid = '550e8400-e29b-41d4-a716-446655440000'
 
   it('produces same output for same input', () => {
-    const plant1 = generatePlant(exampleUuid);
-    const plant2 = generatePlant(exampleUuid);
-    expect(plant1).toEqual(plant2);
-  });
+    const plant1 = generatePlant(exampleUuid)
+    const plant2 = generatePlant(exampleUuid)
+    expect(plant1).toEqual(plant2)
+  })
 
   it('produces different archetypes across a spread of UUIDs', () => {
     const uuids = [
@@ -126,61 +136,61 @@ describe('generatePlant', () => {
       'aabbccdd-eeff-0011-2233-445566778899',
       '11111111-2222-3333-4444-555566667777',
       'deadbeef-dead-beef-dead-beefdeadbeef',
-    ];
-    const ids = new Set(uuids.map((u) => generatePlant(u).archetypeId));
-    expect(ids.size).toBeGreaterThan(1);
-  });
+    ]
+    const ids = new Set(uuids.map((u) => generatePlant(u).archetypeId))
+    expect(ids.size).toBeGreaterThan(1)
+  })
 
   it('includes a valid archetype ID', () => {
-    const plant = generatePlant(exampleUuid);
-    expect(typeof plant.archetypeId).toBe('number');
-    expect(plant.archetypeId).toBeGreaterThanOrEqual(0);
-  });
-});
+    const plant = generatePlant(exampleUuid)
+    expect(typeof plant.archetypeId).toBe('number')
+    expect(plant.archetypeId).toBeGreaterThanOrEqual(0)
+  })
+})
 
 describe('parseHexToRGB', () => {
   describe('valid hex colors', () => {
     it('converts #c54c86 (accent color) to RGB', () => {
-      const result = parseHexToRGB('#c54c86');
-      expect(result.r).toBe(197);
-      expect(result.g).toBe(76);
-      expect(result.b).toBe(134);
-    });
+      const result = parseHexToRGB('#c54c86')
+      expect(result.r).toBe(197)
+      expect(result.g).toBe(76)
+      expect(result.b).toBe(134)
+    })
 
     it('converts #000000 (black) to RGB', () => {
-      const result = parseHexToRGB('#000000');
-      expect(result.r).toBe(0);
-      expect(result.g).toBe(0);
-      expect(result.b).toBe(0);
-    });
+      const result = parseHexToRGB('#000000')
+      expect(result.r).toBe(0)
+      expect(result.g).toBe(0)
+      expect(result.b).toBe(0)
+    })
 
     it('converts #ffffff (white) to RGB', () => {
-      const result = parseHexToRGB('#ffffff');
-      expect(result.r).toBe(255);
-      expect(result.g).toBe(255);
-      expect(result.b).toBe(255);
-    });
+      const result = parseHexToRGB('#ffffff')
+      expect(result.r).toBe(255)
+      expect(result.g).toBe(255)
+      expect(result.b).toBe(255)
+    })
 
     it('handles hex without leading # symbol', () => {
-      const result = parseHexToRGB('c54c86');
-      expect(result.r).toBe(197);
-      expect(result.g).toBe(76);
-      expect(result.b).toBe(134);
-    });
+      const result = parseHexToRGB('c54c86')
+      expect(result.r).toBe(197)
+      expect(result.g).toBe(76)
+      expect(result.b).toBe(134)
+    })
 
     it('handles uppercase hex', () => {
-      const result = parseHexToRGB('#C54C86');
-      expect(result.r).toBe(197);
-      expect(result.g).toBe(76);
-      expect(result.b).toBe(134);
-    });
+      const result = parseHexToRGB('#C54C86')
+      expect(result.r).toBe(197)
+      expect(result.g).toBe(76)
+      expect(result.b).toBe(134)
+    })
 
     it('handles mixed case hex', () => {
-      const result = parseHexToRGB('#C5c8C6');
-      expect(result.r).toBe(197);
-      expect(result.g).toBe(200);
-      expect(result.b).toBe(198);
-    });
+      const result = parseHexToRGB('#C5c8C6')
+      expect(result.r).toBe(197)
+      expect(result.g).toBe(200)
+      expect(result.b).toBe(198)
+    })
 
     it('converts all Gardener palette colors correctly', () => {
       const paletteColors = [
@@ -200,110 +210,110 @@ describe('parseHexToRGB', () => {
         { hex: '#492850', r: 73, g: 40, b: 80 },
         { hex: '#823a63', r: 130, g: 58, b: 99 },
         { hex: '#e67392', r: 230, g: 115, b: 146 },
-      ];
+      ]
 
       paletteColors.forEach(({ hex, r, g, b }) => {
-        const result = parseHexToRGB(hex);
-        expect(result.r).toBe(r);
-        expect(result.g).toBe(g);
-        expect(result.b).toBe(b);
-      });
-    });
-  });
+        const result = parseHexToRGB(hex)
+        expect(result.r).toBe(r)
+        expect(result.g).toBe(g)
+        expect(result.b).toBe(b)
+      })
+    })
+  })
 
   describe('invalid hex colors', () => {
     it('returns black (0,0,0) for invalid hex', () => {
-      const result = parseHexToRGB('invalid');
-      expect(result.r).toBe(0);
-      expect(result.g).toBe(0);
-      expect(result.b).toBe(0);
-    });
+      const result = parseHexToRGB('invalid')
+      expect(result.r).toBe(0)
+      expect(result.g).toBe(0)
+      expect(result.b).toBe(0)
+    })
 
     it('returns black for too-short hex', () => {
-      const result = parseHexToRGB('#c5');
-      expect(result.r).toBe(0);
-      expect(result.g).toBe(0);
-      expect(result.b).toBe(0);
-    });
+      const result = parseHexToRGB('#c5')
+      expect(result.r).toBe(0)
+      expect(result.g).toBe(0)
+      expect(result.b).toBe(0)
+    })
 
     it('returns black for too-long hex', () => {
-      const result = parseHexToRGB('#c54c86ff');
-      expect(result.r).toBe(0);
-      expect(result.g).toBe(0);
-      expect(result.b).toBe(0);
-    });
+      const result = parseHexToRGB('#c54c86ff')
+      expect(result.r).toBe(0)
+      expect(result.g).toBe(0)
+      expect(result.b).toBe(0)
+    })
 
     it('returns black for empty string', () => {
-      const result = parseHexToRGB('');
-      expect(result.r).toBe(0);
-      expect(result.g).toBe(0);
-      expect(result.b).toBe(0);
-    });
+      const result = parseHexToRGB('')
+      expect(result.r).toBe(0)
+      expect(result.g).toBe(0)
+      expect(result.b).toBe(0)
+    })
 
     it('returns black for non-hex characters', () => {
-      const result = parseHexToRGB('#zzzzzz');
-      expect(result.r).toBe(0);
-      expect(result.g).toBe(0);
-      expect(result.b).toBe(0);
-    });
-  });
+      const result = parseHexToRGB('#zzzzzz')
+      expect(result.r).toBe(0)
+      expect(result.g).toBe(0)
+      expect(result.b).toBe(0)
+    })
+  })
 
   describe('RGB output properties', () => {
     it('always returns object with r, g, b properties', () => {
-      const result = parseHexToRGB('#c54c86');
-      expect(result).toHaveProperty('r');
-      expect(result).toHaveProperty('g');
-      expect(result).toHaveProperty('b');
-    });
+      const result = parseHexToRGB('#c54c86')
+      expect(result).toHaveProperty('r')
+      expect(result).toHaveProperty('g')
+      expect(result).toHaveProperty('b')
+    })
 
     it('RGB values are always integers', () => {
-      const result = parseHexToRGB('#c54c86');
-      expect(Number.isInteger(result.r)).toBe(true);
-      expect(Number.isInteger(result.g)).toBe(true);
-      expect(Number.isInteger(result.b)).toBe(true);
-    });
+      const result = parseHexToRGB('#c54c86')
+      expect(Number.isInteger(result.r)).toBe(true)
+      expect(Number.isInteger(result.g)).toBe(true)
+      expect(Number.isInteger(result.b)).toBe(true)
+    })
 
     it('RGB values are within 0-255 range', () => {
-      const testCases = ['#000000', '#ffffff', '#c54c86', '#123abc'];
+      const testCases = ['#000000', '#ffffff', '#c54c86', '#123abc']
       testCases.forEach((hex) => {
-        const result = parseHexToRGB(hex);
-        expect(result.r).toBeGreaterThanOrEqual(0);
-        expect(result.r).toBeLessThanOrEqual(255);
-        expect(result.g).toBeGreaterThanOrEqual(0);
-        expect(result.g).toBeLessThanOrEqual(255);
-        expect(result.b).toBeGreaterThanOrEqual(0);
-        expect(result.b).toBeLessThanOrEqual(255);
-      });
-    });
-  });
-});
+        const result = parseHexToRGB(hex)
+        expect(result.r).toBeGreaterThanOrEqual(0)
+        expect(result.r).toBeLessThanOrEqual(255)
+        expect(result.g).toBeGreaterThanOrEqual(0)
+        expect(result.g).toBeLessThanOrEqual(255)
+        expect(result.b).toBeGreaterThanOrEqual(0)
+        expect(result.b).toBeLessThanOrEqual(255)
+      })
+    })
+  })
+})
 
 describe('selectAccentRamp', () => {
   it('returns a 4-tuple of hex colors', () => {
-    const ramp = selectAccentRamp('550e8400-e29b-41d4-a716-446655440000');
-    expect(Array.isArray(ramp)).toBe(true);
-    expect(ramp.length).toBe(4);
+    const ramp = selectAccentRamp('550e8400-e29b-41d4-a716-446655440000')
+    expect(Array.isArray(ramp)).toBe(true)
+    expect(ramp.length).toBe(4)
     ramp.forEach((color) => {
-      expect(color).toMatch(/^#[0-9a-fA-F]{6}$/);
-    });
-  });
+      expect(color).toMatch(/^#[0-9a-fA-F]{6}$/)
+    })
+  })
 
   it('returns the same ramp for the same UUID', () => {
-    const uuid = '550e8400-e29b-41d4-a716-446655440000';
-    const ramp1 = selectAccentRamp(uuid);
-    const ramp2 = selectAccentRamp(uuid);
-    expect(ramp1).toEqual(ramp2);
-  });
+    const uuid = '550e8400-e29b-41d4-a716-446655440000'
+    const ramp1 = selectAccentRamp(uuid)
+    const ramp2 = selectAccentRamp(uuid)
+    expect(ramp1).toEqual(ramp2)
+  })
 
   it('may return different ramps for different UUIDs', () => {
-    const uuid1 = '550e8400-e29b-41d4-a716-446655440000';
-    const uuid2 = '550e8400-e29b-41d4-a716-446655440001';
-    const ramp1 = selectAccentRamp(uuid1);
-    const ramp2 = selectAccentRamp(uuid2);
+    const uuid1 = '550e8400-e29b-41d4-a716-446655440000'
+    const uuid2 = '550e8400-e29b-41d4-a716-446655440001'
+    const ramp1 = selectAccentRamp(uuid1)
+    const ramp2 = selectAccentRamp(uuid2)
     // Both are valid 4-tuples, but may differ
-    expect(ramp1.length).toBe(4);
-    expect(ramp2.length).toBe(4);
-  });
+    expect(ramp1.length).toBe(4)
+    expect(ramp2.length).toBe(4)
+  })
 
   it('always returns a ramp from the defined palette', () => {
     const validRamps = [
@@ -318,7 +328,7 @@ describe('selectAccentRamp', () => {
       ['#492850', '#823a63', '#c54c86', '#e67392'],
       ['#823a63', '#c54c86', '#e67392', '#efa9b5'],
       ['#322030', '#492850', '#823a63', '#c54c86'],
-    ];
+    ]
 
     const testUUIDs = [
       '550e8400-e29b-41d4-a716-446655440000',
@@ -326,35 +336,35 @@ describe('selectAccentRamp', () => {
       '750e8400-e29b-41d4-a716-446655440000',
       'ffffffff-ffff-ffff-ffff-ffffffffffff',
       '00000000-0000-0000-0000-000000000000',
-    ];
+    ]
 
     testUUIDs.forEach((uuid) => {
-      const ramp = selectAccentRamp(uuid);
-      const rampString = JSON.stringify(ramp);
-      const isValid = validRamps.some((valid) => JSON.stringify(valid) === rampString);
-      expect(isValid).toBe(true);
-    });
-  });
+      const ramp = selectAccentRamp(uuid)
+      const rampString = JSON.stringify(ramp)
+      const isValid = validRamps.some((valid) => JSON.stringify(valid) === rampString)
+      expect(isValid).toBe(true)
+    })
+  })
 
   it('each color in ramp is a valid hex color', () => {
-    const ramp = selectAccentRamp('550e8400-e29b-41d4-a716-446655440000');
+    const ramp = selectAccentRamp('550e8400-e29b-41d4-a716-446655440000')
     ramp.forEach((color, index) => {
-      expect(color).toMatch(/^#[0-9a-fA-F]{6}$/, `Color at index ${index} is invalid: ${color}`);
-    });
-  });
+      expect(color).toMatch(/^#[0-9a-fA-F]{6}$/, `Color at index ${index} is invalid: ${color}`)
+    })
+  })
 
   it('supports value-based equality comparison for ramp deduplication', () => {
     // This test verifies that ramps with identical color values compare equal
     // This is important for the palette swap logic in PlantVisual.tsx which uses
     // JSON.stringify comparison to decide if a palette swap is needed
-    const ramp1 = ['#254265', '#3975a9', '#51a2c9', '#81c6d8'] as const;
-    const ramp2 = ['#254265', '#3975a9', '#51a2c9', '#81c6d8'] as const;
-    const ramp3 = ['#492850', '#823a63', '#c54c86', '#e67392'] as const;
+    const ramp1 = ['#254265', '#3975a9', '#51a2c9', '#81c6d8'] as const
+    const ramp2 = ['#254265', '#3975a9', '#51a2c9', '#81c6d8'] as const
+    const ramp3 = ['#492850', '#823a63', '#c54c86', '#e67392'] as const
 
     // Same values should compare equal using JSON.stringify (used in PlantVisual.tsx)
-    expect(JSON.stringify(ramp1)).toBe(JSON.stringify(ramp2));
-    
+    expect(JSON.stringify(ramp1)).toBe(JSON.stringify(ramp2))
+
     // Different values should compare different
-    expect(JSON.stringify(ramp1)).not.toBe(JSON.stringify(ramp3));
-  });
-});
+    expect(JSON.stringify(ramp1)).not.toBe(JSON.stringify(ramp3))
+  })
+})

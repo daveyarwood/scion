@@ -1,21 +1,21 @@
-import React from 'react';
-import { Song, GrowthStage } from '../../shared/index';
-import { PlantVisual } from './PlantVisual';
-import { SongCard } from './SongCard';
-import './SongGrid.css';
+import React from 'react'
+import { Song, GrowthStage } from '../../shared/index'
+import { PlantVisual } from './PlantVisual'
+import { SongCard } from './SongCard'
+import './SongGrid.css'
 
 interface SongGridProps {
-  songs: Song[];
-  onSongClick?: (song: Song) => void;
-  onSongStageChange?: (song: Song, newStage: GrowthStage) => void;
-  loadingSongId?: string | null;
+  songs: Song[]
+  onSongClick?: (song: Song) => void
+  onSongStageChange?: (song: Song, newStage: GrowthStage) => void
+  loadingSongId?: string | null
 }
 
-export const SongGrid: React.FC<SongGridProps> = ({ 
-  songs, 
-  onSongClick, 
+export const SongGrid: React.FC<SongGridProps> = ({
+  songs,
+  onSongClick,
   onSongStageChange,
-  loadingSongId = null 
+  loadingSongId = null,
 }) => {
   if (songs.length === 0) {
     return (
@@ -26,20 +26,20 @@ export const SongGrid: React.FC<SongGridProps> = ({
         <h2>your garden is empty</h2>
         <p>plant your first seed to get started</p>
       </div>
-    );
+    )
   }
 
   return (
     <div className="song-grid">
       {songs.map((song) => (
-        <SongCard 
-          key={song.id} 
-          song={song} 
+        <SongCard
+          key={song.id}
+          song={song}
           onClick={() => onSongClick?.(song)}
           onStageChange={(newStage) => onSongStageChange?.(song, newStage)}
           isLoadingStageChange={loadingSongId === song.id}
         />
       ))}
     </div>
-  );
-};
+  )
+}

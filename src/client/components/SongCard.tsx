@@ -1,55 +1,62 @@
-import React, { useState } from 'react';
-import { Song, GrowthStage } from '../../shared/index';
-import { PlantVisual } from './PlantVisual';
-import { formatDate } from './dateFormat';
-import { getPromotedStage, getDemotedStage } from '../plant/stageTransitions';
-import './SongCard.css';
+import React, { useState } from 'react'
+import { Song, GrowthStage } from '../../shared/index'
+import { PlantVisual } from './PlantVisual'
+import { formatDate } from './dateFormat'
+import { getPromotedStage, getDemotedStage } from '../plant/stageTransitions'
+import './SongCard.css'
 
 interface SongCardProps {
-  song: Song;
-  onClick?: () => void;
-  onStageChange?: (newStage: GrowthStage) => void;
-  isLoadingStageChange?: boolean;
+  song: Song
+  onClick?: () => void
+  onStageChange?: (newStage: GrowthStage) => void
+  isLoadingStageChange?: boolean
 }
 
-export const SongCard: React.FC<SongCardProps> = ({ 
-  song, 
-  onClick, 
+export const SongCard: React.FC<SongCardProps> = ({
+  song,
+  onClick,
   onStageChange,
-  isLoadingStageChange = false 
+  isLoadingStageChange = false,
 }) => {
-  const [pressing, setPressing] = useState(false);
+  const [pressing, setPressing] = useState(false)
 
   const handlePromote = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const newStage = getPromotedStage(song.growth_stage);
+    e.stopPropagation()
+    const newStage = getPromotedStage(song.growth_stage)
     if (newStage) {
-      onStageChange?.(newStage);
+      onStageChange?.(newStage)
     }
-  };
+  }
 
   const handleDemote = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const newStage = getDemotedStage(song.growth_stage);
+    e.stopPropagation()
+    const newStage = getDemotedStage(song.growth_stage)
     if (newStage) {
-      onStageChange?.(newStage);
+      onStageChange?.(newStage)
     }
-  };
+  }
 
-  const isInactive = song.growth_stage === 'dormant' || song.growth_stage === 'archived';
-  const isAtMinStage = song.growth_stage === 'seed' || isInactive;
-  const isAtMaxPromotableStage = song.growth_stage === 'blooming' || isInactive;
+  const isInactive = song.growth_stage === 'dormant' || song.growth_stage === 'archived'
+  const isAtMinStage = song.growth_stage === 'seed' || isInactive
+  const isAtMaxPromotableStage = song.growth_stage === 'blooming' || isInactive
 
   return (
     <div
       className={`song-card${pressing ? ' song-card--pressing' : ''}`}
       onClick={onClick}
-      onMouseDown={(e) => { if (e.target === e.currentTarget) setPressing(true); }}
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) setPressing(true)
+      }}
       onMouseUp={() => setPressing(false)}
       onMouseLeave={() => setPressing(false)}
     >
       <div className="song-card-header">
-        <PlantVisual id={song.id} stage={song.growth_stage} archetype={song.archetype} accentRamp={song.accent_ramp} />
+        <PlantVisual
+          id={song.id}
+          stage={song.growth_stage}
+          archetype={song.archetype}
+          accentRamp={song.accent_ramp}
+        />
         <div className="song-stage-controls">
           <button
             className="stage-btn-card stage-promote"
@@ -78,5 +85,5 @@ export const SongCard: React.FC<SongCardProps> = ({
         <span className="song-date">{formatDate(song.updated_at)}</span>
       </div>
     </div>
-  );
-};
+  )
+}

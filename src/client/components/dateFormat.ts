@@ -7,9 +7,11 @@
  * Uses locale-aware formatting (en-US by default).
  */
 export const formatDate = (dateString: string): string => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  }).toLowerCase();
-};
+  return new Date(dateString)
+    .toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    })
+    .toLowerCase()
+}

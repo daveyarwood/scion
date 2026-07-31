@@ -3,7 +3,7 @@
  * These are pure functions for determining valid stage transitions.
  */
 
-import { GrowthStage } from '../../shared/index';
+import { GrowthStage } from '../../shared/index'
 
 /**
  * Growth stages that can be advanced via the UI.
@@ -15,42 +15,42 @@ export const PROMOTABLE_STAGES: GrowthStage[] = [
   'sprout',
   'budding',
   'blooming',
-];
+]
 
 /**
  * Check if a stage can be promoted to the next stage.
  * Returns the next stage, or undefined if already at max promotable stage.
  */
 export const getPromotedStage = (currentStage: GrowthStage): GrowthStage | undefined => {
-  const currentIndex = PROMOTABLE_STAGES.indexOf(currentStage);
+  const currentIndex = PROMOTABLE_STAGES.indexOf(currentStage)
   if (currentIndex >= 0 && currentIndex < PROMOTABLE_STAGES.length - 1) {
-    return PROMOTABLE_STAGES[currentIndex + 1];
+    return PROMOTABLE_STAGES[currentIndex + 1]
   }
-  return undefined;
-};
+  return undefined
+}
 
 /**
  * Check if a stage can be demoted to the previous stage.
  * Returns the previous stage, or undefined if already at min stage.
  */
 export const getDemotedStage = (currentStage: GrowthStage): GrowthStage | undefined => {
-  const currentIndex = PROMOTABLE_STAGES.indexOf(currentStage);
+  const currentIndex = PROMOTABLE_STAGES.indexOf(currentStage)
   if (currentIndex > 0) {
-    return PROMOTABLE_STAGES[currentIndex - 1];
+    return PROMOTABLE_STAGES[currentIndex - 1]
   }
-  return undefined;
-};
+  return undefined
+}
 
 /**
  * Check if a stage can be promoted.
  */
 export const canPromote = (stage: GrowthStage): boolean => {
-  return getPromotedStage(stage) !== undefined;
-};
+  return getPromotedStage(stage) !== undefined
+}
 
 /**
  * Check if a stage can be demoted.
  */
 export const canDemote = (stage: GrowthStage): boolean => {
-  return getDemotedStage(stage) !== undefined;
-};
+  return getDemotedStage(stage) !== undefined
+}

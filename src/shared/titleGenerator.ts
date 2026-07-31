@@ -45,7 +45,8 @@ const SIMPLE_TEMPLATES: Template[] = [
 /** Exclamation templates. */
 const EXCLAMATION_TEMPLATES: Template[] = [() => `${pickNoun()}!`, () => `${pickVerb()}!`]
 
-const simple = () => (Math.random() < 0.15 ? pick(EXCLAMATION_TEMPLATES)() : pick(SIMPLE_TEMPLATES)())
+const simple = () =>
+  Math.random() < 0.15 ? pick(EXCLAMATION_TEMPLATES)() : pick(SIMPLE_TEMPLATES)()
 
 /** Extended templates — top-level only. */
 const EXTENDED_TEMPLATES: Template[] = [

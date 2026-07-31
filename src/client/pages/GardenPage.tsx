@@ -1,59 +1,59 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Song, GrowthStage, GrowthStageEnum } from '../../shared/index';
-import { trpc } from '../trpc';
-import { SongGrid } from '../components/SongGrid';
-import './GardenPage.css';
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Song, GrowthStage, GrowthStageEnum } from '../../shared/index'
+import { trpc } from '../trpc'
+import { SongGrid } from '../components/SongGrid'
+import './GardenPage.css'
 
 export const GardenPage: React.FC = () => {
-  const [loadingSongId, setLoadingSongId] = useState<string | null>(null);
-  const [filterStage, setFilterStage] = useState<GrowthStage | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const navigate = useNavigate();
+  const [loadingSongId, setLoadingSongId] = useState<string | null>(null)
+  const [filterStage, setFilterStage] = useState<GrowthStage | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const navigate = useNavigate()
 
-  const listQuery = trpc.song.list.useQuery(undefined, { staleTime: 0 });
+  const listQuery = trpc.song.list.useQuery(undefined, { staleTime: 0 })
   const createMutation = trpc.song.create.useMutation({
     onSuccess: (newSong) => {
-      navigate(`/songs/${newSong.id}`);
+      navigate(`/songs/${newSong.id}`)
     },
-  });
+  })
   const updateMutation = trpc.song.update.useMutation({
     onSuccess: () => {
-      listQuery.refetch();
-      setLoadingSongId(null);
+      listQuery.refetch()
+      setLoadingSongId(null)
     },
     onError: () => {
-      setLoadingSongId(null);
+      setLoadingSongId(null)
     },
-  });
+  })
 
   const handleNewSeed = () => {
-    createMutation.mutate({});
-  };
+    createMutation.mutate({})
+  }
 
   const handleSongClick = (song: Song) => {
-    navigate(`/songs/${song.id}`);
-  };
+    navigate(`/songs/${song.id}`)
+  }
 
   const handleSongStageChange = (song: Song, newStage: GrowthStage) => {
-    setLoadingSongId(song.id);
+    setLoadingSongId(song.id)
     updateMutation.mutate({
       id: song.id,
       growth_stage: newStage,
-    });
-  };
+    })
+  }
 
   const handleStageChipClick = (stage: GrowthStage) => {
-    setFilterStage(filterStage === stage ? null : stage);
-  };
+    setFilterStage(filterStage === stage ? null : stage)
+  }
 
-  const songs = listQuery.data ?? [];
+  const songs = listQuery.data ?? []
   const filteredSongs = songs.filter((s) => {
-    const matchesStage = filterStage === null || s.growth_stage === filterStage;
+    const matchesStage = filterStage === null || s.growth_stage === filterStage
     const matchesSearch =
-      searchQuery === '' || s.title.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesStage && matchesSearch;
-  });
+      searchQuery === '' || s.title.toLowerCase().includes(searchQuery.toLowerCase())
+    return matchesStage && matchesSearch
+  })
 
   return (
     <div className="app">
@@ -112,5 +112,5 @@ export const GardenPage: React.FC = () => {
         )}
       </main>
     </div>
-  );
-};
+  )
+}

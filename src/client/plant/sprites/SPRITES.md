@@ -39,11 +39,13 @@ Note: The original prompt used 6 stages. `Budding` was added when Retro Diffusio
 ## Palette constraints
 
 Accent pixels must use ONLY:
+
 ```
 #4b192b  #812737  #c54c86  #e67392
 ```
 
 All other pixels must use ONLY:
+
 ```
 #193628  #35632a  #659939  #a2bf5e  #d9d89e  #9c665e
 ```

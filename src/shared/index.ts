@@ -2,9 +2,9 @@
 // This module contains no dependencies on Node.js or browser APIs
 // and is importable by both client and server
 
-import { z } from 'zod';
+import { z } from 'zod'
 
-export const appName = 'Scion';
+export const appName = 'Scion'
 
 // Growth stages for song plants
 export const GrowthStageEnum = z.enum([
@@ -15,9 +15,9 @@ export const GrowthStageEnum = z.enum([
   'blooming',
   'dormant',
   'archived',
-]);
+])
 
-export type GrowthStage = z.infer<typeof GrowthStageEnum>;
+export type GrowthStage = z.infer<typeof GrowthStageEnum>
 
 // Song schema with validation
 export const SongSchema = z.object({
@@ -30,9 +30,9 @@ export const SongSchema = z.object({
   growth_stage: GrowthStageEnum.default('seed'),
   created_at: z.string(),
   updated_at: z.string(),
-});
+})
 
-export type Song = z.infer<typeof SongSchema>;
+export type Song = z.infer<typeof SongSchema>
 
 // Input schema for creating a song (excludes id, timestamps)
 const createSongInputSchema = z.object({
@@ -41,10 +41,10 @@ const createSongInputSchema = z.object({
   plot_id: z.string().uuid().nullable().optional(),
   archetype: z.string().optional(),
   accent_ramp: z.string().optional(),
-});
+})
 
-export const CreateSongInput = createSongInputSchema;
-export type CreateSongInput = z.infer<typeof createSongInputSchema>;
+export const CreateSongInput = createSongInputSchema
+export type CreateSongInput = z.infer<typeof createSongInputSchema>
 
 // Input schema for updating a song
 const updateSongInputSchema = z.object({
@@ -54,10 +54,10 @@ const updateSongInputSchema = z.object({
   plot_id: z.string().uuid().nullable().optional(),
   archetype: z.string().optional(),
   accent_ramp: z.string().optional(),
-});
+})
 
-export const UpdateSongInput = updateSongInputSchema;
-export type UpdateSongInput = z.infer<typeof updateSongInputSchema>;
+export const UpdateSongInput = updateSongInputSchema
+export type UpdateSongInput = z.infer<typeof updateSongInputSchema>
 
 // Input schema for updating a song with id (used by tRPC)
 const updateSongWithIdSchema = z.object({
@@ -68,7 +68,7 @@ const updateSongWithIdSchema = z.object({
   plot_id: z.string().uuid().nullable().optional(),
   archetype: z.string().optional(),
   accent_ramp: z.string().optional(),
-});
+})
 
-export const UpdateSongWithId = updateSongWithIdSchema;
-export type UpdateSongWithId = z.infer<typeof updateSongWithIdSchema>;
+export const UpdateSongWithId = updateSongWithIdSchema
+export type UpdateSongWithId = z.infer<typeof updateSongWithIdSchema>

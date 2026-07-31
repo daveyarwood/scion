@@ -1,138 +1,145 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { UpdateSongWithId, GrowthStage } from '../../shared/index';
-import { trpc } from '../trpc';
-import { getPromotedStage, getDemotedStage } from '../plant/stageTransitions';
-import { PlantVisual } from '../components/PlantVisual';
-import { generateTitle } from '../../shared/titleGenerator';
-import './SongEditPage.css';
+import React, { useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { UpdateSongWithId, GrowthStage } from '../../shared/index'
+import { trpc } from '../trpc'
+import { getPromotedStage, getDemotedStage } from '../plant/stageTransitions'
+import { PlantVisual } from '../components/PlantVisual'
+import { generateTitle } from '../../shared/titleGenerator'
+import './SongEditPage.css'
 
 export const SongEditPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
 
-  const utils = trpc.useUtils();
+  const utils = trpc.useUtils()
 
   // Initialize queries before any conditional returns
-  const songQuery = trpc.song.get.useQuery(id || '', { enabled: !!id, staleTime: 0 });
+  const songQuery = trpc.song.get.useQuery(id || '', { enabled: !!id, staleTime: 0 })
   const updateMutation = trpc.song.update.useMutation({
     onSuccess: (updatedSong) => {
-      songQuery.refetch();
+      songQuery.refetch()
       // Update the list cache so the garden page is correct immediately on back navigation
       utils.song.list.setData(undefined, (prev) =>
         prev?.map((s) => (s.id === updatedSong.id ? updatedSong : s))
-      );
+      )
     },
-  });
+  })
   const deleteMutation = trpc.song.delete.useMutation({
     onSuccess: () => {
-      navigate('/');
+      navigate('/')
     },
-  });
+  })
 
   // Initialize state before any conditional returns
-  const [title, setTitle] = useState<string>('');
-  const [body, setBody] = useState<string>('');
-  const [growthStage, setGrowthStage] = useState<GrowthStage>('seed');
-  const [error, setError] = useState<string | null>(null);
-  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
-  const [isDirty, setIsDirty] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [title, setTitle] = useState<string>('')
+  const [body, setBody] = useState<string>('')
+  const [growthStage, setGrowthStage] = useState<GrowthStage>('seed')
+  const [error, setError] = useState<string | null>(null)
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false)
+  const [isDirty, setIsDirty] = useState(false)
+  const [saved, setSaved] = useState(false)
 
   // Sync form from server data unless the user has unsaved edits.
   // isDirty is reset on id change and after a successful save.
   React.useEffect(() => {
-    setIsDirty(false);
-  }, [id]);
+    setIsDirty(false)
+  }, [id])
 
   React.useEffect(() => {
     if (songQuery.data && !songQuery.isFetching && !isDirty) {
-      const song = songQuery.data;
-      setTitle(song.title);
-      setBody(song.body);
-      setGrowthStage(song.growth_stage);
+      const song = songQuery.data
+      setTitle(song.title)
+      setBody(song.body)
+      setGrowthStage(song.growth_stage)
     }
-  }, [songQuery.data, songQuery.isFetching, isDirty]);
+  }, [songQuery.data, songQuery.isFetching, isDirty])
 
   // Check for invalid ID after hooks
   if (!id) {
-    return <div>Invalid song ID</div>;
+    return <div>Invalid song ID</div>
   }
 
   if (songQuery.isLoading) {
-    return <div className="loading">loading song...</div>;
+    return <div className="loading">loading song...</div>
   }
 
   if (songQuery.error || !songQuery.data) {
-    return <div className="error">error loading song: {songQuery.error?.message || 'song not found'}</div>;
+    return (
+      <div className="error">
+        error loading song: {songQuery.error?.message || 'song not found'}
+      </div>
+    )
   }
 
-  const song = songQuery.data;
-  const isLoading = updateMutation.isPending || deleteMutation.isPending;
+  const song = songQuery.data
+  const isLoading = updateMutation.isPending || deleteMutation.isPending
 
   const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
+    e.preventDefault()
+    setError(null)
     try {
-      const updates: UpdateSongWithId = { id: song.id };
-      if (title !== song.title) updates.title = title;
-      if (body !== song.body) updates.body = body;
-      if (growthStage !== song.growth_stage) updates.growth_stage = growthStage;
-      
+      const updates: UpdateSongWithId = { id: song.id }
+      if (title !== song.title) updates.title = title
+      if (body !== song.body) updates.body = body
+      if (growthStage !== song.growth_stage) updates.growth_stage = growthStage
+
       await new Promise<void>((resolve, reject) => {
         updateMutation.mutate(updates, {
           onSuccess: () => {
-            setSaved(true);
-            setIsDirty(false);
-            setTimeout(() => setSaved(false), 2000);
-            resolve();
+            setSaved(true)
+            setIsDirty(false)
+            setTimeout(() => setSaved(false), 2000)
+            resolve()
           },
           onError: (error) => reject(error),
-        });
-      });
+        })
+      })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'failed to save');
+      setError(err instanceof Error ? err.message : 'failed to save')
     }
-  };
+  }
 
   const handleDelete = async () => {
-    setError(null);
+    setError(null)
     try {
       await new Promise<void>((resolve, reject) => {
-        deleteMutation.mutate({ id: song.id }, {
-          onSuccess: () => resolve(),
-          onError: (error) => reject(error),
-        });
-      });
+        deleteMutation.mutate(
+          { id: song.id },
+          {
+            onSuccess: () => resolve(),
+            onError: (error) => reject(error),
+          }
+        )
+      })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'failed to delete');
-      setIsConfirmingDelete(false);
+      setError(err instanceof Error ? err.message : 'failed to delete')
+      setIsConfirmingDelete(false)
     }
-  };
+  }
 
   const handleDeleteClick = () => {
-    setIsConfirmingDelete(true);
-  };
+    setIsConfirmingDelete(true)
+  }
 
   const handlePromote = () => {
-    const newStage = getPromotedStage(growthStage);
+    const newStage = getPromotedStage(growthStage)
     if (newStage) {
-      setGrowthStage(newStage);
-      setIsDirty(true);
+      setGrowthStage(newStage)
+      setIsDirty(true)
     }
-  };
+  }
 
   const handleDemote = () => {
-    const newStage = getDemotedStage(growthStage);
+    const newStage = getDemotedStage(growthStage)
     if (newStage) {
-      setGrowthStage(newStage);
-      setIsDirty(true);
+      setGrowthStage(newStage)
+      setIsDirty(true)
     }
-  };
+  }
 
-  const isInactive = growthStage === 'dormant' || growthStage === 'archived';
-  const isAtMinStage = growthStage === 'seed' || isInactive;
-  const isAtMaxPromotableStage = growthStage === 'blooming' || isInactive;
+  const isInactive = growthStage === 'dormant' || growthStage === 'archived'
+  const isAtMinStage = growthStage === 'seed' || isInactive
+  const isAtMaxPromotableStage = growthStage === 'blooming' || isInactive
 
   return (
     <div className="song-edit-page">
@@ -144,7 +151,12 @@ export const SongEditPage: React.FC = () => {
       <main className="song-edit-main">
         <div className="song-edit-container">
           <div className="song-edit-visual">
-            <PlantVisual id={song.id} stage={growthStage} archetype={song.archetype} accentRamp={song.accent_ramp} />
+            <PlantVisual
+              id={song.id}
+              stage={growthStage}
+              archetype={song.archetype}
+              accentRamp={song.accent_ramp}
+            />
           </div>
 
           <div className="song-edit-form-container">
@@ -158,14 +170,20 @@ export const SongEditPage: React.FC = () => {
                     id="song-edit-title"
                     type="text"
                     value={title}
-                    onChange={(e) => { setTitle(e.target.value); setIsDirty(true); }}
+                    onChange={(e) => {
+                      setTitle(e.target.value)
+                      setIsDirty(true)
+                    }}
                     required
                     disabled={isLoading}
                   />
                   <button
                     type="button"
                     className="btn-dice"
-                    onClick={() => { setTitle(generateTitle()); setIsDirty(true); }}
+                    onClick={() => {
+                      setTitle(generateTitle())
+                      setIsDirty(true)
+                    }}
                     disabled={isLoading}
                     title="generate a random title"
                   >
@@ -179,7 +197,10 @@ export const SongEditPage: React.FC = () => {
                 <textarea
                   id="song-edit-body"
                   value={body}
-                  onChange={(e) => { setBody(e.target.value); setIsDirty(true); }}
+                  onChange={(e) => {
+                    setBody(e.target.value)
+                    setIsDirty(true)
+                  }}
                   disabled={isLoading}
                   rows={8}
                 />
@@ -257,5 +278,5 @@ export const SongEditPage: React.FC = () => {
         </div>
       </main>
     </div>
-  );
-};
+  )
+}

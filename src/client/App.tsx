@@ -1,8 +1,8 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { GardenPage } from './pages/GardenPage';
-import { SongEditPage } from './pages/SongEditPage';
-import './App.css';
+import React from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { GardenPage } from './pages/GardenPage'
+import { SongEditPage } from './pages/SongEditPage'
+import './App.css'
 
 export const App: React.FC = () => {
   return (
@@ -13,5 +13,5 @@ export const App: React.FC = () => {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
-  );
-};
+  )
+}
