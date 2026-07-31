@@ -107,7 +107,18 @@ Nothing escalated.
 
 ## Test Results
 
-<!-- to be filled in by cycle-tester -->
+**Tests run**: 149
+**Passing**: 149
+**Failing**: 0
+
+### Coverage notes
+
+- **Server sort order** (`ORDER BY updated_at DESC`): No existing test covered `song.list` ordering. Added a new test (`orders songs by updated_at descending`) that creates two songs, then updates the older one to bump its `updated_at`, and verifies the updated one surfaces first — confirming the sort is indeed by `updated_at`, not `created_at`.
+- **SongCard date change**: The change from `created_at` to `updated_at` in the JSX is a prop switch; the underlying `formatDate` function is already well-tested (9 tests in `dateFormat.test.ts`). No new test needed.
+- **GardenPage stage-filter chips and title search**: The filtering logic is pure (`Array.filter` with two composed predicates) but embedded in a React component. Per AGENTS.md, React component internals are not tested, and the cycle-tester cannot modify production code to extract pure functions. The filtering behavior is simple boolean combinatorics (`matchesStage && matchesSearch`) that would trivially pass any unit test — the risk is in the UI integration (chip toggle, input binding, no-results state), which requires a browser/component test that is explicitly out of scope. Deferred — low risk.
+- **GardenPage.css**: Styling only; not testable with the current tooling.
+
+All tests passing.
 
 ## Open Questions
 
