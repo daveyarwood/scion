@@ -55,6 +55,27 @@ describe('song.list', () => {
       expect(song.accent_ramp).toBeDefined()
     })
   })
+
+  it('orders songs by updated_at descending', async () => {
+    const caller = appRouter.createCaller({})
+
+    // Create two songs
+    const older = await caller.song.create({ title: 'Older Song' })
+    const newer = await caller.song.create({ title: 'Newer Song' })
+
+    // Both were just created, so newer should come first (descending by updated_at)
+    let result = await caller.song.list()
+    expect(result[0].title).toBe('Newer Song')
+    expect(result[1].title).toBe('Older Song')
+
+    // Update the older song's title — this bumps its updated_at
+    await caller.song.update({ id: older.id, title: 'Older Song (edited)' })
+
+    // Now the older song should come first (its updated_at is newest)
+    result = await caller.song.list()
+    expect(result[0].title).toBe('Older Song (edited)')
+    expect(result[1].title).toBe('Newer Song')
+  })
 })
 
 describe('song.create', () => {
