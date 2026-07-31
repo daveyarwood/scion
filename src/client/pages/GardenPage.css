@@ -1,0 +1,43 @@
+.stage-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.stage-chip {
+  padding: 0.4rem 0.8rem;
+  border: 2px solid var(--color-dark-gray);
+  border-radius: 0;
+  background-color: var(--color-cream);
+  color: var(--color-dark-gray);
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  text-transform: lowercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.stage-chip:hover {
+  background-color: var(--color-pale-green);
+  border-color: var(--color-green);
+}
+
+.stage-chip--active {
+  background-color: var(--color-medium-green);
+  color: var(--color-cream);
+  border-color: var(--color-dark-green);
+}
+
+.stage-chip--active:hover {
+  background-color: var(--color-light-green);
+  color: var(--color-dark-gray);
+}
+
+.no-results {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: var(--color-dark-gray);
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+}
