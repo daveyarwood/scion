@@ -65,9 +65,9 @@ The app is a genuinely usable daily sketchbook. 148 tests, all passing. TypeScri
 
 ## Goals
 
-1. Sort song list by `updated_at` descending — change `ORDER BY` in `song.list` and show `updated_at` on card footers
-2. Add stage-filter chips above the garden grid — clickable stage labels that filter displayed cards client-side
-3. Add title search — text input that filters songs by title client-side, combining with stage-filter
+- [x] Sort song list by `updated_at` descending — change `ORDER BY` in `song.list` and show `updated_at` on card footers
+- [x] Add stage-filter chips above the garden grid — clickable stage labels that filter displayed cards client-side
+- [x] Add title search — text input that filters songs by title client-side, combining with stage-filter
 
 ## Scope
 
@@ -87,7 +87,9 @@ Explicitly deferred:
 
 ## Work Done
 
-<!-- to be filled in by cycle-developer -->
+- **Goal 1 — Sort by `updated_at` descending**: Changed `ORDER BY created_at DESC` to `ORDER BY updated_at DESC` in `src/server/router.ts` (`song.list` procedure). Changed `SongCard` footer to display `song.updated_at` instead of `song.created_at` in `src/client/components/SongCard.tsx`.
+- **Goal 2 — Stage-filter chips**: Added a row of clickable stage chips (seed, seedling, sprout, budding, blooming, dormant, archived) above the garden grid in `src/client/pages/GardenPage.tsx`. Clicking a chip filters displayed songs to that stage; clicking the active chip deselects it (shows all). Active chip gets green background (`stage-chip--active` class). When filters yield no results, a "no songs match your filters" message is shown instead of the empty-garden state. Added CSS in new `src/client/pages/GardenPage.css`.
+- **Goal 3 — Title search**: Added a text input in the garden controls bar that filters songs by title client-side (case-insensitive substring match). Combines with the stage-filter chips: both filters compose together via a single `songs.filter()`. Styled consistently with monospace font and Gardener palette variables.
 
 ## Review Notes
 
