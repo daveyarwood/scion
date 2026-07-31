@@ -16,5 +16,8 @@ data/
 # Scratch image workspace (source sprites belong in src/client/plant/sprites/)
 img/
 
+# Lavish review artifacts
+.lavish/
+
 # Build output
 *.tsbuildinfo
